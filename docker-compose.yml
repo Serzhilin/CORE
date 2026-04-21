@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: core-postgres
+    environment:
+      POSTGRES_USER: core
+      POSTGRES_PASSWORD: core
+      POSTGRES_DB: core
+    ports:
+      - "5436:5432"
+    volumes:
+      - core-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  core-postgres-data:

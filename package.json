@@ -1,0 +1,13 @@
+{
+  "name": "core",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n api,client -c cyan,magenta \"npm run dev --prefix api\" \"npm run dev --prefix app\"",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:seed": "npm run seed --prefix api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
