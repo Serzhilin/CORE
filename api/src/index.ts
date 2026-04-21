@@ -3,6 +3,7 @@ import path from "path";
 import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
+import { Request, Response, NextFunction } from "express";
 import rateLimit from "express-rate-limit";
 import pinoHttp from "pino-http";
 import { logger } from "./lib/logger";
@@ -47,6 +48,12 @@ app.get("/api/communities", requireAuth, listCommunities);
 app.post("/api/communities", requireAuth, createCommunityHandler);
 app.get("/api/communities/:id", requireAuth, requireCommunityMember, getCommunityHandler);
 app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
+
+// ── Global error handler ──────────────────────────────────────────────────────
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    logger.error(err);
+    res.status(500).json({ error: "Internal server error" });
+});
 
 AppDataSource.initialize()
     .then(() => {

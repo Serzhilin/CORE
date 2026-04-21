@@ -1,4 +1,5 @@
 import { AppDataSource } from "../database/data-source";
+import { In } from "typeorm";
 import { Community } from "../database/entities/Community";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { AvailabilityType } from "../database/entities/AvailabilityType";
@@ -19,25 +20,20 @@ export async function createCommunity(
     data: { name: string; slug: string; description?: string },
     creatorPersonId: string
 ): Promise<Community> {
-    const communityRepo = AppDataSource.getRepository(Community);
-    const memberRepo = AppDataSource.getRepository(CommunityMembership);
-    const atRepo = AppDataSource.getRepository(AvailabilityType);
-
-    const community = await communityRepo.save(
-        communityRepo.create({ name: data.name, slug: data.slug, description: data.description ?? null })
-    );
-
-    // Auto-join creator as admin
-    await memberRepo.save(
-        memberRepo.create({ person_id: creatorPersonId, community_id: community.id, is_admin: true })
-    );
-
-    // Seed default availability types
-    await atRepo.save(
-        DEFAULT_AVAILABILITY_TYPES.map((t) => atRepo.create({ ...t, community_id: community.id }))
-    );
-
-    return community;
+    return AppDataSource.transaction(async (manager) => {
+        const community = await manager.save(
+            manager.create(Community, { name: data.name, slug: data.slug, description: data.description ?? null })
+        );
+        await manager.save(
+            manager.create(CommunityMembership, { person_id: creatorPersonId, community_id: community.id, is_admin: true })
+        );
+        await manager.save(
+            DEFAULT_AVAILABILITY_TYPES.map((t) =>
+                manager.create(AvailabilityType, { ...t, community_id: community.id })
+            )
+        );
+        return community;
+    });
 }
 
 export async function getMyCommunities(personId: string): Promise<Community[]> {
@@ -45,9 +41,7 @@ export async function getMyCommunities(personId: string): Promise<Community[]> {
         where: { person_id: personId },
     });
     if (!memberships.length) return [];
-    return AppDataSource.getRepository(Community).findBy(
-        memberships.map((m) => ({ id: m.community_id }))
-    );
+    return AppDataSource.getRepository(Community).findBy({ id: In(memberships.map(m => m.community_id)) });
 }
 
 export async function getCommunityFull(communityId: string) {
@@ -59,7 +53,7 @@ export async function getCommunityFull(communityId: string) {
     });
     const personIds = memberships.map((m) => m.person_id);
     const persons = personIds.length
-        ? await AppDataSource.getRepository(Person).findBy(personIds.map((id) => ({ id })))
+        ? await AppDataSource.getRepository(Person).findBy({ id: In(personIds) })
         : [];
 
     const workgroups = await AppDataSource.getRepository(Workgroup).find({
@@ -69,21 +63,21 @@ export async function getCommunityFull(communityId: string) {
     const wgIds = workgroups.map((w) => w.id);
 
     const wgMemberships = wgIds.length
-        ? await AppDataSource.getRepository(WorkgroupMembership).findBy(wgIds.map((id) => ({ workgroup_id: id })))
+        ? await AppDataSource.getRepository(WorkgroupMembership).findBy({ workgroup_id: In(wgIds) })
         : [];
 
     const wgmIds = wgMemberships.map((m) => m.id);
     const wgRoles = wgmIds.length
-        ? await AppDataSource.getRepository(WorkgroupMemberRole).findBy(wgmIds.map((id) => ({ workgroup_membership_id: id })))
+        ? await AppDataSource.getRepository(WorkgroupMemberRole).findBy({ workgroup_membership_id: In(wgmIds) })
         : [];
 
     const roles = wgIds.length
-        ? await AppDataSource.getRepository(Role).findBy(wgIds.map((id) => ({ workgroup_id: id })))
+        ? await AppDataSource.getRepository(Role).findBy({ workgroup_id: In(wgIds) })
         : [];
 
     const atIds = [...new Set(memberships.map((m) => m.availability_type_id).filter((id): id is string => id !== null))];
     const availabilityTypes = atIds.length
-        ? await AppDataSource.getRepository(AvailabilityType).findBy(atIds.map((id) => ({ id })))
+        ? await AppDataSource.getRepository(AvailabilityType).findBy({ id: In(atIds) })
         : [];
     const atMap = Object.fromEntries(availabilityTypes.map((t) => [t.id, t]));
 
