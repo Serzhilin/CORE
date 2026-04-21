@@ -3,8 +3,13 @@ import path from "path";
 import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
+import rateLimit from "express-rate-limit";
+import pinoHttp from "pino-http";
 import { logger } from "./lib/logger";
 import { AppDataSource } from "./database/data-source";
+import { requireAuth } from "./middleware/auth";
+import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
+import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -13,10 +18,28 @@ const port = process.env.PORT || 3002;
 
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] }));
 app.use(express.json({ limit: "10mb" }));
+app.use(pinoHttp({
+    logger,
+    autoLogging: { ignore: (req) => !!req.url?.includes("/stream") },
+    customLogLevel: (_req, res) => {
+        if (res.statusCode >= 500) return "error";
+        if (res.statusCode >= 400) return "warn";
+        return "info";
+    },
+}));
 
 app.get("/api/health", (_, res) =>
     res.json({ status: "ok", db: AppDataSource.isInitialized ? "connected" : "disconnected" })
 );
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
+app.get("/api/auth/offer", authLimiter, getOffer);
+app.post("/api/auth/login", authLimiter, epassportLogin);
+app.post("/api/auth/dev-login", devLogin);
+app.get("/api/auth/sessions/:id", sseAuthStream);
+app.get("/api/me", requireAuth, getMe);
+app.patch("/api/me", requireAuth, updateMe);
 
 AppDataSource.initialize()
     .then(() => {
