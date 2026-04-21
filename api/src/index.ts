@@ -13,6 +13,7 @@ import { requireCommunityMember, requireCommunityAdmin } from "./middleware/comm
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
 import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler } from "./controllers/CommunityController";
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler } from "./controllers/MemberController";
+import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -58,6 +59,12 @@ app.delete("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAd
 app.patch("/api/communities/:cid/me/availability", requireAuth, requireCommunityMember, setMyAvailability);
 app.patch("/api/communities/:cid/members/:pid/availability", requireAuth, requireCommunityAdmin, setMemberAvailability);
 app.get("/api/communities/:cid/members/:pid/availability-log", requireAuth, requireCommunityAdmin, getMemberAvailabilityLogHandler);
+
+// ── Availability Types ────────────────────────────────────────────────────────
+app.get("/api/communities/:cid/availability-types", requireAuth, requireCommunityMember, listAtHandler);
+app.post("/api/communities/:cid/availability-types", requireAuth, requireCommunityAdmin, createAtHandler);
+app.patch("/api/communities/:cid/availability-types/:tid", requireAuth, requireCommunityAdmin, updateAtHandler);
+app.delete("/api/communities/:cid/availability-types/:tid", requireAuth, requireCommunityAdmin, archiveAtHandler);
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
