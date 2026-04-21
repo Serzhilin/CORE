@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
 import { verifySignature } from "../lib/signature-validator";
 import { findOrCreateByEname, fetchEVaultProfile, updatePerson, displayName, findById } from "../services/PersonService";
+import { Person } from "../database/entities/Person";
 import { signToken } from "../middleware/auth";
 import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
@@ -14,8 +15,18 @@ const sessionResults = new Map<string, object>();
 const sessionReturnTo = new Map<string, string>();
 setInterval(() => { sessionResults.clear(); sessionReturnTo.clear(); }, 30 * 60 * 1000);
 
-function serializePerson(p: any) {
-    return { id: p.id, ename: p.ename, firstName: p.first_name, lastName: p.last_name, displayName: displayName(p) };
+function serializePerson(p: Person) {
+    return {
+        id: p.id,
+        ename: p.ename,
+        firstName: p.first_name,
+        lastName: p.last_name,
+        displayName: displayName(p),
+        email: p.email,
+        phone: p.phone,
+        bio: p.bio,
+        avatarUrl: p.avatar_url,
+    };
 }
 
 export async function getOffer(req: Request, res: Response) {
