@@ -14,6 +14,12 @@ import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } fr
 import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler } from "./controllers/CommunityController";
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler } from "./controllers/MemberController";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
+import {
+    listWorkgroupsHandler, createWorkgroupHandler, updateWorkgroupHandler, deleteWorkgroupHandler,
+    createRoleHandler, updateRoleHandler, deleteRoleHandler,
+    addWgMemberHandler, updateWgMemberHandler, removeWgMemberHandler,
+    assignRoleHandler, unassignRoleHandler,
+} from "./controllers/WorkgroupController";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -65,6 +71,22 @@ app.get("/api/communities/:cid/availability-types", requireAuth, requireCommunit
 app.post("/api/communities/:cid/availability-types", requireAuth, requireCommunityAdmin, createAtHandler);
 app.patch("/api/communities/:cid/availability-types/:tid", requireAuth, requireCommunityAdmin, updateAtHandler);
 app.delete("/api/communities/:cid/availability-types/:tid", requireAuth, requireCommunityAdmin, archiveAtHandler);
+
+// ── Workgroups ────────────────────────────────────────────────────────────────
+app.get("/api/communities/:cid/workgroups", requireAuth, requireCommunityMember, listWorkgroupsHandler);
+app.post("/api/communities/:cid/workgroups", requireAuth, requireCommunityAdmin, createWorkgroupHandler);
+app.patch("/api/communities/:cid/workgroups/:wid", requireAuth, requireCommunityAdmin, updateWorkgroupHandler);
+app.delete("/api/communities/:cid/workgroups/:wid", requireAuth, requireCommunityAdmin, deleteWorkgroupHandler);
+
+app.post("/api/workgroups/:wid/roles", requireAuth, createRoleHandler);
+app.patch("/api/workgroups/:wid/roles/:rid", requireAuth, updateRoleHandler);
+app.delete("/api/workgroups/:wid/roles/:rid", requireAuth, deleteRoleHandler);
+
+app.post("/api/workgroups/:wid/members", requireAuth, addWgMemberHandler);
+app.patch("/api/workgroups/:wid/members/:pid", requireAuth, updateWgMemberHandler);
+app.delete("/api/workgroups/:wid/members/:pid", requireAuth, removeWgMemberHandler);
+app.post("/api/workgroups/:wid/members/:pid/roles", requireAuth, assignRoleHandler);
+app.delete("/api/workgroups/:wid/members/:pid/roles/:rid", requireAuth, unassignRoleHandler);
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
