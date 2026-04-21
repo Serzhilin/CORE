@@ -10,6 +10,7 @@ import { AppDataSource } from "./database/data-source";
 import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
+import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler } from "./controllers/CommunityController";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -40,6 +41,12 @@ app.post("/api/auth/dev-login", devLogin);
 app.get("/api/auth/sessions/:id", sseAuthStream);
 app.get("/api/me", requireAuth, getMe);
 app.patch("/api/me", requireAuth, updateMe);
+
+// ── Communities ───────────────────────────────────────────────────────────────
+app.get("/api/communities", requireAuth, listCommunities);
+app.post("/api/communities", requireAuth, createCommunityHandler);
+app.get("/api/communities/:id", requireAuth, requireCommunityMember, getCommunityHandler);
+app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
 
 AppDataSource.initialize()
     .then(() => {
