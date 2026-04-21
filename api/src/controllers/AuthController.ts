@@ -67,7 +67,11 @@ export async function sseAuthStream(req: Request, res: Response) {
     const { id } = req.params;
     res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive", "Access-Control-Allow-Origin": "*" });
     res.write(": connected\n\n");
-    const handler = (data: object) => { res.write(`data: ${JSON.stringify(data)}\n\n`); res.end(); };
+    const handler = (data: object) => {
+        if (res.writableEnded) return;
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+        res.end();
+    };
     sessions.once(id, handler);
     req.on("close", () => sessions.off(id, handler));
 }
@@ -108,6 +112,11 @@ export async function getMe(req: Request, res: Response) {
 
 export async function updateMe(req: Request, res: Response) {
     const { first_name, last_name, email, phone, bio, avatar_url } = req.body;
-    const person = await updatePerson(req.user!.userId, { first_name, last_name, email, phone, bio, avatar_url });
-    res.json(serializePerson(person));
+    try {
+        const person = await updatePerson(req.user!.userId, { first_name, last_name, email, phone, bio, avatar_url });
+        res.json(serializePerson(person));
+    } catch (err: any) {
+        if (err.code === "23505") { res.status(409).json({ error: "Email already in use" }); return; }
+        throw err;
+    }
 }
