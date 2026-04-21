@@ -12,6 +12,7 @@ import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
 import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler } from "./controllers/CommunityController";
+import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler } from "./controllers/MemberController";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -48,6 +49,15 @@ app.get("/api/communities", requireAuth, listCommunities);
 app.post("/api/communities", requireAuth, createCommunityHandler);
 app.get("/api/communities/:id", requireAuth, requireCommunityMember, getCommunityHandler);
 app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
+
+// ── Community Members ─────────────────────────────────────────────────────────
+app.get("/api/communities/:cid/members", requireAuth, requireCommunityMember, listMembersHandler);
+app.post("/api/communities/:cid/members", requireAuth, requireCommunityAdmin, addMemberHandler);
+app.patch("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAdmin, updateMemberHandler);
+app.delete("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAdmin, deleteMemberHandler);
+app.patch("/api/communities/:cid/me/availability", requireAuth, requireCommunityMember, setMyAvailability);
+app.patch("/api/communities/:cid/members/:pid/availability", requireAuth, requireCommunityAdmin, setMemberAvailability);
+app.get("/api/communities/:cid/members/:pid/availability-log", requireAuth, requireCommunityAdmin, getMemberAvailabilityLogHandler);
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
