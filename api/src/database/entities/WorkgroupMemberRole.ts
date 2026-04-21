@@ -6,10 +6,10 @@ export class WorkgroupMemberRole {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     workgroup_membership_id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     role_id: string;
 
     @CreateDateColumn()

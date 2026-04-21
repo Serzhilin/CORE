@@ -6,10 +6,10 @@ export class WorkgroupMembership {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     person_id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     workgroup_id: string;
 
     @Column({ default: false })

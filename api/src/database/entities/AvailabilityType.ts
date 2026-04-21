@@ -5,7 +5,7 @@ export class AvailabilityType {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     community_id: string;
 
     @Column()

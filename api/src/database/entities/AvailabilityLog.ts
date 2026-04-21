@@ -1,11 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from "typeorm";
 
 @Entity("availability_logs")
 export class AvailabilityLog {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Index()
+    @Column({ type: "uuid" })
     community_membership_id: string;
 
     @Column()

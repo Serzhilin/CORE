@@ -6,10 +6,10 @@ export class CommunityMembership {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     person_id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     community_id: string;
 
     @Column({ default: false })

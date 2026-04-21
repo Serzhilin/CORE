@@ -17,10 +17,14 @@ config({ path: path.resolve(__dirname, "../../../.env") });
 
 const isProduction = process.env.NODE_ENV === "production";
 
+if (!isProduction) {
+    console.warn("[DataSource] synchronize=true — schema auto-synced. Never point this at production data.");
+}
+
 export const AppDataSource = new DataSource({
     type: "postgres",
     host: process.env.DB_HOST || "localhost",
-    port: parseInt(process.env.DB_PORT || "5436"),
+    port: Number(process.env.DB_PORT) || 5436,
     username: process.env.DB_USER || "core",
     password: process.env.DB_PASSWORD || "core",
     database: process.env.DB_NAME || "core",

@@ -5,7 +5,7 @@ export class Role {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ type: "uuid" })
     workgroup_id: string;
 
     @Column()
