@@ -44,7 +44,7 @@ export function computeAvailabilityChanges(
                   type_name: typeName,
                   type_emoji: typeEmoji,
                   reason: current.reason,
-                  from_date: current.from!,
+                  from_date: current.from ?? today,
                   until_date: today,
               }
             : null;
@@ -66,7 +66,7 @@ export function computeAvailabilityChanges(
               type_name: typeName,
               type_emoji: typeEmoji,
               reason: current.reason,
-              from_date: current.from!,
+              from_date: current.from ?? today,
               until_date: today,
           }
         : null;
@@ -81,11 +81,9 @@ export async function applyAvailability(
     membershipId: string,
     payload: AvailabilityPayload
 ): Promise<CommunityMembership> {
-    const memberRepo = AppDataSource.getRepository(CommunityMembership);
-    const logRepo = AppDataSource.getRepository(AvailabilityLog);
     const atRepo = AppDataSource.getRepository(AvailabilityType);
 
-    const m = await memberRepo.findOneOrFail({ where: { id: membershipId } });
+    const m = await AppDataSource.getRepository(CommunityMembership).findOneOrFail({ where: { id: membershipId } });
     const today = new Date();
 
     let typeName = "";
@@ -109,22 +107,33 @@ export async function applyAvailability(
         typeEmoji
     );
 
-    if (log) {
-        await logRepo.save(
-            logRepo.create({
-                community_membership_id: membershipId,
-                type_name: log.type_name,
-                type_emoji: log.type_emoji,
-                reason: log.reason,
-                from_date: log.from_date,
-                until_date: log.until_date,
-            })
-        );
+    const qr = AppDataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+    try {
+        if (log) {
+            await qr.manager.save(
+                qr.manager.create(AvailabilityLog, {
+                    community_membership_id: membershipId,
+                    type_name: log.type_name,
+                    type_emoji: log.type_emoji,
+                    reason: log.reason,
+                    from_date: log.from_date,
+                    until_date: log.until_date,
+                })
+            );
+        }
+        m.availability_type_id = next.type_id;
+        m.availability_reason = next.reason;
+        m.availability_from = next.from;
+        m.availability_until = next.until;
+        const saved = await qr.manager.save(CommunityMembership, m);
+        await qr.commitTransaction();
+        return saved;
+    } catch (err) {
+        await qr.rollbackTransaction();
+        throw err;
+    } finally {
+        await qr.release();
     }
-
-    m.availability_type_id = next.type_id;
-    m.availability_reason = next.reason;
-    m.availability_from = next.from;
-    m.availability_until = next.until;
-    return memberRepo.save(m);
 }

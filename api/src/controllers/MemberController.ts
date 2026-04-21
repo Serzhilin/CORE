@@ -48,6 +48,9 @@ export async function setMyAvailability(req: Request, res: Response) {
     });
     if (!m) { res.status(404).json({ error: "Membership not found" }); return; }
     const { type_id, reason, until, clear } = req.body;
+    if (until && isNaN(new Date(until).getTime())) {
+        res.status(400).json({ error: "Invalid until date" }); return;
+    }
     const updated = await applyAvailability(m.id, {
         type_id: type_id ?? null,
         reason: reason ?? null,
@@ -58,7 +61,16 @@ export async function setMyAvailability(req: Request, res: Response) {
 }
 
 export async function setMemberAvailability(req: Request, res: Response) {
+    // Verify membership belongs to this community
+    const existing = await AppDataSource.getRepository(CommunityMembership).findOne({
+        where: { id: req.params.pid, community_id: req.params.cid },
+    });
+    if (!existing) { res.status(404).json({ error: "Membership not found in this community" }); return; }
+
     const { type_id, reason, until, clear } = req.body;
+    if (until && isNaN(new Date(until).getTime())) {
+        res.status(400).json({ error: "Invalid until date" }); return;
+    }
     try {
         const updated = await applyAvailability(req.params.pid, {
             type_id: type_id ?? null,
