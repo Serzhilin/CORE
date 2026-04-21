@@ -31,7 +31,7 @@ export async function updateAvailabilityType(
     communityId: string,
     data: Partial<Pick<AvailabilityType, "name" | "emoji" | "sort_order">>
 ): Promise<AvailabilityType> {
-    const at = await repo().findOneOrFail({ where: { id, community_id: communityId } });
+    const at = await repo().findOneOrFail({ where: { id, community_id: communityId, is_archived: false } });
     const patch = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
     Object.assign(at, patch);
     return repo().save(at);
