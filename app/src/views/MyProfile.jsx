@@ -1,0 +1,1 @@
+export default function MyProfile() { return <div style={{padding:32}}><h2 style={{fontFamily:'var(--font-title)'}}>My Profile</h2><p style={{color:'var(--color-charcoal-light)'}}>Coming soon.</p></div> }
