@@ -9,7 +9,7 @@ export default function Sidebar() {
 
   const isAdmin = myMembership?.isAdmin ?? false
   const isWorkgroupAdmin = community?.workgroups?.some((wg) =>
-    wg.members.some((m) => m.person_id === user?.id && m.is_workgroup_admin)
+    wg.members?.some((m) => m.person_id === user?.id && m.is_workgroup_admin)
   ) ?? false
 
   const primaryColor = community?.primary_color || '#C4622D'
