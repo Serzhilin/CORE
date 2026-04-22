@@ -1,6 +1,7 @@
 import { useState, lazy, Suspense } from 'react'
 import { useCommunity } from '../context/CommunityContext'
 import CardGrid from './CardGrid'
+import PersonModal from '../components/PersonModal'
 
 const RadialView = lazy(() => import('./RadialView'))
 
@@ -72,7 +73,7 @@ export default function OrganogramView() {
         </Suspense>
       )}
 
-      {/* PersonModal wired in Task 8 */}
+      {selectedMember && <PersonModal member={selectedMember} onClose={() => setSelectedMember(null)} />}
     </div>
   )
 }
