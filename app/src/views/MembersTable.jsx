@@ -3,6 +3,18 @@ import { useCommunity } from '../context/CommunityContext'
 import AvailabilityBadge from '../components/AvailabilityBadge'
 import PersonModal from '../components/PersonModal'
 
+function sortHeader(label, k, sortKey, sortAsc, toggleSort) {
+  const active = sortKey === k
+  return (
+    <th
+      onClick={() => toggleSort(k)}
+      style={{ textAlign: 'left', padding: '10px 16px', cursor: 'pointer', background: active ? 'var(--color-sand)' : 'transparent', whiteSpace: 'nowrap', userSelect: 'none' }}
+    >
+      {label} {active ? (sortAsc ? '↑' : '↓') : ''}
+    </th>
+  )
+}
+
 export default function MembersTable() {
   const { community, loading } = useCommunity()
   const [search, setSearch] = useState('')
@@ -50,18 +62,6 @@ export default function MembersTable() {
       return sortAsc ? cmp : -cmp
     })
 
-  function SortHeader({ label, k }) {
-    const active = sortKey === k
-    return (
-      <th
-        onClick={() => toggleSort(k)}
-        style={{ textAlign: 'left', padding: '10px 16px', cursor: 'pointer', background: active ? 'var(--color-sand)' : 'transparent', whiteSpace: 'nowrap', userSelect: 'none' }}
-      >
-        {label} {active ? (sortAsc ? '↑' : '↓') : ''}
-      </th>
-    )
-  }
-
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -79,11 +79,11 @@ export default function MembersTable() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
-              <SortHeader label="Name" k="name" />
+              {sortHeader('Name', 'name', sortKey, sortAsc, toggleSort)}
               <th style={{ textAlign: 'left', padding: '10px 16px' }}>Workgroups</th>
               <th style={{ textAlign: 'left', padding: '10px 16px' }}>Roles</th>
-              <SortHeader label="Availability" k="availability" />
-              <SortHeader label="Joined" k="joinedAt" />
+              {sortHeader('Availability', 'availability', sortKey, sortAsc, toggleSort)}
+              {sortHeader('Joined', 'joinedAt', sortKey, sortAsc, toggleSort)}
             </tr>
           </thead>
           <tbody>

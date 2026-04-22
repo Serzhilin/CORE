@@ -14,7 +14,9 @@ export default function OrganogramView() {
   if (loading) return <div style={{ color: 'var(--color-charcoal-light)' }}>Loading…</div>
   if (!community) return null
 
-  const allRoles = community.workgroups.flatMap((wg) => wg.roles)
+  const allRoles = community.workgroups
+    .flatMap((wg) => wg.roles)
+    .filter((r, i, arr) => arr.findIndex((x) => x.id === r.id) === i)
 
   return (
     <div>
