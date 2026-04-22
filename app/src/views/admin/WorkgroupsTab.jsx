@@ -1,0 +1,244 @@
+import { useState } from 'react'
+import { useCommunity } from '../../context/CommunityContext'
+import {
+  createWorkgroup, deleteWorkgroup,
+  createRole, deleteRole,
+  addWorkgroupMember, updateWorkgroupMember, removeWorkgroupMember,
+  assignRole, unassignRole,
+} from '../../api/client'
+
+const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
+
+export default function WorkgroupsTab() {
+  const { communityId, community, refresh } = useCommunity()
+  const [expanded, setExpanded] = useState(null)
+  const [addWgForm, setAddWgForm] = useState({ name: '', color: '#C4622D' })
+  const [addingWg, setAddingWg] = useState(false)
+  const [addingRole, setAddingRole] = useState({}) // {wgId: {name, color}}
+  const [addingMember, setAddingMember] = useState(null) // wgId
+
+  async function handleCreateWorkgroup(e) {
+    e.preventDefault()
+    try {
+      await createWorkgroup(communityId, addWgForm)
+      await refresh()
+      setAddingWg(false)
+      setAddWgForm({ name: '', color: '#C4622D' })
+    } catch (err) { alert(err.message) }
+  }
+
+  async function handleDeleteWorkgroup(wid) {
+    if (!confirm('Delete this workgroup and all its roles?')) return
+    try { await deleteWorkgroup(communityId, wid); await refresh() }
+    catch (err) { alert(err.message) }
+  }
+
+  async function handleCreateRole(wid, e) {
+    e.preventDefault()
+    const data = addingRole[wid] || { name: '', color: '#C4622D' }
+    if (!data.name) return
+    try {
+      await createRole(wid, data)
+      await refresh()
+      setAddingRole((r) => ({ ...r, [wid]: { name: '', color: '#C4622D' } }))
+    } catch (err) { alert(err.message) }
+  }
+
+  async function handleDeleteRole(wid, rid) {
+    if (!confirm('Delete role?')) return
+    try { await deleteRole(wid, rid); await refresh() }
+    catch (err) { alert(err.message) }
+  }
+
+  async function handleAddMember(wid, personId) {
+    try { await addWorkgroupMember(wid, { person_id: personId }); await refresh(); setAddingMember(null) }
+    catch (err) { alert(err.message) }
+  }
+
+  async function handleRemoveMember(wid, pid) {
+    try { await removeWorkgroupMember(wid, pid); await refresh() }
+    catch (err) { alert(err.message) }
+  }
+
+  async function handleToggleWgAdmin(wid, pid, val) {
+    try { await updateWorkgroupMember(wid, pid, { is_workgroup_admin: val }); await refresh() }
+    catch (err) { alert(err.message) }
+  }
+
+  async function handleAssignRole(wid, pid, roleId) {
+    try { await assignRole(wid, pid, { role_id: roleId }); await refresh() }
+    catch (err) { if (!err.message.includes('409')) alert(err.message) }
+  }
+
+  async function handleUnassignRole(wid, pid, rid) {
+    try { await unassignRole(wid, pid, rid); await refresh() }
+    catch (err) { alert(err.message) }
+  }
+
+  const communityMembers = community?.members || []
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        <h3 style={{ margin: 0, fontFamily: 'var(--font-title)' }}>Workgroups</h3>
+        <button className="btn-primary" onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</button>
+      </div>
+
+      {addingWg && (
+        <div className="card-warm" style={{ padding: 20, marginBottom: 16 }}>
+          <form onSubmit={handleCreateWorkgroup} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Name</label>
+              <input style={inputStyle} value={addWgForm.name} onChange={(e) => setAddWgForm((f) => ({ ...f, name: e.target.value }))} required />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Color</label>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <input type="color" value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }} />
+                <input style={{ ...inputStyle, width: 90 }} value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} />
+              </div>
+            </div>
+            <button type="submit" className="btn-primary" style={{ fontSize: '0.85rem' }}>Create</button>
+            <button type="button" className="btn-secondary" onClick={() => setAddingWg(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
+          </form>
+        </div>
+      )}
+
+      {(community?.workgroups || []).map((wg) => {
+        const isExpanded = expanded === wg.id
+        const wgMembers = wg.members
+          .map((wm) => ({ ...wm, member: communityMembers.find((m) => m.personId === wm.person_id) }))
+          .filter((wm) => wm.member)
+
+        const nonMembers = communityMembers.filter(
+          (m) => !wg.members.some((wm) => wm.person_id === m.personId)
+        )
+
+        return (
+          <div key={wg.id} className="card" style={{ marginBottom: 12, borderLeft: `4px solid ${wg.color}` }}>
+            {/* Header */}
+            <div
+              onClick={() => setExpanded(isExpanded ? null : wg.id)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', cursor: 'pointer', userSelect: 'none' }}
+            >
+              <span style={{ fontWeight: 700, fontFamily: 'var(--font-title)' }}>{wg.name}</span>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
+                  {wg.members.length} members · {wg.roles.length} roles
+                </span>
+                <button
+                  onClick={() => handleDeleteWorkgroup(wg.id)}
+                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.8rem' }}
+                >
+                  Delete
+                </button>
+                <span style={{ color: 'var(--color-charcoal-light)' }}>{isExpanded ? '▲' : '▼'}</span>
+              </div>
+            </div>
+
+            {isExpanded && (
+              <div style={{ borderTop: '1px solid var(--color-sand)', padding: 20 }}>
+                {/* Roles */}
+                <div style={{ marginBottom: 20 }}>
+                  <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Roles</h4>
+                  {wg.roles.map((r) => (
+                    <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: '50%', background: r.color }} />
+                      <span style={{ flex: 1, fontSize: '0.9rem' }}>{r.name}</span>
+                      <button
+                        onClick={() => handleDeleteRole(wg.id, r.id)}
+                        style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.8rem' }}
+                      >×</button>
+                    </div>
+                  ))}
+                  <form onSubmit={(e) => handleCreateRole(wg.id, e)} style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                    <input
+                      placeholder="Role name"
+                      value={(addingRole[wg.id] || {}).name || ''}
+                      onChange={(e) => setAddingRole((r) => ({ ...r, [wg.id]: { ...(r[wg.id] || {}), name: e.target.value } }))}
+                      style={{ ...inputStyle, flex: 1 }}
+                    />
+                    <input
+                      type="color"
+                      value={(addingRole[wg.id] || {}).color || '#C4622D'}
+                      onChange={(e) => setAddingRole((r) => ({ ...r, [wg.id]: { ...(r[wg.id] || {}), color: e.target.value } }))}
+                      style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }}
+                    />
+                    <button type="submit" className="btn-secondary" style={{ fontSize: '0.8rem' }}>Add role</button>
+                  </form>
+                </div>
+
+                {/* Members */}
+                <div>
+                  <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Members</h4>
+                  {wgMembers.map(({ member, is_workgroup_admin, roles }) => (
+                    <div key={member.personId} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                      <span style={{ flex: 1, fontSize: '0.9rem', fontWeight: 500 }}>
+                        {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
+                      </span>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={is_workgroup_admin}
+                          onChange={(e) => handleToggleWgAdmin(wg.id, member.personId, e.target.checked)}
+                        /> WG admin
+                      </label>
+                      <select
+                        defaultValue=""
+                        onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value); e.target.value = '' }}
+                        style={{ ...inputStyle, padding: '4px 6px', fontSize: '0.8rem' }}
+                      >
+                        <option value="">+ Role</option>
+                        {wg.roles.filter((r) => !roles.includes(r.id)).map((r) => (
+                          <option key={r.id} value={r.id}>{r.name}</option>
+                        ))}
+                      </select>
+                      {roles.map((rid) => {
+                        const role = wg.roles.find((r) => r.id === rid)
+                        if (!role) return null
+                        return (
+                          <span key={rid} style={{ fontSize: '0.75rem', background: role.color + '30', border: `1px solid ${role.color}`, borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            {role.name}
+                            <button onClick={() => handleUnassignRole(wg.id, member.personId, rid)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)' }}>×</button>
+                          </span>
+                        )
+                      })}
+                      <button
+                        onClick={() => handleRemoveMember(wg.id, member.personId)}
+                        style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.8rem' }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                  {addingMember === wg.id ? (
+                    <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                      <select
+                        defaultValue=""
+                        onChange={(e) => { if (e.target.value) handleAddMember(wg.id, e.target.value) }}
+                        style={{ ...inputStyle, flex: 1 }}
+                      >
+                        <option value="">Select community member…</option>
+                        {nonMembers.map((m) => (
+                          <option key={m.personId} value={m.personId}>
+                            {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
+                          </option>
+                        ))}
+                      </select>
+                      <button className="btn-secondary" onClick={() => setAddingMember(null)} style={{ fontSize: '0.8rem' }}>Cancel</button>
+                    </div>
+                  ) : (
+                    <button className="btn-secondary" onClick={() => setAddingMember(wg.id)} style={{ fontSize: '0.8rem', marginTop: 8 }}>
+                      + Add member
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
