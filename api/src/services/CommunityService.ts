@@ -113,10 +113,77 @@ export async function getCommunityFull(communityId: string) {
                 roles: roles.filter((r) => r.workgroup_id === wg.id),
                 members: wgMembs.map((wm) => ({
                     ...wm,
-                    roleIds: wgRoles
+                    roles: wgRoles
                         .filter((r) => r.workgroup_membership_id === wm.id)
                         .map((r) => r.role_id),
                 })),
+            };
+        }),
+    };
+}
+
+export async function getCommunityGraph(communityId: string) {
+    const workgroups = await AppDataSource.getRepository(Workgroup).find({
+        where: { community_id: communityId },
+        order: { sort_order: "ASC" },
+    });
+    const wgIds = workgroups.map((w) => w.id);
+
+    const roles = wgIds.length
+        ? await AppDataSource.getRepository(Role).findBy({ workgroup_id: In(wgIds) })
+        : [];
+
+    const wgMemberships = wgIds.length
+        ? await AppDataSource.getRepository(WorkgroupMembership).findBy({ workgroup_id: In(wgIds) })
+        : [];
+    const wgmIds = wgMemberships.map((m) => m.id);
+    const wgMemberRoles = wgmIds.length
+        ? await AppDataSource.getRepository(WorkgroupMemberRole).findBy({ workgroup_membership_id: In(wgmIds) })
+        : [];
+
+    const communityMemberships = await AppDataSource.getRepository(CommunityMembership).find({
+        where: { community_id: communityId },
+    });
+    const personIds = communityMemberships.map((m) => m.person_id);
+    const persons = personIds.length
+        ? await AppDataSource.getRepository(Person).findBy({ id: In(personIds) })
+        : [];
+
+    const atIds = [...new Set(
+        communityMemberships.map((m) => m.availability_type_id).filter((id): id is string => id !== null)
+    )];
+    const availabilityTypes = atIds.length
+        ? await AppDataSource.getRepository(AvailabilityType).findBy({ id: In(atIds) })
+        : [];
+    const atMap = Object.fromEntries(availabilityTypes.map((t) => [t.id, t]));
+
+    return {
+        workgroups: workgroups.map((wg) => ({
+            id: wg.id,
+            name: wg.name,
+            color: wg.color,
+            description: wg.description,
+        })),
+        persons: communityMemberships.map((cm) => {
+            const person = persons.find((p) => p.id === cm.person_id)!;
+            const at = cm.availability_type_id ? atMap[cm.availability_type_id] : null;
+            const myMemberships = wgMemberships.filter((wm) => wm.person_id === cm.person_id);
+            return {
+                id: cm.person_id,
+                firstName: person?.first_name ?? null,
+                lastName: person?.last_name ?? null,
+                isAspirant: cm.is_aspirant,
+                isAdmin: cm.is_admin,
+                availability: at ? { name: at.name, emoji: at.emoji } : null,
+                memberships: myMemberships.map((wm) => {
+                    const myRoleIds = wgMemberRoles
+                        .filter((r) => r.workgroup_membership_id === wm.id)
+                        .map((r) => r.role_id);
+                    const myRoleNames = roles
+                        .filter((r) => myRoleIds.includes(r.id))
+                        .map((r) => r.name);
+                    return { workgroupId: wm.workgroup_id, roles: myRoleNames };
+                }),
             };
         }),
     };

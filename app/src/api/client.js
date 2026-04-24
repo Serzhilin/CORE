@@ -1,5 +1,5 @@
 const BASE = '/api'
-const SSE_BASE = import.meta.env.DEV ? 'http://localhost:3002/api' : '/api'
+const SSE_BASE = import.meta.env.DEV ? 'http://localhost:3003/api' : '/api'
 
 function getToken() {
   return localStorage.getItem('core_token')
@@ -48,6 +48,7 @@ export function subscribeToAuthSession(sessionId, onLogin) {
 export const listCommunities = () => req('GET', '/communities')
 export const createCommunity = (data) => req('POST', '/communities', data)
 export const getCommunity = (id) => req('GET', `/communities/${id}`)
+export const getCommunityGraph = (id) => req('GET', `/communities/${id}/graph`)
 export const updateCommunity = (id, data) => req('PATCH', `/communities/${id}`, data)
 
 // ── Members ───────────────────────────────────────────────────────────────────

@@ -11,7 +11,7 @@ import { AppDataSource } from "./database/data-source";
 import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
-import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler } from "./controllers/CommunityController";
+import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler } from "./controllers/CommunityController";
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler } from "./controllers/MemberController";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
@@ -55,6 +55,7 @@ app.patch("/api/me", requireAuth, updateMe);
 app.get("/api/communities", requireAuth, listCommunities);
 app.post("/api/communities", requireAuth, createCommunityHandler);
 app.get("/api/communities/:id", requireAuth, requireCommunityMember, getCommunityHandler);
+app.get("/api/communities/:id/graph", requireAuth, requireCommunityMember, getCommunityGraphHandler);
 app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
 
 // ── Community Members ─────────────────────────────────────────────────────────

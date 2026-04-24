@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createCommunity, getMyCommunities, getCommunityFull, updateCommunity } from "../services/CommunityService";
+import { createCommunity, getMyCommunities, getCommunityFull, updateCommunity, getCommunityGraph } from "../services/CommunityService";
 import { Community } from "../database/entities/Community";
 
 export async function listCommunities(req: Request, res: Response) {
@@ -24,6 +24,11 @@ export async function getCommunityHandler(req: Request, res: Response) {
     const community = await getCommunityFull(req.params.id);
     if (!community) { res.status(404).json({ error: "Community not found" }); return; }
     res.json(community);
+}
+
+export async function getCommunityGraphHandler(req: Request, res: Response) {
+    const data = await getCommunityGraph(req.params.id);
+    res.json(data);
 }
 
 export async function updateCommunityHandler(req: Request, res: Response) {
