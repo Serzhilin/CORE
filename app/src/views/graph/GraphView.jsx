@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { getCommunityGraph } from '../../api/client'
 import GraphToolbar from './GraphToolbar'
 import { useGraphData } from './useGraphData'
+import { useForceSimulation } from './useForceSimulation'
 
 const INITIAL_FILTERS = {
   workgroupId: '',
@@ -33,6 +34,7 @@ export default function GraphView({ communityId }) {
   }
 
   const { nodes, links } = useGraphData(graphData, mode, filters)
+  const { simNodes, simLinks, reheat, W, H } = useForceSimulation(nodes, links)
 
   if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
   if (!graphData) return null
@@ -56,7 +58,7 @@ export default function GraphView({ communityId }) {
           Graph canvas — coming soon
           <pre style={{ fontSize: '0.7rem', marginTop: 8 }}>
             nodes: {nodes.length} | links: {links.length}{'\n'}
-            mode: {mode}
+            sim positioned: {simNodes.filter(n => n.x != null).length}/{simNodes.length}
           </pre>
         </div>
       </div>
