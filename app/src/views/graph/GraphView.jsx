@@ -38,6 +38,10 @@ export default function GraphView({ communityId }) {
   const { nodes, links } = useGraphData(graphData, mode, filters)
   const { simNodes, simLinks, reheat, W, H } = useForceSimulation(nodes, links)
 
+  useEffect(() => {
+    reheat()
+  }, [nodes, reheat])
+
   if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
   if (!graphData) return null
 
