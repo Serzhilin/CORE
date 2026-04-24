@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { getCommunityGraph } from '../../api/client'
+import GraphToolbar from './GraphToolbar'
 
 const INITIAL_FILTERS = {
   workgroupId: '',
@@ -36,10 +37,15 @@ export default function GraphView({ communityId }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 140px)', minHeight: 500 }}>
       <div style={{ marginBottom: 8 }}>
-        {/* GraphToolbar goes here — Task 4 */}
-        <div style={{ fontSize: '0.8rem', color: '#aaa' }}>
-          {graphData.workgroups.length} workgroups · {graphData.persons.length} members
-        </div>
+        <GraphToolbar
+          graphData={graphData}
+          mode={mode}
+          filters={filters}
+          onModeChange={setMode}
+          onFiltersChange={(patch) => setFilters(f => ({ ...f, ...patch }))}
+          onReset={resetFilters}
+          onExport={() => {/* wired in Task 11 */}}
+        />
       </div>
       <div style={{ flex: 1, position: 'relative' }}>
         {/* ForceGraph goes here — Task 7 */}
