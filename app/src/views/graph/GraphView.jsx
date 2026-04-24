@@ -4,6 +4,7 @@ import GraphToolbar from './GraphToolbar'
 import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
 import ForceGraph from './ForceGraph'
+import GraphSidePanel from './GraphSidePanel'
 
 const INITIAL_FILTERS = {
   workgroupId: '',
@@ -63,6 +64,12 @@ export default function GraphView({ communityId }) {
           svgRef={svgRef}
           W={W}
           H={H}
+        />
+        <GraphSidePanel
+          selected={selected}
+          graphData={graphData}
+          onClose={() => setSelected(null)}
+          onFilterToWorkgroup={(wgId) => setFilters(f => ({ ...f, workgroupId: wgId }))}
         />
       </div>
     </div>
