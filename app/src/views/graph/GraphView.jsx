@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { getCommunityGraph } from '../../api/client'
 import GraphToolbar from './GraphToolbar'
+import { useGraphData } from './useGraphData'
 
 const INITIAL_FILTERS = {
   workgroupId: '',
@@ -31,6 +32,8 @@ export default function GraphView({ communityId }) {
     setSelected(null)
   }
 
+  const { nodes, links } = useGraphData(graphData, mode, filters)
+
   if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
   if (!graphData) return null
 
@@ -49,11 +52,11 @@ export default function GraphView({ communityId }) {
       </div>
       <div style={{ flex: 1, position: 'relative' }}>
         {/* ForceGraph goes here — Task 7 */}
-        <div style={{ padding: 20, color: '#888' }}>
-          Graph canvas placeholder
+        <div style={{ padding: 20, color: '#888', fontSize: '0.8rem' }}>
+          Graph canvas — coming soon
           <pre style={{ fontSize: '0.7rem', marginTop: 8 }}>
-            mode: {mode}{'\n'}
-            selected: {JSON.stringify(selected)}
+            nodes: {nodes.length} | links: {links.length}{'\n'}
+            mode: {mode}
           </pre>
         </div>
       </div>
