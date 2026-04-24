@@ -42,6 +42,19 @@ export default function GraphView({ communityId }) {
     reheat()
   }, [nodes, reheat])
 
+  const exportSvg = () => {
+    if (!svgRef.current) return
+    const serializer = new XMLSerializer()
+    const svgStr = serializer.serializeToString(svgRef.current)
+    const blob = new Blob([svgStr], { type: 'image/svg+xml' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `organogram-${new Date().toISOString().slice(0, 10)}.svg`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
   if (!graphData) return null
 
@@ -55,7 +68,7 @@ export default function GraphView({ communityId }) {
           onModeChange={setMode}
           onFiltersChange={(patch) => setFilters(f => ({ ...f, ...patch }))}
           onReset={resetFilters}
-          onExport={() => {/* wired in Task 11 */}}
+          onExport={exportSvg}
         />
       </div>
       <div style={{ flex: 1, position: 'relative' }}>
