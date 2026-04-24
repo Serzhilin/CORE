@@ -3,6 +3,7 @@ import { getCommunityGraph } from '../../api/client'
 import GraphToolbar from './GraphToolbar'
 import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
+import ForceGraph from './ForceGraph'
 
 const INITIAL_FILTERS = {
   workgroupId: '',
@@ -53,14 +54,16 @@ export default function GraphView({ communityId }) {
         />
       </div>
       <div style={{ flex: 1, position: 'relative' }}>
-        {/* ForceGraph goes here — Task 7 */}
-        <div style={{ padding: 20, color: '#888', fontSize: '0.8rem' }}>
-          Graph canvas — coming soon
-          <pre style={{ fontSize: '0.7rem', marginTop: 8 }}>
-            nodes: {nodes.length} | links: {links.length}{'\n'}
-            sim positioned: {simNodes.filter(n => n.x != null).length}/{simNodes.length}
-          </pre>
-        </div>
+        <ForceGraph
+          simNodes={simNodes}
+          simLinks={simLinks}
+          filters={filters}
+          selected={selected}
+          onSelect={setSelected}
+          svgRef={svgRef}
+          W={W}
+          H={H}
+        />
       </div>
     </div>
   )
