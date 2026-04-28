@@ -7,7 +7,6 @@ import Sidebar from './components/Sidebar'
 import OnboardingScreen from './views/OnboardingScreen'
 
 const OrganogramView = lazy(() => import('./views/OrganogramView'))
-const MembersTable = lazy(() => import('./views/MembersTable'))
 const MyProfile = lazy(() => import('./views/MyProfile'))
 const AdminPanel = lazy(() => import('./views/AdminPanel'))
 
@@ -37,7 +36,6 @@ function Layout() {
         <Suspense fallback={<div style={{ color: 'var(--color-charcoal-light)' }}>Loading view…</div>}>
           <Routes>
             <Route path="/" element={<OrganogramView />} />
-            <Route path="/members" element={<MembersTable />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="*" element={<Navigate to="/" replace />} />

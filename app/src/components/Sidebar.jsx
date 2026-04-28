@@ -59,9 +59,6 @@ export default function Sidebar() {
         <NavLink to="/" end style={({ isActive }) => ({ ...navStyle, ...(isActive ? activeStyle : {}) })}>
           🗂 Organogram
         </NavLink>
-        <NavLink to="/members" style={({ isActive }) => ({ ...navStyle, ...(isActive ? activeStyle : {}) })}>
-          👥 Members
-        </NavLink>
         <NavLink to="/profile" style={({ isActive }) => ({ ...navStyle, ...(isActive ? activeStyle : {}) })}>
           👤 My profile
         </NavLink>

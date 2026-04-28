@@ -3,14 +3,13 @@ import { useCommunity } from '../context/CommunityContext'
 import CardGrid from './CardGrid'
 import PersonModal from '../components/PersonModal'
 
-const RadialView = lazy(() => import('./RadialView'))
 const GraphView = lazy(() => import('./graph/GraphView'))
 
 export default function OrganogramView() {
   const { community, loading } = useCommunity()
-  const [view, setView] = useState('cards') // 'cards' | 'radial'
+  const [view, setView] = useState('cards') // 'cards' | 'graph'
   const [selectedMember, setSelectedMember] = useState(null)
-  const [filter, setFilter] = useState({ workgroupId: '', roleId: '', hideUnavailable: false })
+  const [filter, setFilter] = useState({ workgroupId: '', roleId: '', hideUnavailable: false, search: '' })
 
   if (loading) return <div style={{ color: 'var(--color-charcoal-light)' }}>Loading…</div>
   if (!community) return null
@@ -30,19 +29,21 @@ export default function OrganogramView() {
             onClick={() => setView('cards')} style={{ fontSize: '0.85rem' }}
           >Cards</button>
           <button
-            className={view === 'radial' ? 'btn-primary' : 'btn-secondary'}
-            onClick={() => setView('radial')} style={{ fontSize: '0.85rem' }}
-          >Radial</button>
-          <button
             className={view === 'graph' ? 'btn-primary' : 'btn-secondary'}
             onClick={() => setView('graph')} style={{ fontSize: '0.85rem' }}
           >Graph</button>
         </div>
       </div>
 
-      {/* Filter bar */}
-      {view !== 'graph' && (
+      {/* Filter bar — cards only */}
+      {view === 'cards' && (
         <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          <input
+            placeholder="Search by name…"
+            value={filter.search}
+            onChange={(e) => setFilter((f) => ({ ...f, search: e.target.value }))}
+            style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', background: 'white', width: 160 }}
+          />
           <select
             value={filter.workgroupId}
             onChange={(e) => setFilter((f) => ({ ...f, workgroupId: e.target.value }))}
@@ -74,15 +75,11 @@ export default function OrganogramView() {
         </div>
       )}
 
-      {view === 'graph' ? (
-        <Suspense fallback={<div>Loading graph…</div>}>
-          <GraphView communityId={community.id} />
-        </Suspense>
-      ) : view === 'cards' ? (
+      {view === 'cards' ? (
         <CardGrid community={community} filter={filter} onMemberClick={setSelectedMember} />
       ) : (
-        <Suspense fallback={<div>Loading radial view…</div>}>
-          <RadialView community={community} filter={filter} onMemberClick={setSelectedMember} />
+        <Suspense fallback={<div>Loading graph…</div>}>
+          <GraphView communityId={community.id} />
         </Suspense>
       )}
 

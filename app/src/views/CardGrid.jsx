@@ -21,12 +21,16 @@ export default function CardGrid({ community, filter, onMemberClick }) {
     .sort((a, b) => a.sort_order - b.sort_order)
 
   function membersForWorkgroup(wg) {
+    const q = filter.search?.toLowerCase() ?? ''
     return wg.members
       .map((wm) => community.members.find((m) => m.personId === wm.person_id))
       .filter(Boolean)
       .filter((m) => !filter.hideUnavailable || !m.availability)
       .filter((m) => !filter.roleId || wg.members
         .find((wm) => wm.person_id === m.personId)?.roles.includes(filter.roleId))
+      .filter((m) => !q ||
+        (m.firstName || '').toLowerCase().includes(q) ||
+        (m.lastName || '').toLowerCase().includes(q))
   }
 
   async function exportPng() {

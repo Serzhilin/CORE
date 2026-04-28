@@ -1,0 +1,116 @@
+<h2>What should live in the graph toolbar?</h2>
+<p class="subtitle">Pick everything that feels useful. You can deselect too.</p>
+
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">Graph toolbar — select all controls you want</div>
+  <div class="mockup-body" style="padding:16px 20px;">
+
+    <!-- Toolbar mockup -->
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:10px 14px; background:#faf7f2; border-radius:8px; border:1px solid #e5ddd0; margin-bottom:20px; font-size:0.82rem;">
+      <!-- View mode toggle -->
+      <div style="display:flex; border:1px solid #e5ddd0; border-radius:6px; overflow:hidden;">
+        <div style="padding:5px 10px; background:#C4622D; color:white; font-weight:600; cursor:pointer; font-size:0.75rem;">By person</div>
+        <div style="padding:5px 10px; background:white; color:#888; cursor:pointer; font-size:0.75rem;">By workgroup</div>
+      </div>
+      <div style="width:1px; height:24px; background:#e5ddd0;"></div>
+      <!-- Filters -->
+      <select style="padding:4px 8px; border-radius:5px; border:1px solid #e5ddd0; font-size:0.78rem; background:white; color:#555;">
+        <option>All workgroups</option>
+      </select>
+      <select style="padding:4px 8px; border-radius:5px; border:1px solid #e5ddd0; font-size:0.78rem; background:white; color:#555;">
+        <option>All roles</option>
+      </select>
+      <div style="width:1px; height:24px; background:#e5ddd0;"></div>
+      <!-- Toggles -->
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:0.75rem;color:#555;">
+        <input type="checkbox"> Hide unavailable
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:0.75rem;color:#555;">
+        <input type="checkbox"> Show aspirants
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:0.75rem;color:#555;">
+        <input type="checkbox"> Show names
+      </label>
+      <div style="width:1px; height:24px; background:#e5ddd0;"></div>
+      <!-- Search -->
+      <input placeholder="🔍 Search person…" style="padding:4px 10px; border-radius:5px; border:1px solid #e5ddd0; font-size:0.78rem; width:130px;">
+      <div style="margin-left:auto; display:flex; gap:6px;">
+        <button style="padding:4px 10px; border-radius:5px; border:1px solid #e5ddd0; font-size:0.75rem; background:white; cursor:pointer; color:#555;">⟳ Reset</button>
+        <button style="padding:4px 10px; border-radius:5px; border:1px solid #e5ddd0; font-size:0.75rem; background:white; cursor:pointer; color:#555;">↓ SVG</button>
+      </div>
+    </div>
+
+    <!-- Feature cards to select -->
+    <p style="font-size:0.78rem; color:#888; margin:0 0 12px;">Select all the controls you want in the toolbar:</p>
+
+    <div class="options" data-multiselect>
+
+      <div class="option" data-choice="view-mode" onclick="toggleSelect(this)">
+        <div class="letter">1</div>
+        <div class="content">
+          <h3>By person / By workgroup toggle</h3>
+          <p>Switch between single-node and clone-node modes. Already decided — just confirming it lives here.</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="filter-workgroup" onclick="toggleSelect(this)">
+        <div class="letter">2</div>
+        <div class="content">
+          <h3>Filter by workgroup</h3>
+          <p>Dropdown to isolate one workgroup — dims or hides everyone else. Useful for "show me only the Finance cluster."</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="filter-role" onclick="toggleSelect(this)">
+        <div class="letter">3</div>
+        <div class="content">
+          <h3>Filter by role</h3>
+          <p>Highlight only people holding a specific role (e.g. "Voorzitter"). Others dim out.</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="hide-unavailable" onclick="toggleSelect(this)">
+        <div class="letter">4</div>
+        <div class="content">
+          <h3>Hide unavailable toggle</h3>
+          <p>Remove sick/vacation people from the graph entirely. Useful for "who can I actually reach right now."</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="show-aspirants" onclick="toggleSelect(this)">
+        <div class="letter">5</div>
+        <div class="content">
+          <h3>Show / hide aspirants</h3>
+          <p>Aspirants shown with dashed outline by default. Toggle to hide them for a "full members only" view.</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="show-names" onclick="toggleSelect(this)">
+        <div class="letter">6</div>
+        <div class="content">
+          <h3>Show / hide names</h3>
+          <p>Names below nodes clutter the graph with 45+ people. Toggle to show only dots, hover to reveal name. Cleaner for overview.</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="search" onclick="toggleSelect(this)">
+        <div class="letter">7</div>
+        <div class="content">
+          <h3>Search / spotlight person</h3>
+          <p>Type a name → that node pulses and centres, everything else dims. Great for "where is Lilian in this graph."</p>
+        </div>
+      </div>
+
+      <div class="option" data-choice="export" onclick="toggleSelect(this)">
+        <div class="letter">8</div>
+        <div class="content">
+          <h3>Export as SVG / PNG</h3>
+          <p>Already exists in the current views. Keep it here too for sharing/printing the organogram.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<p class="subtitle">Click all that apply — multi-select is on. Or tell me in the terminal.</p>

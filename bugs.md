@@ -1,0 +1,1 @@
+Make the menu the same as in ALVer - on the top (not left): icon and name of community on the left + avatar on the right + menu: My profile, Admin and log out should be there. And organogram is basically the Main view - others are accessible from the menu only.

@@ -1,0 +1,21 @@
+{"type":"server-started","port":57914,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:57914","screen_dir":"/home/serzhilin/Projects/KERN/.superpowers/brainstorm/3034205-1776758906/content","state_dir":"/home/serzhilin/Projects/KERN/.superpowers/brainstorm/3034205-1776758906/state"}
+{"type":"screen-added","file":"/home/serzhilin/Projects/KERN/.superpowers/brainstorm/3034205-1776758906/content/organogram-approaches.html"}
+{"type":"screen-added","file":"/home/serzhilin/Projects/KERN/.superpowers/brainstorm/3034205-1776758906/content/waiting-1.html"}
+{"type":"server-stopped","reason":"idle timeout"}
+node:fs:2412
+    return binding.writeFileUtf8(
+                   ^
+
+Error: ENOENT: no such file or directory, open '/home/serzhilin/Projects/KERN/.superpowers/brainstorm/3034205-1776758906/state/server-stopped'
+    at Object.writeFileSync (node:fs:2412:20)
+    at shutdown (/home/serzhilin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/server.cjs:305:8)
+    at Timeout._onTimeout (/home/serzhilin/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/server.cjs:322:59)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/home/serzhilin/Projects/KERN/.superpowers/brainstorm/3034205-1776758906/state/server-stopped'
+}
+
+Node.js v24.13.1

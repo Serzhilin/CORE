@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
+import EmojiPicker from '../../components/EmojiPicker'
 import {
   updateCommunity,
   createAvailabilityType,
@@ -134,7 +135,7 @@ export default function CommunityTab() {
             <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>
               {editingAt?.id === t.id ? (
                 <>
-                  <input value={editingAt.emoji} onChange={(e) => setEditingAt((a) => ({ ...a, emoji: e.target.value }))} style={{ width: 48, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', textAlign: 'center' }} />
+                  <EmojiPicker value={editingAt.emoji} onChange={(emoji) => setEditingAt((a) => ({ ...a, emoji }))} />
                   <input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} style={{ flex: 1, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--color-sand-dark)' }} />
                   <button className="btn-primary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => handleUpdateAt(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</button>
                   <button className="btn-secondary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => setEditingAt(null)}>Cancel</button>
@@ -151,7 +152,7 @@ export default function CommunityTab() {
           ))}
         </div>
         <form onSubmit={handleAddAvailabilityType} style={{ display: 'flex', gap: 8 }}>
-          <input placeholder="🏖" value={atForm.emoji} onChange={(e) => setAtForm((f) => ({ ...f, emoji: e.target.value }))} style={{ width: 60, padding: '8px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', textAlign: 'center' }} />
+          <EmojiPicker value={atForm.emoji} onChange={(emoji) => setAtForm((f) => ({ ...f, emoji }))} />
           <input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1, padding: '8px 12px', borderRadius: 6, border: '1px solid var(--color-sand-dark)' }} />
           <button type="submit" className="btn-primary" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</button>
         </form>
