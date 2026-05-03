@@ -45,7 +45,7 @@ export default function MembersTab() {
   }
 
   return (
-    <div>
+    <div style={{ maxWidth: 680, margin: '0 auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <h3 style={{ margin: 0, fontFamily: 'var(--font-title)' }}>Members</h3>
         <button className="btn-primary" onClick={() => setAdding(true)} style={{ fontSize: '0.85rem' }}>Add member</button>

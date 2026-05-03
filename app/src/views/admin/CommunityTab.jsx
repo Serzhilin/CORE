@@ -1,12 +1,6 @@
 import { useState } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
-import EmojiPicker from '../../components/EmojiPicker'
-import {
-  updateCommunity,
-  createAvailabilityType,
-  updateAvailabilityType,
-  archiveAvailabilityType,
-} from '../../api/client'
+import { updateCommunity } from '../../api/client'
 
 const inputStyle = {
   width: '100%', padding: '10px 14px', borderRadius: 8,
@@ -14,7 +8,7 @@ const inputStyle = {
 }
 
 export default function CommunityTab() {
-  const { communityId, community, availabilityTypes, refresh } = useCommunity()
+  const { communityId, community, refresh } = useCommunity()
 
   const [form, setForm] = useState({
     name: community?.name || '',
@@ -26,9 +20,9 @@ export default function CommunityTab() {
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
 
-  const [atForm, setAtForm] = useState({ name: '', emoji: '' })
-  const [atSaving, setAtSaving] = useState(false)
-  const [editingAt, setEditingAt] = useState(null) // {id, name, emoji}
+  const [logo, setLogo] = useState(community?.logo_url || null)
+  const [logoSaving, setLogoSaving] = useState(false)
+  const [logoError, setLogoError] = useState(null)
 
   async function handleSave(e) {
     e.preventDefault()
@@ -45,43 +39,45 @@ export default function CommunityTab() {
     }
   }
 
-  async function handleAddAvailabilityType(e) {
-    e.preventDefault()
-    if (!atForm.name || !atForm.emoji) return
-    setAtSaving(true)
+  function handleLogoUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result
+      setLogo(dataUrl)
+      setLogoError(null)
+      setLogoSaving(true)
+      try {
+        await updateCommunity(communityId, { logo_url: dataUrl })
+        await refresh()
+      } catch (err) {
+        setLogoError(err.message)
+        setLogo(community?.logo_url || null)
+      } finally {
+        setLogoSaving(false)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  async function removeLogo() {
+    setLogoError(null)
+    setLogoSaving(true)
     try {
-      await createAvailabilityType(communityId, atForm)
+      setLogo(null)
+      await updateCommunity(communityId, { logo_url: null })
       await refresh()
-      setAtForm({ name: '', emoji: '' })
     } catch (err) {
-      alert('Error: ' + err.message)
+      setLogoError(err.message)
+      setLogo(community?.logo_url || null)
     } finally {
-      setAtSaving(false)
-    }
-  }
-
-  async function handleUpdateAt(id, data) {
-    try {
-      await updateAvailabilityType(communityId, id, data)
-      await refresh()
-      setEditingAt(null)
-    } catch (err) {
-      alert('Error: ' + err.message)
-    }
-  }
-
-  async function handleArchiveAt(id) {
-    if (!confirm('Archive this availability type?')) return
-    try {
-      await archiveAvailabilityType(communityId, id)
-      await refresh()
-    } catch (err) {
-      alert(err.message)
+      setLogoSaving(false)
     }
   }
 
   return (
-    <div style={{ maxWidth: 560 }}>
+    <div style={{ maxWidth: 560, margin: '0 auto' }}>
       {/* Community settings */}
       <div className="card" style={{ padding: 28, marginBottom: 24 }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
@@ -101,6 +97,36 @@ export default function CommunityTab() {
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Description</label>
             <textarea style={{ ...inputStyle, resize: 'vertical', minHeight: 60 }} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
           </div>
+
+          {/* Logo upload */}
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 500 }}>Logo</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{
+                width: 80, height: 48, border: '1px solid var(--color-sand)', borderRadius: 8,
+                background: 'var(--color-cream)', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', overflow: 'hidden', flexShrink: 0,
+              }}>
+                {logo
+                  ? <img src={logo} alt="logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                  : <span style={{ fontSize: '1.5rem' }}>🏛️</span>
+                }
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: '6px 12px', cursor: 'pointer', opacity: logoSaving ? 0.5 : 1 }}>
+                  {logoSaving ? 'Saving…' : logo ? 'Replace' : 'Upload'}
+                  <input type="file" accept="image/svg+xml,image/png,image/jpeg" onChange={handleLogoUpload} style={{ display: 'none' }} disabled={logoSaving} />
+                </label>
+                {logo && (
+                  <button type="button" className="btn-secondary" style={{ fontSize: '0.82rem', padding: '6px 12px', color: 'var(--color-red)' }} onClick={removeLogo} disabled={logoSaving}>
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+            {logoError && <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--color-red)' }}>{logoError}</div>}
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Primary color</label>
@@ -125,38 +151,6 @@ export default function CommunityTab() {
         </form>
       </div>
 
-      {/* Availability types */}
-      <div className="card" style={{ padding: 28 }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
-          Availability types
-        </h3>
-        <div style={{ marginBottom: 16 }}>
-          {availabilityTypes.map((t) => (
-            <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>
-              {editingAt?.id === t.id ? (
-                <>
-                  <EmojiPicker value={editingAt.emoji} onChange={(emoji) => setEditingAt((a) => ({ ...a, emoji }))} />
-                  <input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} style={{ flex: 1, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--color-sand-dark)' }} />
-                  <button className="btn-primary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => handleUpdateAt(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</button>
-                  <button className="btn-secondary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => setEditingAt(null)}>Cancel</button>
-                </>
-              ) : (
-                <>
-                  <span style={{ fontSize: '1.1rem' }}>{t.emoji}</span>
-                  <span style={{ flex: 1 }}>{t.name}</span>
-                  <button className="btn-secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</button>
-                  <button style={{ background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => handleArchiveAt(t.id)}>Archive</button>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-        <form onSubmit={handleAddAvailabilityType} style={{ display: 'flex', gap: 8 }}>
-          <EmojiPicker value={atForm.emoji} onChange={(emoji) => setAtForm((f) => ({ ...f, emoji }))} />
-          <input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1, padding: '8px 12px', borderRadius: 6, border: '1px solid var(--color-sand-dark)' }} />
-          <button type="submit" className="btn-primary" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</button>
-        </form>
-      </div>
     </div>
   )
 }

@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { useUser } from '../context/UserContext'
-import { useCommunity } from '../context/CommunityContext'
-import { updateMe, setMyAvailability } from '../api/client'
+import { updateMe } from '../api/client'
 
 export default function MyProfile() {
   const { user, refreshMe } = useUser()
-  const { communityId, community, availabilityTypes, myMembership, refresh } = useCommunity()
 
   const [form, setForm] = useState({
     first_name: user?.firstName || '',
@@ -16,13 +14,6 @@ export default function MyProfile() {
   })
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
-
-  const [avForm, setAvForm] = useState({
-    type_id: myMembership?.availability?.type.id || '',
-    reason: myMembership?.availability?.reason || '',
-    until: myMembership?.availability?.until || '',
-  })
-  const [avSaving, setAvSaving] = useState(false)
 
   async function handleSaveProfile(e) {
     e.preventDefault()
@@ -36,36 +27,6 @@ export default function MyProfile() {
       setSaveMsg('Error: ' + err.message)
     } finally {
       setSaving(false)
-    }
-  }
-
-  async function handleSetAvailability(e) {
-    e.preventDefault()
-    setAvSaving(true)
-    try {
-      await setMyAvailability(communityId, {
-        type_id: avForm.type_id || undefined,
-        reason: avForm.reason || undefined,
-        until: avForm.until || undefined,
-      })
-      await refresh()
-    } catch (err) {
-      alert('Error: ' + err.message)
-    } finally {
-      setAvSaving(false)
-    }
-  }
-
-  async function handleClearAvailability() {
-    setAvSaving(true)
-    try {
-      await setMyAvailability(communityId, { clear: true })
-      await refresh()
-      setAvForm({ type_id: '', reason: '', until: '' })
-    } catch (err) {
-      alert('Error: ' + err.message)
-    } finally {
-      setAvSaving(false)
     }
   }
 
@@ -84,7 +45,7 @@ export default function MyProfile() {
   }
 
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: 600, margin: '0 auto' }}>
       <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: 24 }}>My Profile</h2>
 
       {/* Profile form */}
@@ -128,53 +89,6 @@ export default function MyProfile() {
         </form>
       </div>
 
-      {/* Availability form */}
-      {communityId && (
-        <div className="card" style={{ padding: 28 }}>
-          <h3 style={{ margin: '0 0 20px', fontSize: '1rem', color: 'var(--color-charcoal-light)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Availability in {community?.name}
-          </h3>
-          {myMembership?.availability && (
-            <div style={{ background: 'var(--color-sand)', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: '0.9rem' }}>
-              Currently: {myMembership.availability.type.emoji} {myMembership.availability.type.name}
-              {myMembership.availability.reason && ` — ${myMembership.availability.reason}`}
-            </div>
-          )}
-          <form onSubmit={handleSetAvailability} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Status</label>
-              <select
-                style={inputStyle}
-                value={avForm.type_id}
-                onChange={(e) => setAvForm((f) => ({ ...f, type_id: e.target.value }))}
-              >
-                <option value="">Available (no status)</option>
-                {availabilityTypes.map((t) => (
-                  <option key={t.id} value={t.id}>{t.emoji} {t.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Reason (optional)</label>
-              <input style={inputStyle} value={avForm.reason} onChange={(e) => setAvForm((f) => ({ ...f, reason: e.target.value }))} placeholder="Short note…" />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Until (optional)</label>
-              <input type="date" style={inputStyle} value={avForm.until} onChange={(e) => setAvForm((f) => ({ ...f, until: e.target.value }))} />
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="submit" className="btn-primary" disabled={avSaving || !avForm.type_id}>
-                {avSaving ? 'Saving…' : 'Set availability'}
-              </button>
-              {myMembership?.availability && (
-                <button type="button" className="btn-secondary" onClick={handleClearAvailability} disabled={avSaving}>
-                  Clear
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   )
 }

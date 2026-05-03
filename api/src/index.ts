@@ -89,6 +89,13 @@ app.delete("/api/workgroups/:wid/members/:pid", requireAuth, removeWgMemberHandl
 app.post("/api/workgroups/:wid/members/:pid/roles", requireAuth, assignRoleHandler);
 app.delete("/api/workgroups/:wid/members/:pid/roles/:rid", requireAuth, unassignRoleHandler);
 
+// ── Production: serve React app ───────────────────────────────────────────────
+if (process.env.NODE_ENV === "production") {
+    const clientPath = path.join(__dirname, "../client");
+    app.use(express.static(clientPath));
+    app.use((_req, res) => res.sendFile(path.join(clientPath, "index.html")));
+}
+
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     logger.error(err);

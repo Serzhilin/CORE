@@ -1,0 +1,48 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-core}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-core}
+    volumes:
+      - core-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-core} -d ${DB_NAME:-core}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - core-internal
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-core}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-core}
+      JWT_SECRET: ${JWT_SECRET}
+      PUBLIC_REGISTRY_URL: ${PUBLIC_REGISTRY_URL:-https://registry.w3ds.metastate.foundation}
+      VITE_PUBLIC_CORE_BASE_URL: ${VITE_PUBLIC_CORE_BASE_URL}
+    ports:
+      - "${PORT:-3002}:3002"
+    networks:
+      - core-internal
+
+volumes:
+  core-postgres-data:
+
+networks:
+  core-internal:

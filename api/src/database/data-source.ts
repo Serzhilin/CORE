@@ -28,7 +28,7 @@ export const AppDataSource = new DataSource({
     username: process.env.DB_USER || "core",
     password: process.env.DB_PASSWORD || "core",
     database: process.env.DB_NAME || "core",
-    synchronize: !isProduction,
+    synchronize: process.env.DB_SYNCHRONIZE === "true" ? true : !isProduction,
     entities: [
         Person, Community, CommunityMembership,
         AvailabilityType, AvailabilityLog,

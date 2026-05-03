@@ -1,26 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { getCommunityGraph } from '../../api/client'
-import GraphToolbar from './GraphToolbar'
 import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
 import ForceGraph from './ForceGraph'
 import GraphSidePanel from './GraphSidePanel'
 
-const INITIAL_FILTERS = {
-  workgroupId: '',
-  roleId: '',
-  hideUnavailable: false,
-  showAspirants: true,
-  showNames: false,
-  search: '',
-}
-
-export default function GraphView({ communityId }) {
+export default function GraphView({ communityId, filters, onFilterToWorkgroup, exportRef, style }) {
   const [graphData, setGraphData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [mode, setMode] = useState('by-person') // 'by-person' | 'by-workgroup'
-  const [filters, setFilters] = useState(INITIAL_FILTERS)
-  const [selected, setSelected] = useState(null) // { type: 'person'|'workgroup', id }
+  const [selected, setSelected] = useState(null)
   const svgRef = useRef(null)
 
   useEffect(() => {
@@ -30,48 +18,34 @@ export default function GraphView({ communityId }) {
       .finally(() => setLoading(false))
   }, [communityId])
 
-  const resetFilters = () => {
-    setFilters(INITIAL_FILTERS)
-    setSelected(null)
-  }
+  const { nodes, links } = useGraphData(graphData, filters)
+  const { simNodes, simLinks, reheat, simRef, W, H } = useForceSimulation(nodes, links)
 
-  const { nodes, links } = useGraphData(graphData, mode, filters)
-  const { simNodes, simLinks, reheat, W, H } = useForceSimulation(nodes, links)
+  useEffect(() => { reheat() }, [nodes, reheat])
 
+  // Expose export function to parent via ref
   useEffect(() => {
-    reheat()
-  }, [nodes, reheat])
-
-  const exportSvg = () => {
-    if (!svgRef.current) return
-    const serializer = new XMLSerializer()
-    const svgStr = serializer.serializeToString(svgRef.current)
-    const blob = new Blob([svgStr], { type: 'image/svg+xml' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `organogram-${new Date().toISOString().slice(0, 10)}.svg`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+    if (!exportRef) return
+    exportRef.current = () => {
+      if (!svgRef.current) return
+      const serializer = new XMLSerializer()
+      const svgStr = serializer.serializeToString(svgRef.current)
+      const blob = new Blob([svgStr], { type: 'image/svg+xml' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `organogram-${new Date().toISOString().slice(0, 10)}.svg`
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+  }, [exportRef])
 
   if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
   if (!graphData) return null
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 140px)', minHeight: 500 }}>
-      <div style={{ marginBottom: 8 }}>
-        <GraphToolbar
-          graphData={graphData}
-          mode={mode}
-          filters={filters}
-          onModeChange={setMode}
-          onFiltersChange={(patch) => setFilters(f => ({ ...f, ...patch }))}
-          onReset={resetFilters}
-          onExport={exportSvg}
-        />
-      </div>
-      <div style={{ flex: 1, position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, ...style }}>
+      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
         <ForceGraph
           simNodes={simNodes}
           simLinks={simLinks}
@@ -79,6 +53,7 @@ export default function GraphView({ communityId }) {
           selected={selected}
           onSelect={setSelected}
           svgRef={svgRef}
+          simRef={simRef}
           W={W}
           H={H}
         />
@@ -86,7 +61,7 @@ export default function GraphView({ communityId }) {
           selected={selected}
           graphData={graphData}
           onClose={() => setSelected(null)}
-          onFilterToWorkgroup={(wgId) => setFilters(f => ({ ...f, workgroupId: wgId }))}
+          onFilterToWorkgroup={onFilterToWorkgroup}
         />
       </div>
     </div>

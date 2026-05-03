@@ -1,19 +1,16 @@
+import { useEffect, useRef, useState } from 'react'
 import WorkgroupNode from './WorkgroupNode'
 import PersonNode from './PersonNode'
-import CloneLink from './CloneLink'
 
 function getHighlightedIds(selected, nodes, links) {
   if (!selected) return null
   const highlighted = new Set()
 
   if (selected.type === 'person') {
-    // All clones of this person
     nodes.forEach(n => {
-      if (n.type === 'person' && (n.personId === selected.id || n.id === selected.id)) {
+      if (n.type === 'person' && (n.personId === selected.id || n.id === selected.id))
         highlighted.add(n.id)
-      }
     })
-    // Their workgroup nodes (via links)
     links.forEach(l => {
       if (l.type !== 'member') return
       const srcId = typeof l.source === 'object' ? l.source.id : l.source
@@ -40,83 +37,189 @@ function getHighlightedIds(selected, nodes, links) {
   return highlighted
 }
 
-export default function ForceGraph({ simNodes, simLinks, filters, selected, onSelect, svgRef, W, H }) {
-  const highlightedIds = getHighlightedIds(selected, simNodes, simLinks)
+export default function ForceGraph({ simNodes, simLinks, filters, selected, onSelect, svgRef, simRef, W, H }) {
+  const INITIAL_TR = { x: 90, y: 52.5, k: 0.85 }
+  const [transform, setTransform] = useState(INITIAL_TR)
+  const trRef = useRef(INITIAL_TR)
+  const dragRef = useRef(null)  // { nodeId, isWorkgroup, moved }
+  const panRef = useRef(null)   // { startCX, startCY, startTx, startTy }
+  const wasDragged = useRef(false)
+  const [isPanning, setIsPanning] = useState(false)
 
+  function setTr(fn) {
+    setTransform(prev => {
+      const next = typeof fn === 'function' ? fn(prev) : fn
+      trRef.current = next
+      return next
+    })
+  }
+
+  // Wheel zoom (needs passive:false for preventDefault)
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg) return
+    function onWheel(e) {
+      e.preventDefault()
+      const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15
+      const rect = svg.getBoundingClientRect()
+      const mx = (e.clientX - rect.left) / rect.width * W
+      const my = (e.clientY - rect.top) / rect.height * H
+      setTr(t => {
+        const k = Math.max(0.15, Math.min(6, t.k * factor))
+        const x = mx - (mx - t.x) * (k / t.k)
+        const y = my - (my - t.y) * (k / t.k)
+        return { x, y, k }
+      })
+    }
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    return () => svg.removeEventListener('wheel', onWheel)
+  }, [svgRef, W, H])
+
+  function clientToGraph(clientX, clientY) {
+    const rect = svgRef.current.getBoundingClientRect()
+    const svgX = (clientX - rect.left) / rect.width * W
+    const svgY = (clientY - rect.top) / rect.height * H
+    const t = trRef.current
+    return { x: (svgX - t.x) / t.k, y: (svgY - t.y) / t.k }
+  }
+
+  function handleSvgMouseDown(e) {
+    if (e.button !== 0) return
+    panRef.current = {
+      startCX: e.clientX, startCY: e.clientY,
+      startTx: trRef.current.x, startTy: trRef.current.y,
+    }
+    setIsPanning(true)
+  }
+
+  function handleNodeMouseDown(e, nodeId, isWorkgroup) {
+    e.stopPropagation()
+    if (e.button !== 0) return
+    const node = simRef.current?._nodes.find(n => n.id === nodeId)
+    if (node) { node.fx = node.x; node.fy = node.y }
+    dragRef.current = { nodeId, isWorkgroup, moved: false, startCX: e.clientX, startCY: e.clientY }
+    wasDragged.current = false
+  }
+
+  function handleMouseMove(e) {
+    if (panRef.current && !dragRef.current) {
+      const { startCX, startCY, startTx, startTy } = panRef.current
+      const rect = svgRef.current.getBoundingClientRect()
+      const dx = (e.clientX - startCX) / rect.width * W
+      const dy = (e.clientY - startCY) / rect.height * H
+      setTr(t => ({ ...t, x: startTx + dx, y: startTy + dy }))
+    }
+
+    if (dragRef.current) {
+      const dx = e.clientX - dragRef.current.startCX
+      const dy = e.clientY - dragRef.current.startCY
+      if (Math.hypot(dx, dy) > 4) {
+        dragRef.current.moved = true
+        wasDragged.current = true
+      }
+      if (dragRef.current.moved) {
+        const pos = clientToGraph(e.clientX, e.clientY)
+        const node = simRef.current?._nodes.find(n => n.id === dragRef.current.nodeId)
+        if (node) {
+          node.fx = pos.x
+          node.fy = pos.y
+          simRef.current?.alpha(0.3).restart()
+        }
+      }
+    }
+  }
+
+  function handleMouseUp() {
+    if (dragRef.current) {
+      const { nodeId, isWorkgroup, moved } = dragRef.current
+      if (moved && !isWorkgroup) {
+        // Release person nodes — let them float free again
+        const node = simRef.current?._nodes.find(n => n.id === nodeId)
+        if (node) { node.fx = null; node.fy = null }
+        simRef.current?.alpha(0.3).restart()
+      }
+      dragRef.current = null
+      // Clear wasDragged after click event fires
+      setTimeout(() => { wasDragged.current = false }, 0)
+    }
+    panRef.current = null
+    setIsPanning(false)
+  }
+
+  const highlightedIds = getHighlightedIds(selected, simNodes, simLinks)
   const memberLinks = simLinks.filter(l => l.type === 'member')
-  const samePersonLinks = simLinks.filter(l => l.type === 'same-person')
   const wgNodes = simNodes.filter(n => n.type === 'workgroup')
   const personNodes = simNodes.filter(n => n.type === 'person')
+  const { x, y, k } = transform
 
   return (
     <svg
       ref={svgRef}
       width="100%"
+      height="100%"
       viewBox={`0 0 ${W} ${H}`}
-      style={{ background: '#faf7f2', borderRadius: 8, border: '1px solid #e5ddd0', display: 'block' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onSelect(null) }}
+      style={{ background: '#faf7f2', borderRadius: 8, border: '1px solid #e5ddd0', display: 'block', cursor: isPanning ? 'grabbing' : 'grab' }}
+      onMouseDown={handleSvgMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onClick={(e) => { if (e.target === e.currentTarget && !wasDragged.current) onSelect(null) }}
     >
-      {/* Member links */}
-      <g>
-        {memberLinks.map(link => {
-          const src = link.source
-          const tgt = link.target
-          if (!src?.x || !tgt?.x) return null
-          const srcId = typeof src === 'object' ? src.id : src
-          const dimmed = highlightedIds && !highlightedIds.has(srcId)
-          return (
-            <line
-              key={link.id}
-              x1={src.x} y1={src.y}
-              x2={tgt.x} y2={tgt.y}
-              stroke={typeof src === 'object' ? (src.color ?? '#ddd') : '#ddd'}
-              strokeWidth={1}
-              opacity={dimmed ? 0.05 : 0.35}
-            />
-          )
-        })}
-      </g>
+      <g transform={`translate(${x},${y}) scale(${k})`}>
+        {/* Member links */}
+        <g>
+          {memberLinks.map(link => {
+            const src = link.source
+            const tgt = link.target
+            if (!src?.x || !tgt?.x) return null
+            const srcId = typeof src === 'object' ? src.id : src
+            const dimmed = highlightedIds && !highlightedIds.has(srcId)
+            return (
+              <line
+                key={link.id}
+                x1={src.x} y1={src.y}
+                x2={tgt.x} y2={tgt.y}
+                stroke={typeof tgt === 'object' ? (tgt.color ?? '#ddd') : '#ddd'}
+                strokeWidth={1}
+                opacity={dimmed ? 0.05 : 0.35}
+              />
+            )
+          })}
+        </g>
 
-      {/* Clone "same person" links */}
-      <g>
-        {samePersonLinks.map(link => <CloneLink key={link.id} link={link} />)}
-      </g>
-
-      {/* Workgroup nodes */}
-      <g>
-        {wgNodes.map(node => (
-          <WorkgroupNode
-            key={node.id}
-            node={node}
-            dimmed={!!highlightedIds && !highlightedIds.has(node.id)}
-            selected={selected?.type === 'workgroup' && selected?.id === node.workgroupId}
-            onClick={() => onSelect({ type: 'workgroup', id: node.workgroupId })}
-          />
-        ))}
-      </g>
-
-      {/* Person nodes */}
-      <g>
-        {personNodes.map(node => {
-          const matchesSearch = filters.search
-            ? node.name.toLowerCase().includes(filters.search.toLowerCase())
-            : null
-          const dimmedBySearch = matchesSearch === false
-          const dimmedBySelection = !!highlightedIds && !highlightedIds.has(node.id)
-          return (
-            <PersonNode
+        {/* Workgroup nodes */}
+        <g>
+          {wgNodes.map(node => (
+            <WorkgroupNode
               key={node.id}
               node={node}
-              dimmed={dimmedBySelection || dimmedBySearch}
-              selected={
-                selected?.type === 'person' &&
-                (node.personId === selected.id || node.id === selected.id)
-              }
-              showName={filters.showNames || matchesSearch === true}
-              onClick={() => onSelect({ type: 'person', id: node.personId ?? node.id })}
+              dimmed={!!highlightedIds && !highlightedIds.has(node.id)}
+              selected={selected?.type === 'workgroup' && selected?.id === node.workgroupId}
+              onClick={() => { if (!wasDragged.current) onSelect({ type: 'workgroup', id: node.workgroupId }) }}
+              onMouseDown={(e) => handleNodeMouseDown(e, node.id, true)}
             />
-          )
-        })}
+          ))}
+        </g>
+
+        {/* Person nodes */}
+        <g>
+          {personNodes.map(node => {
+            const matchesSearch = filters.search
+              ? node.name.toLowerCase().includes(filters.search.toLowerCase())
+              : null
+            return (
+              <PersonNode
+                key={node.id}
+                node={node}
+                dimmed={(!!highlightedIds && !highlightedIds.has(node.id)) || matchesSearch === false}
+                selected={selected?.type === 'person' && (node.personId === selected.id || node.id === selected.id)}
+                showName={true}
+                onClick={() => { if (!wasDragged.current) onSelect({ type: 'person', id: node.personId ?? node.id }) }}
+                onMouseDown={(e) => handleNodeMouseDown(e, node.id, false)}
+              />
+            )
+          })}
+        </g>
       </g>
     </svg>
   )

@@ -1,10 +1,10 @@
-export default function PersonNode({ node, dimmed, selected, showName, onClick }) {
+export default function PersonNode({ node, dimmed, selected, showName, onClick, onMouseDown }) {
   const opacity = dimmed ? 0.1 : 1
   const r = node.r ?? 10
-  const isMulti = node.colors && node.colors.length >= 2
+  const roleColors = node.roleColors ?? []
 
   return (
-    <g transform={`translate(${node.x ?? 0},${node.y ?? 0})`} style={{ cursor: 'pointer' }} onClick={onClick}>
+    <g transform={`translate(${node.x ?? 0},${node.y ?? 0})`} style={{ cursor: 'pointer' }} onClick={onClick} onMouseDown={onMouseDown}>
       <circle
         r={r}
         fill={node.isUnassigned ? '#ccc' : node.color}
@@ -14,23 +14,24 @@ export default function PersonNode({ node, dimmed, selected, showName, onClick }
         strokeDasharray={node.isAspirant ? '3,2' : 'none'}
         opacity={opacity}
       />
-      {isMulti && (
+      {roleColors.map((color, i) => (
         <circle
-          r={r + 3}
+          key={color + i}
+          r={r + 4 + i * 4}
           fill="none"
-          stroke={node.colors[1]}
-          strokeWidth={2}
-          opacity={opacity * 0.6}
+          stroke={color}
+          strokeWidth={i === 0 ? 2.5 : 2}
+          opacity={opacity * 0.85}
         />
-      )}
+      ))}
       {selected && (
-        <circle r={r + 5} fill="none" stroke={node.color} strokeWidth={2} opacity={0.5} />
+        <circle r={r + 4 + roleColors.length * 4 + 2} fill="none" stroke={node.color} strokeWidth={2} opacity={0.5} />
       )}
       {showName && (
         <text
           y={r + 11}
           textAnchor="middle"
-          fontSize={7}
+          fontSize={9}
           fill="#555"
           opacity={opacity}
           style={{ pointerEvents: 'none', userSelect: 'none' }}

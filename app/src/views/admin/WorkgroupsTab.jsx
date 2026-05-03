@@ -78,7 +78,7 @@ export default function WorkgroupsTab() {
   const communityMembers = community?.members || []
 
   return (
-    <div>
+    <div style={{ maxWidth: 680, margin: '0 auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <h3 style={{ margin: 0, fontFamily: 'var(--font-title)' }}>Workgroups</h3>
         <button className="btn-primary" onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</button>
