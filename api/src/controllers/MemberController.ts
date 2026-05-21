@@ -42,7 +42,11 @@ export async function updateMemberHandler(req: Request, res: Response) {
 }
 
 export async function deleteMemberHandler(req: Request, res: Response) {
-    await removeMember(req.params.cid, req.params.pid);
+    const membership = await AppDataSource.getRepository(CommunityMembership).findOne({
+        where: { person_id: req.params.pid, community_id: req.params.cid },
+    });
+    if (!membership) { res.status(404).json({ error: "Membership not found" }); return; }
+    await removeMember(req.params.cid, membership.id);
     res.status(204).send();
 }
 
