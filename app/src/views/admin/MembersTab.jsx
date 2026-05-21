@@ -85,7 +85,7 @@ export default function MembersTab() {
             </tr>
           </thead>
           <tbody>
-            {(community?.members || []).map((m, idx) => {
+            {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m, idx) => {
               const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
               return (
                 <tr key={m.personId} style={{ background: idx % 2 === 0 ? 'transparent' : 'var(--color-cream)' }}>
