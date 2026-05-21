@@ -355,8 +355,7 @@ export default function WorkgroupsTab() {
                                       >×</button>
                                     </span>
                                   )
-                                })
-                                )}
+                                })}
 
                                 <button
                                   onClick={() => handleRemoveMember(wg.id, member.personId)}
