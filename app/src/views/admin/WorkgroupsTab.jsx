@@ -95,6 +95,23 @@ export default function WorkgroupsTab() {
     setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
   }
 
+  async function handleSaveRoleName(wid, rid, name) {
+    const trimmed = name.trim()
+    if (!trimmed) {
+      setEditingRoleName((s) => { const n = { ...s }; delete n[rid]; return n })
+      return
+    }
+    try {
+      await updateRole(wid, rid, { name: trimmed })
+      await refresh()
+    } catch (err) { alert(err.message) }
+    setEditingRoleName((s) => { const n = { ...s }; delete n[rid]; return n })
+  }
+
+  function handleCancelRoleName(rid) {
+    setEditingRoleName((s) => { const n = { ...s }; delete n[rid]; return n })
+  }
+
   const communityMembers = community?.members || []
   function getTab(wgId) { return activeTab[wgId] || 'members' }
 
@@ -216,7 +233,26 @@ export default function WorkgroupsTab() {
                       {wg.roles.map((r) => (
                         <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                           <span style={{ width: 10, height: 10, borderRadius: '50%', background: r.color }} />
-                          <span style={{ flex: 1, fontSize: '0.9rem' }}>{r.name}</span>
+                          {editingRoleName[r.id] !== undefined ? (
+                            <input
+                              autoFocus
+                              value={editingRoleName[r.id]}
+                              onChange={(e) => setEditingRoleName((s) => ({ ...s, [r.id]: e.target.value }))}
+                              onBlur={() => handleSaveRoleName(wg.id, r.id, editingRoleName[r.id])}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSaveRoleName(wg.id, r.id, editingRoleName[r.id])
+                                if (e.key === 'Escape') handleCancelRoleName(r.id)
+                              }}
+                              style={{ ...inputStyle, flex: 1, padding: '3px 7px', fontSize: '0.9rem' }}
+                            />
+                          ) : (
+                            <span
+                              style={{ flex: 1, fontSize: '0.9rem', cursor: 'pointer' }}
+                              onClick={() => setEditingRoleName((s) => ({ ...s, [r.id]: r.name }))}
+                            >
+                              {r.name}
+                            </span>
+                          )}
                           <button
                             onClick={() => handleDeleteRole(wg.id, r.id)}
                             style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.8rem' }}
