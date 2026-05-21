@@ -54,7 +54,10 @@ export async function updateWorkgroupMember(workgroupMembershipId: string, data:
 }
 
 export async function removeWorkgroupMember(workgroupId: string, personId: string): Promise<void> {
-    await wgmRepo().delete({ workgroup_id: workgroupId, person_id: personId });
+    const wm = await wgmRepo().findOne({ where: { workgroup_id: workgroupId, person_id: personId } });
+    if (!wm) return;
+    await wmrRepo().delete({ workgroup_membership_id: wm.id });
+    await wgmRepo().delete(wm.id);
 }
 
 export async function assignRole(workgroupMembershipId: string, roleId: string): Promise<WorkgroupMemberRole> {

@@ -7,17 +7,22 @@ const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid va
 export default function MembersTab() {
   const { communityId, community, refresh } = useCommunity()
   const [adding, setAdding] = useState(false)
-  const [addForm, setAddForm] = useState({ first_name: '', last_name: '', email: '' })
+  const [addForm, setAddForm] = useState({ first_name: '', last_name: '', email: '', is_aspirant: false, is_active_partner: false, joined_at: '' })
   const [addSaving, setAddSaving] = useState(false)
 
   async function handleAdd(e) {
     e.preventDefault()
     setAddSaving(true)
     try {
-      await addMember(communityId, addForm)
+      const newMembership = await addMember(communityId, addForm)
+      const extras = {}
+      if (addForm.is_aspirant) extras.is_aspirant = true
+      if (addForm.is_active_partner) extras.is_active_partner = true
+      if (addForm.joined_at) extras.joined_at = addForm.joined_at
+      if (Object.keys(extras).length) await updateMember(communityId, newMembership.person_id, extras)
       await refresh()
       setAdding(false)
-      setAddForm({ first_name: '', last_name: '', email: '' })
+      setAddForm({ first_name: '', last_name: '', email: '', is_aspirant: false, is_active_partner: false, joined_at: '' })
     } catch (err) {
       alert('Error: ' + err.message)
     } finally {
@@ -67,7 +72,21 @@ export default function MembersTab() {
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Email</label>
               <input type="email" style={inputStyle} value={addForm.email} onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))} />
             </div>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Joined</label>
+              <input type="date" style={inputStyle} value={addForm.joined_at} onChange={(e) => setAddForm((f) => ({ ...f, joined_at: e.target.value }))} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'flex-end', paddingBottom: 2 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={addForm.is_aspirant} onChange={(e) => setAddForm((f) => ({ ...f, is_aspirant: e.target.checked }))} />
+                Aspirant
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={addForm.is_active_partner} onChange={(e) => setAddForm((f) => ({ ...f, is_active_partner: e.target.checked }))} />
+                Active partner
+              </label>
+            </div>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
               <button type="submit" className="btn-primary" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</button>
               <button type="button" className="btn-secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
             </div>
@@ -79,7 +98,7 @@ export default function MembersTab() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
-              {['Name', 'Email', 'Admin', 'Aspirant', 'Active partner', 'Joined', ''].map((h) => (
+              {['Name', 'Email', 'Aspirant', 'Active partner', 'Joined', ''].map((h) => (
                 <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -91,10 +110,6 @@ export default function MembersTab() {
                 <tr key={m.personId} style={{ background: idx % 2 === 0 ? 'transparent' : 'var(--color-cream)' }}>
                   <td style={{ padding: '10px 14px', fontWeight: 500 }}>{name}</td>
                   <td style={{ padding: '10px 14px', color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>{m.email || '—'}</td>
-                  <td style={{ padding: '10px 14px' }}>
-                    <input type="checkbox" checked={m.isAdmin}
-                      onChange={(e) => handleUpdate(m.personId, { is_admin: e.target.checked })} />
-                  </td>
                   <td style={{ padding: '10px 14px' }}>
                     <input type="checkbox" checked={m.isAspirant}
                       onChange={(e) => handleUpdate(m.personId, { is_aspirant: e.target.checked })} />

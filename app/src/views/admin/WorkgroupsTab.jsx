@@ -148,9 +148,9 @@ export default function WorkgroupsTab() {
             return nameA.localeCompare(nameB)
           })
 
-        const nonMembers = communityMembers.filter(
-          (m) => !wg.members.some((wm) => wm.person_id === m.personId)
-        )
+        const nonMembers = communityMembers
+          .filter((m) => !wg.members.some((wm) => wm.person_id === m.personId))
+          .sort((a, b) => ([a.firstName, a.lastName].filter(Boolean).join(' ') || a.email || '').localeCompare([b.firstName, b.lastName].filter(Boolean).join(' ') || b.email || ''))
 
         return (
           <div key={wg.id} className="card" style={{ marginBottom: 12, borderLeft: `4px solid ${wg.color}` }}>
@@ -353,9 +353,12 @@ export default function WorkgroupsTab() {
 
                                 <button
                                   onClick={() => handleRemoveMember(wg.id, member.personId)}
-                                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.78rem', marginLeft: 'auto' }}
+                                  title="Remove from workgroup"
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', marginLeft: 'auto', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
                                 >
-                                  Remove
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                                  </svg>
                                 </button>
                               </div>
                             </div>

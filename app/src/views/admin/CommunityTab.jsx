@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
-import { updateCommunity } from '../../api/client'
+import { useUser } from '../../context/UserContext'
+import { updateCommunity, updateMember } from '../../api/client'
 
 const inputStyle = {
   width: '100%', padding: '10px 14px', borderRadius: 8,
@@ -9,6 +10,7 @@ const inputStyle = {
 
 export default function CommunityTab() {
   const { communityId, community, refresh } = useCommunity()
+  const { user } = useUser()
 
   const [form, setForm] = useState({
     name: community?.name || '',
@@ -118,8 +120,10 @@ export default function CommunityTab() {
                   <input type="file" accept="image/svg+xml,image/png,image/jpeg" onChange={handleLogoUpload} style={{ display: 'none' }} disabled={logoSaving} />
                 </label>
                 {logo && (
-                  <button type="button" className="btn-secondary" style={{ fontSize: '0.82rem', padding: '6px 12px', color: 'var(--color-red)' }} onClick={removeLogo} disabled={logoSaving}>
-                    Remove
+                  <button type="button" className="btn-secondary" title="Remove logo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removeLogo} disabled={logoSaving}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                    </svg>
                   </button>
                 )}
               </div>
@@ -151,6 +155,56 @@ export default function CommunityTab() {
         </form>
       </div>
 
+      {/* Admins */}
+      <div className="card" style={{ padding: 28 }}>
+        <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+          Admins
+        </h3>
+
+        {(community?.members || []).filter((m) => m.isAdmin).sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m) => {
+          const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
+          const isSelf = m.personId === user?.id
+          return (
+            <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>
+              <span style={{ flex: 1, fontSize: '0.9rem', fontWeight: 500 }}>{name}</span>
+              {isSelf && <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>you</span>}
+              <button
+                title="Remove admin"
+                disabled={isSelf}
+                onClick={async () => {
+                  if (!confirm(`Remove admin rights from ${name}?`)) return
+                  try { await updateMember(communityId, m.personId, { is_admin: false }); await refresh() }
+                  catch (err) { alert(err.message) }
+                }}
+                style={{ background: 'none', border: 'none', cursor: isSelf ? 'not-allowed' : 'pointer', color: isSelf ? 'var(--color-sand-dark)' : 'var(--color-red)', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                </svg>
+              </button>
+            </div>
+          )
+        })}
+
+        <div style={{ marginTop: 16 }}>
+          <select
+            value=""
+            onChange={async (e) => {
+              if (!e.target.value) return
+              try { await updateMember(communityId, e.target.value, { is_admin: true }); await refresh() }
+              catch (err) { alert(err.message) }
+            }}
+            style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--color-sand-dark)', fontSize: '0.88rem', background: 'white', cursor: 'pointer' }}
+          >
+            <option value="">+ Add admin…</option>
+            {(community?.members || []).filter((m) => !m.isAdmin).sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m) => (
+              <option key={m.personId} value={m.personId}>
+                {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
     </div>
   )
 }

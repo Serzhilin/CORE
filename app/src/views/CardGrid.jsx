@@ -30,6 +30,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
       .filter((m) => !q ||
         (m.firstName || '').toLowerCase().includes(q) ||
         (m.lastName || '').toLowerCase().includes(q))
+      .sort((a, b) => (a.firstName || '').localeCompare(b.firstName || ''))
   }
 
   function membersForWorkgroup(wg) {

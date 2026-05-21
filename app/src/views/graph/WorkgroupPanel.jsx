@@ -1,7 +1,7 @@
 export default function WorkgroupPanel({ workgroup, graphData, onClose, onFilterToWorkgroup }) {
-  const members = graphData.persons.filter(p =>
-    p.memberships.some(m => m.workgroupId === workgroup.id)
-  )
+  const members = graphData.persons
+    .filter(p => p.memberships.some(m => m.workgroupId === workgroup.id))
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, height: '100%' }}>
