@@ -1,5 +1,5 @@
 const BASE = '/api'
-const SSE_BASE = import.meta.env.DEV ? 'http://localhost:3003/api' : '/api'
+const SSE_BASE = import.meta.env.DEV ? 'http://localhost:3004/api' : '/api'
 
 function getToken() {
   return localStorage.getItem('core_token')
