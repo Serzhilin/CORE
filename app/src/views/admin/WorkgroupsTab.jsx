@@ -233,9 +233,10 @@ export default function WorkgroupsTab() {
                       {wg.roles.map((r) => (
                         <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                           <input
+                            key={r.color}
                             type="color"
-                            value={r.color}
-                            onChange={(e) => updateRole(wg.id, r.id, { color: e.target.value }).then(refresh)}
+                            defaultValue={r.color}
+                            onBlur={(e) => updateRole(wg.id, r.id, { color: e.target.value }).then(refresh)}
                             title="Change color"
                             style={{ width: 18, height: 18, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer', background: 'none', flexShrink: 0 }}
                           />
