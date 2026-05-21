@@ -236,7 +236,7 @@ export default function WorkgroupsTab() {
                             key={r.color}
                             type="color"
                             defaultValue={r.color}
-                            onBlur={(e) => updateRole(wg.id, r.id, { color: e.target.value }).then(refresh)}
+                            onChange={(e) => updateRole(wg.id, r.id, { color: e.target.value }).then(refresh)}
                             title="Change color"
                             style={{ width: 18, height: 18, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer', background: 'none', flexShrink: 0 }}
                           />
