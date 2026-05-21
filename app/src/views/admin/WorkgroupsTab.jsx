@@ -87,8 +87,8 @@ export default function WorkgroupsTab() {
     try {
       await updateWorkgroup(communityId, wid, { name: trimmed })
       await refresh()
+      setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
     } catch (err) { alert(err.message) }
-    setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
   }
 
   function handleCancelWgName(wid) {
