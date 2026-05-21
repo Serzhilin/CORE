@@ -137,7 +137,7 @@ export default function WorkgroupsTab() {
         </div>
       )}
 
-      {(community?.workgroups || []).map((wg) => {
+      {[...(community?.workgroups || [])].sort((a, b) => a.name.localeCompare(b.name)).map((wg) => {
         const isExpanded = expanded === wg.id
         const wgMembers = wg.members
           .map((wm) => ({ ...wm, member: communityMembers.find((m) => m.personId === wm.person_id) }))
