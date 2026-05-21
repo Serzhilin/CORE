@@ -29,7 +29,7 @@ export default function WorkgroupPanel({ workgroup, graphData, onClose, onFilter
               <div style={{ minWidth: 0 }}>
                 <span style={{ fontSize: '0.78rem' }}>{p.firstName} {p.lastName}</span>
                 {m?.roles.length > 0 && (
-                  <span style={{ fontSize: '0.68rem', color: workgroup.color, marginLeft: 5 }}>· {m.roles.join(', ')}</span>
+                  <span style={{ fontSize: '0.68rem', color: workgroup.color, marginLeft: 5 }}>· {m.roles.map(r => r.name).join(', ')}</span>
                 )}
               </div>
             </div>

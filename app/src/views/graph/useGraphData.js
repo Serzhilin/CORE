@@ -16,7 +16,7 @@ export function useGraphData(graphData, filters) {
     }
     if (filters.roleName) {
       visiblePersons = visiblePersons.filter(p =>
-        p.memberships.some(m => m.roles.includes(filters.roleName))
+        p.memberships.some(m => m.roles.some(r => r.name === filters.roleName))
       )
     }
 
@@ -42,8 +42,7 @@ export function useGraphData(graphData, filters) {
         .map(m => visibleWorkgroups.find(wg => wg.id === m.workgroupId)?.color)
         .filter(Boolean)
       const roleColors = activeMemberships
-        .filter(m => m.roles.length > 0)
-        .map(m => visibleWorkgroups.find(wg => wg.id === m.workgroupId)?.color)
+        .flatMap(m => m.roles.map(r => r.color))
         .filter(Boolean)
       return {
         id: p.id,

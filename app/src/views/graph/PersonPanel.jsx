@@ -50,7 +50,7 @@ export default function PersonPanel({ person, graphData, onClose }) {
               }}>
                 <div style={{ fontSize: '0.78rem', fontWeight: 600 }}>{wg.name}</div>
                 <div style={{ fontSize: '0.7rem', color: m.roles.length ? wg.color : '#aaa', marginTop: 2 }}>
-                  {m.roles.length ? m.roles.join(', ') : 'no role'}
+                  {m.roles.length ? m.roles.map(r => r.name).join(', ') : 'no role'}
                 </div>
               </div>
             )

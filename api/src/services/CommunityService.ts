@@ -179,10 +179,10 @@ export async function getCommunityGraph(communityId: string) {
                     const myRoleIds = wgMemberRoles
                         .filter((r) => r.workgroup_membership_id === wm.id)
                         .map((r) => r.role_id);
-                    const myRoleNames = roles
+                    const myRoles = roles
                         .filter((r) => myRoleIds.includes(r.id))
-                        .map((r) => r.name);
-                    return { workgroupId: wm.workgroup_id, roles: myRoleNames };
+                        .map((r) => ({ id: r.id, name: r.name, color: r.color }));
+                    return { workgroupId: wm.workgroup_id, roles: myRoles };
                 }),
             };
         }),
