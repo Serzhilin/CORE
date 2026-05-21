@@ -3,7 +3,7 @@ import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
   createRole, updateRole, deleteRole,
-  addWorkgroupMember, updateWorkgroupMember, removeWorkgroupMember,
+  addWorkgroupMember, removeWorkgroupMember,
   assignRole, unassignRole,
 } from '../../api/client'
 
@@ -60,11 +60,6 @@ export default function WorkgroupsTab() {
 
   async function handleRemoveMember(wid, pid) {
     try { await removeWorkgroupMember(wid, pid); await refresh() }
-    catch (err) { alert(err.message) }
-  }
-
-  async function handleToggleWgAdmin(wid, pid, val) {
-    try { await updateWorkgroupMember(wid, pid, { is_workgroup_admin: val }); await refresh() }
     catch (err) { alert(err.message) }
   }
 
@@ -293,7 +288,7 @@ export default function WorkgroupsTab() {
                     <div>
                       <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Members</h4>
                       <div>
-                        {wgMembers.map(({ member, is_workgroup_admin, roles }, idx) => {
+                        {wgMembers.map(({ member, roles }, idx) => {
                           const displayName = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'
                           const unassignedRoles = wg.roles.filter((r) => !roles.includes(r.id))
                           return (
@@ -307,17 +302,8 @@ export default function WorkgroupsTab() {
                                 gap: 6,
                               }}
                             >
-                              {/* Top row: name + admin toggle */}
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{displayName}</span>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', cursor: 'pointer', color: 'var(--color-charcoal-light)' }}>
-                                  <input
-                                    type="checkbox"
-                                    checked={is_workgroup_admin}
-                                    onChange={(e) => handleToggleWgAdmin(wg.id, member.personId, e.target.checked)}
-                                  />
-                                  WG admin
-                                </label>
                               </div>
 
                               {/* Bottom row: add role dropdown + role chips + remove */}
