@@ -80,7 +80,10 @@ export default function WorkgroupsTab() {
 
   async function handleSaveWgName(wid, name) {
     const trimmed = name.trim()
-    if (!trimmed) return
+    if (!trimmed) {
+      setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
+      return
+    }
     try {
       await updateWorkgroup(communityId, wid, { name: trimmed })
       await refresh()
