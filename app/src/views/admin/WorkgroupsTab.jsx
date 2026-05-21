@@ -104,8 +104,8 @@ export default function WorkgroupsTab() {
     try {
       await updateRole(wid, rid, { name: trimmed })
       await refresh()
+      setEditingRoleName((s) => { const n = { ...s }; delete n[rid]; return n })
     } catch (err) { alert(err.message) }
-    setEditingRoleName((s) => { const n = { ...s }; delete n[rid]; return n })
   }
 
   function handleCancelRoleName(rid) {
