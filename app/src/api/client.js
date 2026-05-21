@@ -59,6 +59,7 @@ export const removeMember = (cid, pid) => req('DELETE', `/communities/${cid}/mem
 export const setMyAvailability = (cid, data) => req('PATCH', `/communities/${cid}/me/availability`, data)
 export const setMemberAvailability = (cid, pid, data) => req('PATCH', `/communities/${cid}/members/${pid}/availability`, data)
 export const getMemberAvailabilityLog = (cid, pid) => req('GET', `/communities/${cid}/members/${pid}/availability-log`)
+export const updateMemberPerson = (cid, pid, data) => req('PATCH', `/communities/${cid}/members/${pid}/person`, data)
 
 // ── Availability Types ────────────────────────────────────────────────────────
 export const listAvailabilityTypes = (cid) => req('GET', `/communities/${cid}/availability-types`)

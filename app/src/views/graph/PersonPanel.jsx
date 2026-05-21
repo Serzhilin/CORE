@@ -50,7 +50,7 @@ export default function PersonPanel({ person, graphData, onClose }) {
               }}>
                 <div style={{ fontSize: '0.78rem', fontWeight: 600 }}>{wg.name}</div>
                 <div style={{ fontSize: '0.7rem', color: m.roles.length ? wg.color : '#aaa', marginTop: 2 }}>
-                  {m.roles.length ? m.roles.map(r => r.name).join(', ') : 'no role'}
+                  {m.roles.map(r => r.name).join(', ')}
                 </div>
               </div>
             )
@@ -58,17 +58,15 @@ export default function PersonPanel({ person, graphData, onClose }) {
         )}
       </div>
 
-      {/* Status */}
-      <div style={{ borderTop: '1px solid #f0ece4', paddingTop: 6 }}>
-        <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#aaa', marginBottom: 4 }}>Status</div>
-        {person.availability ? (
+      {/* Status — only show when not available */}
+      {person.availability && (
+        <div style={{ borderTop: '1px solid #f0ece4', paddingTop: 6 }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#aaa', marginBottom: 4 }}>Status</div>
           <div style={{ fontSize: '0.78rem', color: '#b45309' }}>
             {person.availability.emoji} {person.availability.name}
           </div>
-        ) : (
-          <div style={{ fontSize: '0.78rem', color: '#16a34a' }}>● Available</div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div style={{ marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #f0ece4' }}>
         <div style={{ fontSize: '0.72rem', color: '#bbb', textAlign: 'center' }}>click graph to close</div>

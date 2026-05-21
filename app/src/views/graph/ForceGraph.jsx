@@ -150,6 +150,17 @@ export default function ForceGraph({ simNodes, simLinks, filters, selected, onSe
   const memberLinks = simLinks.filter(l => l.type === 'member')
   const wgNodes = simNodes.filter(n => n.type === 'workgroup')
   const personNodes = simNodes.filter(n => n.type === 'person')
+
+  // First-name uniqueness for label display
+  const firstNameCounts = {}
+  personNodes.forEach(n => { const f = (n.name || '').split(' ')[0]; firstNameCounts[f] = (firstNameCounts[f] || 0) + 1 })
+  function personLabel(node) {
+    const parts = (node.name || '').split(' ')
+    const first = parts[0] || ''
+    if (!first) return ''
+    if (firstNameCounts[first] > 1 && parts[1]) return `${first} ${parts[1][0]}.`
+    return first
+  }
   const { x, y, k } = transform
 
   return (
@@ -210,7 +221,7 @@ export default function ForceGraph({ simNodes, simLinks, filters, selected, onSe
             return (
               <PersonNode
                 key={node.id}
-                node={node}
+                node={{ ...node, name: personLabel(node) }}
                 dimmed={(!!highlightedIds && !highlightedIds.has(node.id)) || matchesSearch === false}
                 selected={selected?.type === 'person' && (node.personId === selected.id || node.id === selected.id)}
                 showName={true}

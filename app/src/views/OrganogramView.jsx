@@ -77,21 +77,6 @@ export default function OrganogramView() {
           ))}
         </select>
 
-        <label style={checkStyle}>
-          <input type="checkbox" checked={filter.showUnavailable} onChange={(e) => patch({ showUnavailable: e.target.checked })} />
-          Show unavailable
-        </label>
-        <label style={checkStyle}>
-          <input type="checkbox" checked={filter.showAspirants} onChange={(e) => patch({ showAspirants: e.target.checked })} />
-          Show aspirants
-        </label>
-
-        <input
-          placeholder="Search by name…"
-          value={filter.search}
-          onChange={(e) => patch({ search: e.target.value })}
-          style={{ ...inputStyle, width: 160 }}
-        />
 
       </div>
 
@@ -102,7 +87,12 @@ export default function OrganogramView() {
           <GraphView style={{ flex: 1, minHeight: 0 }}
             communityId={community.id}
             filters={filter}
+            refreshKey={community.workgroups.flatMap(wg => wg.roles.map(r => r.id + r.name + r.color)).join('|')}
             onFilterToWorkgroup={(wgId) => patch({ workgroupId: wgId })}
+            onPersonSelect={(pid) => {
+              const m = community.members.find((m) => m.personId === pid)
+              if (m) setSelectedMember(m)
+            }}
             exportRef={graphExportRef}
           />
         </Suspense>

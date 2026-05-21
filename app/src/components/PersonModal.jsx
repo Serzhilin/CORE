@@ -36,12 +36,23 @@ export default function PersonModal({ member, onClose }) {
       >
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div>
-            <h2 style={{ fontFamily: 'var(--font-title)', margin: '0 0 4px' }}>
-              {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
-            </h2>
-            {member.isAdmin && <span style={{ fontSize: '0.75rem', background: 'var(--color-sand)', borderRadius: 4, padding: '2px 8px' }}>Admin</span>}
-            {member.isAspirant && <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 4, padding: '2px 8px', marginLeft: 4 }}>Aspirant</span>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {member.avatarUrl
+              ? <img src={member.avatarUrl} alt="" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+              : <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--color-sand-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 600, color: 'white', flexShrink: 0 }}>
+                  {(member.firstName || member.email || '?')[0].toUpperCase()}
+                </div>
+            }
+            <div>
+              <h2 style={{ fontFamily: 'var(--font-title)', margin: '0 0 4px' }}>
+                {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
+              </h2>
+              <div style={{ display: 'flex', gap: 4 }}>
+                {member.isAdmin && <span style={{ fontSize: '0.75rem', background: 'var(--color-sand)', borderRadius: 4, padding: '2px 8px' }}>Admin</span>}
+                {member.isAspirant && <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 4, padding: '2px 8px' }}>Aspirant</span>}
+                {member.isActivePartner && <span style={{ fontSize: '0.75rem', background: '#E8F5E9', borderRadius: 4, padding: '2px 8px' }}>Active partner</span>}
+              </div>
+            </div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', color: 'var(--color-charcoal-light)', lineHeight: 1 }}>×</button>
         </div>
@@ -80,11 +91,6 @@ export default function PersonModal({ member, onClose }) {
           </div>
         )}
 
-        {(isAdmin || isOwn) && (
-          <div style={{ paddingTop: 16, borderTop: '1px solid var(--color-sand)', fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
-            Edit available in {isOwn ? '"My profile"' : '"Admin → Members"'}
-          </div>
-        )}
       </div>
     </div>
   )

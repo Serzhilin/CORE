@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { listMembers, addMember, updateMember, removeMember, getMemberAvailabilityLog } from "../services/MemberService";
+import { updatePerson } from "../services/PersonService";
 import { applyAvailability } from "../services/AvailabilityService";
 import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
@@ -90,4 +91,16 @@ export async function setMemberAvailability(req: Request, res: Response) {
 
 export async function getMemberAvailabilityLogHandler(req: Request, res: Response) {
     res.json(await getMemberAvailabilityLog(req.params.pid));
+}
+
+export async function updateMemberPersonHandler(req: Request, res: Response) {
+    const { ename } = req.body;
+    try {
+        const person = await updatePerson(req.params.pid, { ename: ename ?? null });
+        res.json(person);
+    } catch (err: any) {
+        if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Person not found" }); return; }
+        if (err.code === "23505") { res.status(409).json({ error: "eName already in use" }); return; }
+        throw err;
+    }
 }

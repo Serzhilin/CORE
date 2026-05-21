@@ -7,9 +7,9 @@ import WorkgroupsTab from './admin/WorkgroupsTab'
 import AvailabilityTab from './admin/AvailabilityTab'
 
 const TABS = [
-  { key: 'community', label: 'Community' },
-  { key: 'members', label: 'Members' },
   { key: 'workgroups', label: 'Workgroups' },
+  { key: 'members', label: 'Members' },
+  { key: 'community', label: 'Community' },
   { key: 'availability', label: 'Availability types' },
 ]
 
@@ -30,7 +30,7 @@ export default function AdminPanel() {
 
   const visibleTabs = isAdmin ? TABS : TABS.filter((t) => t.key === 'workgroups')
 
-  const activeKey = pathname.split('/admin/')[1]?.split('/')[0] || 'community'
+  const activeKey = pathname.split('/admin/')[1]?.split('/')[0] || 'workgroups'
 
   return (
     <div>
@@ -55,12 +55,12 @@ export default function AdminPanel() {
       </div>
 
       <Routes>
-        <Route index element={<Navigate to="community" replace />} />
+        <Route index element={<Navigate to="workgroups" replace />} />
         <Route path="community" element={isAdmin ? <CommunityTab /> : <Navigate to="/admin/workgroups" replace />} />
         <Route path="members" element={isAdmin ? <MembersTab /> : <Navigate to="/admin/workgroups" replace />} />
         <Route path="workgroups" element={<WorkgroupsTab />} />
         <Route path="availability" element={isAdmin ? <AvailabilityTab /> : <Navigate to="/admin/workgroups" replace />} />
-        <Route path="*" element={<Navigate to="community" replace />} />
+        <Route path="*" element={<Navigate to="workgroups" replace />} />
       </Routes>
     </div>
   )

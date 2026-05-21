@@ -5,7 +5,7 @@ import { useForceSimulation } from './useForceSimulation'
 import ForceGraph from './ForceGraph'
 import GraphSidePanel from './GraphSidePanel'
 
-export default function GraphView({ communityId, filters, onFilterToWorkgroup, exportRef, style }) {
+export default function GraphView({ communityId, filters, onFilterToWorkgroup, onPersonSelect, refreshKey, exportRef, style }) {
   const [graphData, setGraphData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
@@ -16,7 +16,7 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, e
     getCommunityGraph(communityId)
       .then(setGraphData)
       .finally(() => setLoading(false))
-  }, [communityId])
+  }, [communityId, refreshKey])
 
   const { nodes, links } = useGraphData(graphData, filters)
   const { simNodes, simLinks, reheat, simRef, W, H } = useForceSimulation(nodes, links)
@@ -51,7 +51,10 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, e
           simLinks={simLinks}
           filters={filters}
           selected={selected}
-          onSelect={setSelected}
+          onSelect={(node) => {
+            setSelected(node)
+            if (node?.type === 'person' && onPersonSelect) onPersonSelect(node.personId ?? node.id)
+          }}
           svgRef={svgRef}
           simRef={simRef}
           W={W}

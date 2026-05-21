@@ -111,9 +111,12 @@ export default function TopBar() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '0.88rem', color: 'white', fontWeight: 600,
               fontFamily: 'Inter, sans-serif', flexShrink: 0,
+              overflow: 'hidden', padding: 0,
             }}
           >
-            {initial}
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : initial}
           </button>
 
           {showMenu && (

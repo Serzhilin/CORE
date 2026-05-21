@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
-import { addMember, updateMember, removeMember } from '../../api/client'
+import { addMember, updateMember, updateMemberPerson, removeMember } from '../../api/client'
 
 const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
@@ -98,7 +98,7 @@ export default function MembersTab() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
-              {['Name', 'Email', 'Aspirant', 'Active partner', 'Joined', ''].map((h) => (
+              {['Name', 'Email', 'eName', 'Aspirant', 'Active partner', 'Joined', ''].map((h) => (
                 <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -110,6 +110,17 @@ export default function MembersTab() {
                 <tr key={m.personId} style={{ background: idx % 2 === 0 ? 'transparent' : 'var(--color-cream)' }}>
                   <td style={{ padding: '10px 14px', fontWeight: 500 }}>{name}</td>
                   <td style={{ padding: '10px 14px', color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>{m.email || '—'}</td>
+                  <td style={{ padding: '10px 14px' }}>
+                    <input
+                      style={{ ...inputStyle, fontSize: '0.8rem', padding: '4px 8px', width: 200, fontFamily: 'monospace' }}
+                      defaultValue={m.ename || ''}
+                      placeholder="@uuid…"
+                      onBlur={(e) => {
+                        const val = e.target.value.trim() || null
+                        if (val !== (m.ename || null)) updateMemberPerson(communityId, m.personId, { ename: val }).then(refresh).catch((err) => alert(err.message))
+                      }}
+                    />
+                  </td>
                   <td style={{ padding: '10px 14px' }}>
                     <input type="checkbox" checked={m.isAspirant}
                       onChange={(e) => handleUpdate(m.personId, { is_aspirant: e.target.checked })} />

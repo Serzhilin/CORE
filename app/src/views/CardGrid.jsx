@@ -107,7 +107,10 @@ function MemberRow({ m, dotColor, onMemberClick }) {
         opacity: unavailable ? 0.45 : 1,
       }}
     >
-      <span style={{ width: 10, height: 10, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
+      {m.avatarUrl
+        ? <img src={m.avatarUrl} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+        : <span style={{ width: 24, height: 24, borderRadius: '50%', background: dotColor, flexShrink: 0, display: 'inline-block' }} />
+      }
       <span style={{ fontSize: '0.9rem' }}>
         {m.firstName || m.lastName || 'Unknown'}
         {m.isAspirant && (
@@ -115,7 +118,16 @@ function MemberRow({ m, dotColor, onMemberClick }) {
             aspirant
           </span>
         )}
-        {unavailable && <AvailabilityBadge availability={m.availability} inline />}
+        {unavailable && (
+          <>
+            <AvailabilityBadge availability={m.availability} inline />
+            {m.availability.until && (
+              <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>
+                until {new Date(m.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+              </span>
+            )}
+          </>
+        )}
       </span>
     </div>
   )

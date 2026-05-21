@@ -12,7 +12,7 @@ import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
 import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler } from "./controllers/CommunityController";
-import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler } from "./controllers/MemberController";
+import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler } from "./controllers/MemberController";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
     listWorkgroupsHandler, createWorkgroupHandler, updateWorkgroupHandler, deleteWorkgroupHandler,
@@ -63,6 +63,7 @@ app.get("/api/communities/:cid/members", requireAuth, requireCommunityMember, li
 app.post("/api/communities/:cid/members", requireAuth, requireCommunityAdmin, addMemberHandler);
 app.patch("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAdmin, updateMemberHandler);
 app.delete("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAdmin, deleteMemberHandler);
+app.patch("/api/communities/:cid/members/:pid/person", requireAuth, requireCommunityAdmin, updateMemberPersonHandler);
 app.patch("/api/communities/:cid/me/availability", requireAuth, requireCommunityMember, setMyAvailability);
 app.patch("/api/communities/:cid/members/:pid/availability", requireAuth, requireCommunityAdmin, setMemberAvailability);
 app.get("/api/communities/:cid/members/:pid/availability-log", requireAuth, requireCommunityAdmin, getMemberAvailabilityLogHandler);

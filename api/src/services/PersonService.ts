@@ -14,7 +14,7 @@ export async function findById(id: string): Promise<Person | null> {
 }
 
 export async function updatePerson(id: string, data: Partial<Pick<Person,
-    "first_name" | "last_name" | "email" | "phone" | "bio" | "avatar_url">>): Promise<Person> {
+    "first_name" | "last_name" | "email" | "phone" | "bio" | "avatar_url" | "ename">>): Promise<Person> {
     const person = await repo().findOneOrFail({ where: { id } });
     Object.assign(person, data);
     return repo().save(person);

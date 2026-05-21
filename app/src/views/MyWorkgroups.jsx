@@ -9,6 +9,7 @@ export default function MyWorkgroups() {
   const { user } = useUser()
   const { community, refresh } = useCommunity()
   const [busy, setBusy] = useState({}) // { [wgId]: true } while API in-flight
+  const [joinOpen, setJoinOpen] = useState(false)
 
   const allWorkgroups = community?.workgroups || []
 
@@ -119,12 +120,6 @@ export default function MyWorkgroups() {
                   </span>
                 ))}
 
-                {roles.length === 0 && unassigned.length === 0 && (
-                  <span style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>No roles in this workgroup</span>
-                )}
-                {roles.length === 0 && unassigned.length > 0 && (
-                  <span style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>No role assigned yet</span>
-                )}
               </div>
             </div>
           ))}
@@ -134,10 +129,19 @@ export default function MyWorkgroups() {
       {/* Available workgroups */}
       {available.length > 0 && (
         <div>
-          <h4 style={{ margin: '0 0 12px', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-charcoal-light)' }}>
-            Join a workgroup
-          </h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button
+            onClick={() => setJoinOpen(v => !v)}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', marginBottom: joinOpen ? 12 : 0 }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              style={{ transition: 'transform 0.15s', transform: joinOpen ? 'rotate(90deg)' : 'rotate(0deg)', color: 'var(--color-charcoal-light)' }}>
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-charcoal-light)', fontWeight: 600 }}>
+              Join a workgroup
+            </span>
+          </button>
+          {joinOpen && <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {available.map((wg) => (
               <div
                 key={wg.id}
@@ -162,7 +166,7 @@ export default function MyWorkgroups() {
                 </button>
               </div>
             ))}
-          </div>
+          </div>}
         </div>
       )}
     </div>

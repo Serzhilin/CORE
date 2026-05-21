@@ -29,6 +29,20 @@ function serializePerson(p: Person) {
     };
 }
 
+async function getMembershipsForPerson(personId: string) {
+    const memberships = await AppDataSource.getRepository(CommunityMembership).find({ where: { person_id: personId } });
+    const communityIds = memberships.map((m) => m.community_id);
+    const communities = communityIds.length
+        ? await AppDataSource.getRepository(Community).findBy(communityIds.map((id) => ({ id })))
+        : [];
+    return memberships.map((m) => ({
+        communityId: m.community_id,
+        isAdmin: m.is_admin,
+        isAspirant: m.is_aspirant,
+        community: communities.find((c) => c.id === m.community_id),
+    }));
+}
+
 export async function getOffer(req: Request, res: Response) {
     const baseUrl = process.env.VITE_PUBLIC_CORE_BASE_URL || `http://localhost:${process.env.PORT || 3002}`;
     const sessionId = uuidv4();
@@ -68,7 +82,8 @@ export async function epassportLogin(req: Request, res: Response) {
     const token = signToken({ userId: person.id, ename: person.ename! });
     const returnTo = sessionReturnTo.get(session) ?? "/";
     sessionReturnTo.delete(session);
-    const payload = { token, user: serializePerson(person), returnTo };
+    const memberships = await getMembershipsForPerson(person.id);
+    const payload = { token, user: serializePerson(person), memberships, returnTo };
     sessionResults.set(session, payload);
     sessions.emit(session, payload);
     res.json(payload);
@@ -95,7 +110,8 @@ export async function devLogin(req: Request, res: Response) {
         person = await updatePerson(person.id, { first_name: "Dev", last_name: "User" });
     }
     const token = signToken({ userId: person.id, ename: person.ename! });
-    res.json({ token, user: serializePerson(person) });
+    const memberships = await getMembershipsForPerson(person.id);
+    res.json({ token, user: serializePerson(person), memberships });
 }
 
 export async function getMe(req: Request, res: Response) {
