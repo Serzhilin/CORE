@@ -2,14 +2,15 @@ import AvailabilityBadge from '../components/AvailabilityBadge'
 
 export default function CardGrid({ community, filter, onMemberClick, gridRef }) {
 
-  // personId → {workgroupId → firstRoleColor}
-  const personRoles = {}
+  // personId → { workgroupId → roleColors[] }
+  const personRoleColors = {}
   for (const wg of community.workgroups) {
     for (const wm of wg.members) {
-      const firstRoleId = wm.roles?.[0]
-      const role = firstRoleId ? wg.roles.find((r) => r.id === firstRoleId) : null
-      if (!personRoles[wm.person_id]) personRoles[wm.person_id] = {}
-      personRoles[wm.person_id][wg.id] = role?.color || '#E8DDD0'
+      const roleColors = (wm.roles || [])
+        .map((rid) => wg.roles.find((r) => r.id === rid)?.color)
+        .filter(Boolean)
+      if (!personRoleColors[wm.person_id]) personRoleColors[wm.person_id] = {}
+      personRoleColors[wm.person_id][wg.id] = roleColors
     }
   }
 
@@ -67,7 +68,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
             </div>
             <div style={{ paddingBottom: 12 }}>
               {unassignedMembers.map((m) => (
-                <MemberRow key={m.personId} m={m} dotColor="#E8DDD0" onMemberClick={onMemberClick} />
+                <MemberRow key={m.personId} m={m} wgColor="#ccc" roleColors={[]} onMemberClick={onMemberClick} />
               ))}
             </div>
           </div>
@@ -85,7 +86,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
                   <div style={{ padding: '4px 16px', fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>No members</div>
                 )}
                 {members.map((m) => (
-                  <MemberRow key={m.personId} m={m} dotColor={personRoles[m.personId]?.[wg.id] || '#E8DDD0'} onMemberClick={onMemberClick} />
+                  <MemberRow key={m.personId} m={m} wgColor={wg.color} roleColors={personRoleColors[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} />
                 ))}
               </div>
             </div>
@@ -96,8 +97,10 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
   )
 }
 
-function MemberRow({ m, dotColor, onMemberClick }) {
+function MemberRow({ m, wgColor, roleColors, onMemberClick }) {
   const unavailable = !!m.availability
+  const r = 6
+  const svgSize = r * 2 + (roleColors.length > 0 ? roleColors.length * 5 + 4 : 0)
   return (
     <div
       onClick={() => onMemberClick(m)}
@@ -109,10 +112,18 @@ function MemberRow({ m, dotColor, onMemberClick }) {
     >
       {m.avatarUrl
         ? <img src={m.avatarUrl} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-        : <span style={{ width: 24, height: 24, borderRadius: '50%', background: dotColor, flexShrink: 0, display: 'inline-block' }} />
+        : (
+          <svg width={svgSize + 4} height={svgSize + 4} viewBox={`${-(svgSize/2+2)} ${-(svgSize/2+2)} ${svgSize+4} ${svgSize+4}`} style={{ flexShrink: 0, overflow: 'visible' }}>
+            {roleColors.map((color, i) => (
+              <circle key={i} r={r + 3 + i * 5} fill="none" stroke={color} strokeWidth={1.5} opacity={0.85} />
+            ))}
+            <circle r={r} fill={wgColor} fillOpacity={m.isAspirant ? 0.35 : 0.85}
+              stroke={m.isAspirant ? wgColor : 'white'} strokeWidth={1}
+              strokeDasharray={m.isAspirant ? '3,2' : 'none'} />
+          </svg>
+        )
       }
-      <span style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <span>
+      <span style={{ fontSize: '0.9rem' }}>
         {m.firstName || m.lastName || 'Unknown'}
         {m.isAspirant && (
           <span style={{ marginLeft: 5, fontSize: '0.72rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic' }}>
@@ -128,12 +139,6 @@ function MemberRow({ m, dotColor, onMemberClick }) {
               </span>
             )}
           </>
-        )}
-        </span>
-        {m.bio && (
-          <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>
-            {m.bio}
-          </span>
         )}
       </span>
     </div>
