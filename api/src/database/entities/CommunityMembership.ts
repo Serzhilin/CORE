@@ -18,6 +18,9 @@ export class CommunityMembership {
     @Column({ default: false })
     is_aspirant: boolean;
 
+    @Column({ default: false })
+    is_active_partner: boolean;
+
     @Column({ type: "date", nullable: true })
     joined_at: Date | null;
 

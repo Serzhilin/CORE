@@ -25,7 +25,7 @@ export async function addMemberHandler(req: Request, res: Response) {
 
 export async function updateMemberHandler(req: Request, res: Response) {
     const patch = Object.fromEntries(
-        Object.entries({ is_admin: req.body.is_admin, is_aspirant: req.body.is_aspirant, joined_at: req.body.joined_at })
+        Object.entries({ is_admin: req.body.is_admin, is_aspirant: req.body.is_aspirant, is_active_partner: req.body.is_active_partner, joined_at: req.body.joined_at })
             .filter(([, v]) => v !== undefined)
     );
     try {

@@ -79,7 +79,7 @@ export default function MembersTab() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
-              {['Name', 'Email', 'Admin', 'Aspirant', 'Joined', ''].map((h) => (
+              {['Name', 'Email', 'Admin', 'Aspirant', 'Active partner', 'Joined', ''].map((h) => (
                 <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -98,6 +98,10 @@ export default function MembersTab() {
                   <td style={{ padding: '10px 14px' }}>
                     <input type="checkbox" checked={m.isAspirant}
                       onChange={(e) => handleUpdate(m.personId, { is_aspirant: e.target.checked })} />
+                  </td>
+                  <td style={{ padding: '10px 14px' }}>
+                    <input type="checkbox" checked={m.isActivePartner ?? false}
+                      onChange={(e) => handleUpdate(m.personId, { is_active_partner: e.target.checked })} />
                   </td>
                   <td style={{ padding: '10px 14px' }}>
                     <input

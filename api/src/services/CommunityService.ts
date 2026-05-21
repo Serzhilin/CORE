@@ -95,6 +95,7 @@ export async function getCommunityFull(communityId: string) {
                 avatarUrl: person?.avatar_url ?? null,
                 isAdmin: m.is_admin,
                 isAspirant: m.is_aspirant,
+                isActivePartner: m.is_active_partner,
                 joinedAt: m.joined_at,
                 availability: at
                     ? {

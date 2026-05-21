@@ -40,7 +40,7 @@ export async function addMember(
 
 export async function updateMember(
     membershipId: string,
-    data: Partial<Pick<CommunityMembership, "is_admin" | "is_aspirant" | "joined_at">>
+    data: Partial<Pick<CommunityMembership, "is_admin" | "is_aspirant" | "is_active_partner" | "joined_at">>
 ): Promise<CommunityMembership> {
     const m = await memberRepo().findOneOrFail({ where: { id: membershipId } });
     Object.assign(m, data);
