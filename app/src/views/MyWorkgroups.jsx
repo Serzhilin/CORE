@@ -90,6 +90,7 @@ export default function MyWorkgroups() {
                   <select
                     value=""
                     onChange={(e) => handleAssign(wg, e.target.value)}
+                    disabled={busy[wg.id]}
                     style={{ ...inputStyle, padding: '3px 8px', color: 'var(--color-charcoal-light)' }}
                   >
                     <option value="">+ Role</option>
@@ -112,6 +113,7 @@ export default function MyWorkgroups() {
                     {r.name}
                     <button
                       onClick={() => handleUnassign(wg, r.id)}
+                      disabled={busy[wg.id]}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}
                     >×</button>
                   </span>
