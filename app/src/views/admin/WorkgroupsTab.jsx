@@ -232,7 +232,13 @@ export default function WorkgroupsTab() {
                       <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Roles</h4>
                       {wg.roles.map((r) => (
                         <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                          <span style={{ width: 10, height: 10, borderRadius: '50%', background: r.color }} />
+                          <input
+                            type="color"
+                            value={r.color}
+                            onChange={(e) => updateRole(wg.id, r.id, { color: e.target.value }).then(refresh)}
+                            title="Change color"
+                            style={{ width: 18, height: 18, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer', background: 'none', flexShrink: 0 }}
+                          />
                           {editingRoleName[r.id] !== undefined ? (
                             <input
                               autoFocus
