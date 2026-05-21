@@ -280,18 +280,16 @@ export default function WorkgroupsTab() {
                   {getTab(wg.id) === 'members' && (
                     <div>
                       <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Members</h4>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {wgMembers.map(({ member, is_workgroup_admin, roles }) => {
+                      <div>
+                        {wgMembers.map(({ member, is_workgroup_admin, roles }, idx) => {
                           const displayName = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'
                           const unassignedRoles = wg.roles.filter((r) => !roles.includes(r.id))
                           return (
                             <div
                               key={member.personId}
                               style={{
-                                background: 'white',
-                                border: '1px solid var(--color-sand)',
-                                borderRadius: 8,
-                                padding: '10px 14px',
+                                borderTop: idx === 0 ? 'none' : '1px solid var(--color-sand)',
+                                padding: '10px 0',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: 6,
