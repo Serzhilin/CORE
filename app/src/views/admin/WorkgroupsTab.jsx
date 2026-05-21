@@ -315,8 +315,21 @@ export default function WorkgroupsTab() {
                                 </label>
                               </div>
 
-                              {/* Bottom row: role chips + add role dropdown + remove */}
+                              {/* Bottom row: add role dropdown + role chips + remove */}
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                {unassignedRoles.length > 0 && (
+                                  <select
+                                    value=""
+                                    onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value) }}
+                                    style={{ ...inputStyle, padding: '2px 6px', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
+                                  >
+                                    <option value="">+ Role</option>
+                                    {unassignedRoles.map((r) => (
+                                      <option key={r.id} value={r.id}>{r.name}</option>
+                                    ))}
+                                  </select>
+                                )}
+
                                 {roles.map((rid) => {
                                   const role = wg.roles.find((r) => r.id === rid)
                                   if (!role) return null
@@ -342,19 +355,7 @@ export default function WorkgroupsTab() {
                                       >×</button>
                                     </span>
                                   )
-                                })}
-
-                                {unassignedRoles.length > 0 && (
-                                  <select
-                                    value=""
-                                    onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value) }}
-                                    style={{ ...inputStyle, padding: '2px 6px', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
-                                  >
-                                    <option value="">+ Role</option>
-                                    {unassignedRoles.map((r) => (
-                                      <option key={r.id} value={r.id}>{r.name}</option>
-                                    ))}
-                                  </select>
+                                })
                                 )}
 
                                 <button
