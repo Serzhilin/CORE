@@ -46,13 +46,17 @@ export default function MyWorkgroups() {
 
   async function handleAssign(wg, roleId) {
     if (!roleId) return
+    setBusy((s) => ({ ...s, [wg.id]: true }))
     try { await assignRole(wg.id, user.id, { role_id: roleId }); await refresh() }
     catch (err) { if (!err.message?.includes('409')) alert(err.message) }
+    setBusy((s) => ({ ...s, [wg.id]: false }))
   }
 
   async function handleUnassign(wg, roleId) {
+    setBusy((s) => ({ ...s, [wg.id]: true }))
     try { await unassignRole(wg.id, user.id, roleId); await refresh() }
     catch (err) { alert(err.message) }
+    setBusy((s) => ({ ...s, [wg.id]: false }))
   }
 
   return (
