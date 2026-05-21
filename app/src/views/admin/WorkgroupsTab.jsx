@@ -147,6 +147,11 @@ export default function WorkgroupsTab() {
         const wgMembers = wg.members
           .map((wm) => ({ ...wm, member: communityMembers.find((m) => m.personId === wm.person_id) }))
           .filter((wm) => wm.member)
+          .sort((a, b) => {
+            const nameA = [a.member.firstName, a.member.lastName].filter(Boolean).join(' ') || a.member.email || ''
+            const nameB = [b.member.firstName, b.member.lastName].filter(Boolean).join(' ') || b.member.email || ''
+            return nameA.localeCompare(nameB)
+          })
 
         const nonMembers = communityMembers.filter(
           (m) => !wg.members.some((wm) => wm.person_id === m.personId)
@@ -230,7 +235,7 @@ export default function WorkgroupsTab() {
                   {getTab(wg.id) === 'roles' && (
                     <div>
                       <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Roles</h4>
-                      {wg.roles.map((r) => (
+                      {[...wg.roles].sort((a, b) => a.name.localeCompare(b.name)).map((r) => (
                         <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                           <input
                             key={r.color}
