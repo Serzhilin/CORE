@@ -53,7 +53,7 @@ export default function TopBar() {
       padding: '0 24px',
       position: 'sticky',
       top: 0,
-      zIndex: 10,
+      zIndex: 200,
     }}>
       <div style={{
         display: 'flex',
@@ -118,7 +118,7 @@ export default function TopBar() {
 
           {showMenu && (
             <div style={{
-              position: 'absolute', top: 42, right: 0, zIndex: 100,
+              position: 'absolute', top: 42, right: 0, zIndex: 1000,
               background: 'white', border: '1px solid var(--color-sand)',
               borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
               minWidth: 200, overflow: 'hidden',
