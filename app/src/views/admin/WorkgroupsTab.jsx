@@ -78,6 +78,20 @@ export default function WorkgroupsTab() {
     catch (err) { alert(err.message) }
   }
 
+  async function handleSaveWgName(wid, name) {
+    const trimmed = name.trim()
+    if (!trimmed) return
+    try {
+      await updateWorkgroup(communityId, wid, { name: trimmed })
+      await refresh()
+    } catch (err) { alert(err.message) }
+    setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
+  }
+
+  function handleCancelWgName(wid) {
+    setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
+  }
+
   const communityMembers = community?.members || []
 
   return (
@@ -124,7 +138,33 @@ export default function WorkgroupsTab() {
               onClick={() => setExpanded(isExpanded ? null : wg.id)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', cursor: 'pointer', userSelect: 'none' }}
             >
-              <span style={{ fontWeight: 700, fontFamily: 'var(--font-title)' }}>{wg.name}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                   onClick={(e) => e.stopPropagation()}>
+                {editingWgName[wg.id] !== undefined ? (
+                  <input
+                    autoFocus
+                    value={editingWgName[wg.id]}
+                    onChange={(e) => setEditingWgName((s) => ({ ...s, [wg.id]: e.target.value }))}
+                    onBlur={() => handleSaveWgName(wg.id, editingWgName[wg.id])}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveWgName(wg.id, editingWgName[wg.id])
+                      if (e.key === 'Escape') handleCancelWgName(wg.id)
+                    }}
+                    style={{ ...inputStyle, fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1rem', padding: '4px 8px' }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <span
+                    style={{ fontWeight: 700, fontFamily: 'var(--font-title)', cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setEditingWgName((s) => ({ ...s, [wg.id]: wg.name }))
+                    }}
+                  >
+                    {wg.name}
+                  </span>
+                )}
+              </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
                   {wg.members.length} members · {wg.roles.length} roles
