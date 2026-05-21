@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
 import {
-  createWorkgroup, deleteWorkgroup,
-  createRole, deleteRole,
+  createWorkgroup, updateWorkgroup, deleteWorkgroup,
+  createRole, updateRole, deleteRole,
   addWorkgroupMember, updateWorkgroupMember, removeWorkgroupMember,
   assignRole, unassignRole,
 } from '../../api/client'
@@ -16,6 +16,9 @@ export default function WorkgroupsTab() {
   const [addingWg, setAddingWg] = useState(false)
   const [addingRole, setAddingRole] = useState({}) // {wgId: {name, color}}
   const [addingMember, setAddingMember] = useState(null) // wgId
+  const [editingWgName, setEditingWgName] = useState({})    // { [wgId]: string }
+  const [editingRoleName, setEditingRoleName] = useState({}) // { [roleId]: string }
+  const [activeTab, setActiveTab] = useState({})              // { [wgId]: 'roles' | 'members' }
 
   async function handleCreateWorkgroup(e) {
     e.preventDefault()
