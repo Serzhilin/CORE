@@ -280,68 +280,112 @@ export default function WorkgroupsTab() {
                   {getTab(wg.id) === 'members' && (
                     <div>
                       <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Members</h4>
-                      {wgMembers.map(({ member, is_workgroup_admin, roles }) => (
-                        <div key={member.personId} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                          <span style={{ flex: 1, fontSize: '0.9rem', fontWeight: 500 }}>
-                            {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
-                          </span>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', cursor: 'pointer' }}>
-                            <input
-                              type="checkbox"
-                              checked={is_workgroup_admin}
-                              onChange={(e) => handleToggleWgAdmin(wg.id, member.personId, e.target.checked)}
-                            /> WG admin
-                          </label>
-                          <select
-                            defaultValue=""
-                            onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value); e.target.value = '' }}
-                            style={{ ...inputStyle, padding: '4px 6px', fontSize: '0.8rem' }}
-                          >
-                            <option value="">+ Role</option>
-                            {wg.roles.filter((r) => !roles.includes(r.id)).map((r) => (
-                              <option key={r.id} value={r.id}>{r.name}</option>
-                            ))}
-                          </select>
-                          {roles.map((rid) => {
-                            const role = wg.roles.find((r) => r.id === rid)
-                            if (!role) return null
-                            return (
-                              <span key={rid} style={{ fontSize: '0.75rem', background: role.color + '30', border: `1px solid ${role.color}`, borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                {role.name}
-                                <button onClick={() => handleUnassignRole(wg.id, member.personId, rid)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)' }}>×</button>
-                              </span>
-                            )
-                          })}
-                          <button
-                            onClick={() => handleRemoveMember(wg.id, member.personId)}
-                            style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.8rem' }}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      ))}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {wgMembers.map(({ member, is_workgroup_admin, roles }) => {
+                          const displayName = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'
+                          const unassignedRoles = wg.roles.filter((r) => !roles.includes(r.id))
+                          return (
+                            <div
+                              key={member.personId}
+                              style={{
+                                background: 'white',
+                                border: '1px solid var(--color-sand)',
+                                borderRadius: 8,
+                                padding: '10px 14px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 6,
+                              }}
+                            >
+                              {/* Top row: name + admin toggle */}
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{displayName}</span>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', cursor: 'pointer', color: 'var(--color-charcoal-light)' }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={is_workgroup_admin}
+                                    onChange={(e) => handleToggleWgAdmin(wg.id, member.personId, e.target.checked)}
+                                  />
+                                  WG admin
+                                </label>
+                              </div>
 
-                      {addingMember === wg.id ? (
-                        <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                          <select
-                            defaultValue=""
-                            onChange={(e) => { if (e.target.value) handleAddMember(wg.id, e.target.value) }}
-                            style={{ ...inputStyle, flex: 1 }}
-                          >
-                            <option value="">Select community member…</option>
-                            {nonMembers.map((m) => (
-                              <option key={m.personId} value={m.personId}>
-                                {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
-                              </option>
-                            ))}
-                          </select>
-                          <button className="btn-secondary" onClick={() => setAddingMember(null)} style={{ fontSize: '0.8rem' }}>Cancel</button>
-                        </div>
-                      ) : (
-                        <button className="btn-secondary" onClick={() => setAddingMember(wg.id)} style={{ fontSize: '0.8rem', marginTop: 8 }}>
-                          + Add member
-                        </button>
-                      )}
+                              {/* Bottom row: role chips + add role dropdown + remove */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                {roles.map((rid) => {
+                                  const role = wg.roles.find((r) => r.id === rid)
+                                  if (!role) return null
+                                  return (
+                                    <span
+                                      key={rid}
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        background: role.color + '22',
+                                        border: `1px solid ${role.color}`,
+                                        borderRadius: 4,
+                                        padding: '2px 8px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 4,
+                                        color: 'var(--color-charcoal)',
+                                      }}
+                                    >
+                                      {role.name}
+                                      <button
+                                        onClick={() => handleUnassignRole(wg.id, member.personId, rid)}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}
+                                      >×</button>
+                                    </span>
+                                  )
+                                })}
+
+                                {unassignedRoles.length > 0 && (
+                                  <select
+                                    value=""
+                                    onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value) }}
+                                    style={{ ...inputStyle, padding: '2px 6px', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
+                                  >
+                                    <option value="">+ Role</option>
+                                    {unassignedRoles.map((r) => (
+                                      <option key={r.id} value={r.id}>{r.name}</option>
+                                    ))}
+                                  </select>
+                                )}
+
+                                <button
+                                  onClick={() => handleRemoveMember(wg.id, member.personId)}
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.78rem', marginLeft: 'auto' }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          )
+                        })}
+
+                        {/* Add member */}
+                        {addingMember === wg.id ? (
+                          <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+                            <select
+                              defaultValue=""
+                              onChange={(e) => { if (e.target.value) handleAddMember(wg.id, e.target.value) }}
+                              style={{ ...inputStyle, flex: 1 }}
+                            >
+                              <option value="">Select community member…</option>
+                              {nonMembers.map((m) => (
+                                <option key={m.personId} value={m.personId}>
+                                  {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
+                                </option>
+                              ))}
+                            </select>
+                            <button className="btn-secondary" onClick={() => setAddingMember(null)} style={{ fontSize: '0.8rem' }}>Cancel</button>
+                          </div>
+                        ) : (
+                          <button className="btn-secondary" onClick={() => setAddingMember(wg.id)} style={{ fontSize: '0.8rem', alignSelf: 'flex-start' }}>
+                            + Add member
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
