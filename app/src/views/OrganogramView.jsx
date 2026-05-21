@@ -1,7 +1,7 @@
 import { useState, useRef, lazy, Suspense } from 'react'
 import { useCommunity } from '../context/CommunityContext'
 import CardGrid from './CardGrid'
-import PersonModal from '../components/PersonModal'
+import MemberSidePanel from '../components/MemberSidePanel'
 import html2canvas from 'html2canvas'
 
 const GraphView = lazy(() => import('./graph/GraphView'))
@@ -77,6 +77,17 @@ export default function OrganogramView() {
           ))}
         </select>
 
+        <input
+          placeholder="Search by name…"
+          value={filter.search}
+          onChange={(e) => patch({ search: e.target.value })}
+          style={{ ...inputStyle, width: 160 }}
+        />
+
+        <label style={checkStyle}>
+          <input type="checkbox" checked={filter.showUnavailable} onChange={(e) => patch({ showUnavailable: e.target.checked })} />
+          Show unavailable
+        </label>
 
       </div>
 
@@ -98,7 +109,7 @@ export default function OrganogramView() {
         </Suspense>
       )}
 
-      {selectedMember && <PersonModal member={selectedMember} onClose={() => setSelectedMember(null)} />}
+      {selectedMember && <MemberSidePanel member={selectedMember} onClose={() => setSelectedMember(null)} />}
     </div>
   )
 }

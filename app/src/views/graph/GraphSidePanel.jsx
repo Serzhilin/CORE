@@ -2,10 +2,8 @@ import PersonPanel from './PersonPanel'
 import WorkgroupPanel from './WorkgroupPanel'
 
 export default function GraphSidePanel({ selected, graphData, onClose, onFilterToWorkgroup }) {
-  const visible = !!selected
-  const person = selected?.type === 'person'
-    ? graphData?.persons.find(p => p.id === selected.id) ?? null
-    : null
+  const visible = !!selected && selected.type === 'workgroup'
+  const person = null
   const workgroup = selected?.type === 'workgroup'
     ? graphData?.workgroups.find(wg => wg.id === selected.id) ?? null
     : null

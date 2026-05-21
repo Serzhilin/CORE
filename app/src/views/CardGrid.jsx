@@ -111,7 +111,8 @@ function MemberRow({ m, dotColor, onMemberClick }) {
         ? <img src={m.avatarUrl} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
         : <span style={{ width: 24, height: 24, borderRadius: '50%', background: dotColor, flexShrink: 0, display: 'inline-block' }} />
       }
-      <span style={{ fontSize: '0.9rem' }}>
+      <span style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <span>
         {m.firstName || m.lastName || 'Unknown'}
         {m.isAspirant && (
           <span style={{ marginLeft: 5, fontSize: '0.72rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic' }}>
@@ -127,6 +128,12 @@ function MemberRow({ m, dotColor, onMemberClick }) {
               </span>
             )}
           </>
+        )}
+        </span>
+        {m.bio && (
+          <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}>
+            {m.bio}
+          </span>
         )}
       </span>
     </div>
