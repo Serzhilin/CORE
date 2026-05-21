@@ -159,8 +159,16 @@ export default function WorkgroupsTab() {
               onClick={() => setExpanded(isExpanded ? null : wg.id)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', cursor: 'pointer', userSelect: 'none' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}
                    onClick={(e) => e.stopPropagation()}>
+                <input
+                  key={wg.color}
+                  type="color"
+                  defaultValue={wg.color}
+                  onChange={(e) => updateWorkgroup(communityId, wg.id, { color: e.target.value }).then(refresh)}
+                  title="Change color"
+                  style={{ width: 18, height: 18, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer', background: 'none', flexShrink: 0 }}
+                />
                 {editingWgName[wg.id] !== undefined ? (
                   <input
                     autoFocus
