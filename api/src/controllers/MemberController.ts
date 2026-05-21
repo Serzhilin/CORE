@@ -29,7 +29,10 @@ export async function updateMemberHandler(req: Request, res: Response) {
             .filter(([, v]) => v !== undefined)
     );
     try {
-        const m = await updateMember(req.params.pid, patch);
+        const membership = await AppDataSource.getRepository(CommunityMembership).findOneOrFail({
+            where: { person_id: req.params.pid, community_id: req.params.cid },
+        });
+        const m = await updateMember(membership.id, patch);
         res.json(m);
     } catch (err: any) {
         if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Membership not found" }); return; }
