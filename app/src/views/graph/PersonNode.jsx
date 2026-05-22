@@ -25,7 +25,13 @@ export default function PersonNode({ node, dimmed, selected, showName, onClick, 
         />
       ))}
       {selected && (
-        <circle r={r + 4 + roleColors.length * 4 + 2} fill="none" stroke={node.color} strokeWidth={2} opacity={0.5} />
+        <>
+          <circle r={r + 4 + roleColors.length * 4 + 2} fill="none" stroke={node.color} strokeWidth={2} opacity={0.5} />
+          <circle r={r + 2} fill="none" stroke={node.color} strokeWidth={2} opacity={0.6}>
+            <animate attributeName="r" values={`${r + 2};${r + 18}`} dur="1.8s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.6;0" dur="1.8s" repeatCount="indefinite" />
+          </circle>
+        </>
       )}
       {showName && (
         <text

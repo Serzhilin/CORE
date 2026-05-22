@@ -17,6 +17,7 @@ export default function WorkgroupsTab() {
   const [addingRole, setAddingRole] = useState({}) // {wgId: {name, color}}
   const [addingMember, setAddingMember] = useState(null) // wgId
   const [editingWgName, setEditingWgName] = useState({})    // { [wgId]: string }
+  const [editingWgDesc, setEditingWgDesc] = useState({})    // { [wgId]: string }
   const [editingRoleName, setEditingRoleName] = useState({}) // { [roleId]: string }
   const [activeTab, setActiveTab] = useState({})              // { [wgId]: 'roles' | 'members' }
 
@@ -88,6 +89,18 @@ export default function WorkgroupsTab() {
 
   function handleCancelWgName(wid) {
     setEditingWgName((s) => { const n = { ...s }; delete n[wid]; return n })
+  }
+
+  async function handleSaveWgDesc(wid, desc) {
+    try {
+      await updateWorkgroup(communityId, wid, { description: desc.trim() || null })
+      await refresh()
+    } catch (err) { alert(err.message) }
+    setEditingWgDesc((s) => { const n = { ...s }; delete n[wid]; return n })
+  }
+
+  function handleCancelWgDesc(wid) {
+    setEditingWgDesc((s) => { const n = { ...s }; delete n[wid]; return n })
   }
 
   async function handleSaveRoleName(wid, rid, name) {
@@ -215,7 +228,7 @@ export default function WorkgroupsTab() {
               <div style={{ borderTop: '1px solid var(--color-sand)' }}>
                 {/* Tab bar */}
                 <div style={{ display: 'flex', borderBottom: '1px solid var(--color-sand)' }}>
-                  {['members', 'roles'].map((tab) => (
+                  {['members', 'roles', 'details'].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab((s) => ({ ...s, [wg.id]: tab }))}
@@ -395,6 +408,46 @@ export default function WorkgroupsTab() {
                             + Add member
                           </button>
                         )}
+                      </div>
+                    </div>
+                  )}
+
+                  {getTab(wg.id) === 'details' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: 6, fontSize: '0.8rem', fontWeight: 500 }}>Description</label>
+                        {editingWgDesc[wg.id] !== undefined ? (
+                          <textarea
+                            autoFocus
+                            value={editingWgDesc[wg.id]}
+                            onChange={(e) => setEditingWgDesc((s) => ({ ...s, [wg.id]: e.target.value }))}
+                            onBlur={() => handleSaveWgDesc(wg.id, editingWgDesc[wg.id])}
+                            onKeyDown={(e) => { if (e.key === 'Escape') handleCancelWgDesc(wg.id) }}
+                            rows={4}
+                            style={{ ...inputStyle, width: '100%', resize: 'vertical', fontSize: '0.88rem' }}
+                            placeholder="Describe this workgroup…"
+                          />
+                        ) : (
+                          <div
+                            onClick={() => setEditingWgDesc((s) => ({ ...s, [wg.id]: wg.description || '' }))}
+                            style={{ fontSize: '0.88rem', color: wg.description ? 'var(--color-charcoal)' : 'var(--color-charcoal-light)', cursor: 'pointer', fontStyle: wg.description ? 'normal' : 'italic', lineHeight: 1.6, padding: '6px 0' }}
+                          >
+                            {wg.description || 'Click to add a description…'}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: 6, fontSize: '0.8rem', fontWeight: 500 }}>Color</label>
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                          <input
+                            key={wg.color}
+                            type="color"
+                            defaultValue={wg.color}
+                            onChange={(e) => updateWorkgroup(communityId, wg.id, { color: e.target.value }).then(refresh)}
+                            style={{ width: 40, height: 36, border: 'none', padding: 0, cursor: 'pointer', borderRadius: 6 }}
+                          />
+                          <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', fontFamily: 'monospace' }}>{wg.color}</span>
+                        </div>
                       </div>
                     </div>
                   )}

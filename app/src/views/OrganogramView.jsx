@@ -101,9 +101,9 @@ export default function OrganogramView() {
 
       {/* Main content row: view + InfoPanel */}
       <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+        <div style={{ flex: 1, minWidth: 0, overflow: view === 'cards' ? 'auto' : 'hidden' }}>
           {view === 'cards' ? (
-            <CardGrid community={community} filter={filter} onMemberClick={handleMemberClick} gridRef={cardGridRef} />
+            <CardGrid community={community} filter={filter} onMemberClick={handleMemberClick} gridRef={cardGridRef} selectedPersonId={panelSelection?.type === 'person' ? panelSelection.id : null} />
           ) : (
             <Suspense fallback={<div>Loading graph…</div>}>
               <GraphView

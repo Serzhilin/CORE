@@ -79,9 +79,12 @@ export default function MyWorkgroups() {
                 <button
                   onClick={() => handleLeave(wg)}
                   disabled={busy[wg.id]}
-                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', fontSize: '0.8rem', opacity: busy[wg.id] ? 0.5 : 1 }}
+                  title="Leave workgroup"
+                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
                 >
-                  Leave
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
                 </button>
               </div>
 
@@ -157,12 +160,14 @@ export default function MyWorkgroups() {
                   {wg.members.length} {wg.members.length === 1 ? 'member' : 'members'}
                 </span>
                 <button
-                  className="btn-secondary"
                   onClick={() => handleJoin(wg)}
                   disabled={busy[wg.id]}
-                  style={{ fontSize: '0.8rem', padding: '5px 14px', opacity: busy[wg.id] ? 0.5 : 1 }}
+                  title="Join workgroup"
+                  style={{ background: 'none', border: 'none', color: 'var(--color-green)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
                 >
-                  Join
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+                  </svg>
                 </button>
               </div>
             ))}

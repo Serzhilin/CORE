@@ -1,16 +1,17 @@
+import { useEffect } from 'react'
 import AvailabilityBadge from '../components/AvailabilityBadge'
 
-export default function CardGrid({ community, filter, onMemberClick, gridRef }) {
+export default function CardGrid({ community, filter, onMemberClick, gridRef, selectedPersonId }) {
 
-  // personId → { workgroupId → roleColors[] }
-  const personRoleColors = {}
+  // personId → { workgroupId → [{id, name, color}] }
+  const personRoles = {}
   for (const wg of community.workgroups) {
     for (const wm of wg.members) {
-      const roleColors = (wm.roles || [])
-        .map((rid) => wg.roles.find((r) => r.id === rid)?.color)
+      const roles = (wm.roles || [])
+        .map((rid) => wg.roles.find((r) => r.id === rid))
         .filter(Boolean)
-      if (!personRoleColors[wm.person_id]) personRoleColors[wm.person_id] = {}
-      personRoleColors[wm.person_id][wg.id] = roleColors
+      if (!personRoles[wm.person_id]) personRoles[wm.person_id] = {}
+      personRoles[wm.person_id][wg.id] = roles
     }
   }
 
@@ -48,6 +49,12 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
     ? applyCommonFilters(community.members.filter((m) => !assignedIds.has(m.personId)))
     : []
 
+  useEffect(() => {
+    if (!selectedPersonId) return
+    const el = document.querySelector(`[data-person-id="${selectedPersonId}"]`)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [selectedPersonId])
+
   return (
     <div>
       <div
@@ -68,7 +75,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
             </div>
             <div style={{ paddingBottom: 12 }}>
               {unassignedMembers.map((m) => (
-                <MemberRow key={m.personId} m={m} wgColor="#ccc" roleColors={[]} onMemberClick={onMemberClick} />
+                <MemberRow key={m.personId} m={m} wgColor="#ccc" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} />
               ))}
             </div>
           </div>
@@ -78,15 +85,16 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
           const members = membersForWorkgroup(wg)
           return (
             <div key={wg.id} className="card" style={{ borderTop: `3px solid ${wg.color}`, overflow: 'hidden' }}>
-              <div style={{ padding: '12px 16px 8px', fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)' }}>
-                {wg.name}
+              <div style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)' }}>{wg.name}</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>{members.length}</span>
               </div>
               <div style={{ paddingBottom: 12 }}>
                 {members.length === 0 && (
                   <div style={{ padding: '4px 16px', fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>No members</div>
                 )}
                 {members.map((m) => (
-                  <MemberRow key={m.personId} m={m} wgColor={wg.color} roleColors={personRoleColors[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} />
+                  <MemberRow key={m.personId} m={m} wgColor={wg.color} roles={personRoles[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} />
                 ))}
               </div>
             </div>
@@ -97,25 +105,29 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef }) 
   )
 }
 
-function MemberRow({ m, wgColor, roleColors, onMemberClick }) {
+function MemberRow({ m, wgColor, roles, onMemberClick, selected }) {
   const unavailable = !!m.availability
   const r = 6
-  const svgSize = r * 2 + (roleColors.length > 0 ? roleColors.length * 5 + 4 : 0)
+  const svgSize = r * 2 + (roles.length > 0 ? roles.length * 5 + 4 : 0)
   return (
     <div
+      data-person-id={m.personId}
       onClick={() => onMemberClick(m)}
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
         padding: '5px 16px', cursor: 'pointer',
         opacity: unavailable ? 0.45 : 1,
+        background: selected ? `${wgColor}18` : 'none',
+        borderLeft: selected ? `3px solid ${wgColor}` : '3px solid transparent',
+        transition: 'background 0.2s, border-color 0.2s',
       }}
     >
       {m.avatarUrl
         ? <img src={m.avatarUrl} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
         : (
           <svg width={svgSize + 4} height={svgSize + 4} viewBox={`${-(svgSize/2+2)} ${-(svgSize/2+2)} ${svgSize+4} ${svgSize+4}`} style={{ flexShrink: 0, overflow: 'visible' }}>
-            {roleColors.map((color, i) => (
-              <circle key={i} r={r + 3 + i * 5} fill="none" stroke={color} strokeWidth={1.5} opacity={0.85} />
+            {roles.map((role, i) => (
+              <circle key={role.id} r={r + 3 + i * 5} fill="none" stroke={role.color} strokeWidth={1.5} opacity={0.85} />
             ))}
             <circle r={r} fill={wgColor} fillOpacity={m.isAspirant ? 0.35 : 0.85}
               stroke={m.isAspirant ? wgColor : 'white'} strokeWidth={1}
@@ -130,6 +142,11 @@ function MemberRow({ m, wgColor, roleColors, onMemberClick }) {
             aspirant
           </span>
         )}
+        {roles.map((role) => (
+          <span key={role.id} style={{ marginLeft: 5, fontSize: '0.72rem', color: role.color, fontStyle: 'italic' }}>
+            {role.name}
+          </span>
+        ))}
         {unavailable && (
           <>
             <AvailabilityBadge availability={m.availability} inline />

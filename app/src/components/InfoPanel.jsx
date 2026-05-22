@@ -182,6 +182,8 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
   )
 }
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
 export default function InfoPanel({ selection, onSelect, onFilterToWorkgroup }) {
   const { community } = useCommunity()
   const [open, setOpen] = useState(false)
@@ -221,6 +223,29 @@ export default function InfoPanel({ selection, onSelect, onFilterToWorkgroup }) 
       return <PersonView member={member} community={community} fromWorkgroup={selection.fromWorkgroup} onBack={handleBack} />
     }
     return null
+  }
+
+  if (isMobile) {
+    if (!open) return null
+    return (
+      <>
+        <div onClick={() => { setOpen(false); onSelect(null) }} style={{ position: 'fixed', inset: 0, zIndex: 400 }} />
+        <div style={{
+          position: 'fixed', top: 0, right: 0, bottom: 0,
+          width: '85vw', maxWidth: 340,
+          background: 'white', borderLeft: `3px solid ${accent}`,
+          boxShadow: '-4px 0 24px rgba(44,44,44,0.15)',
+          zIndex: 500, overflowY: 'auto',
+          padding: '20px 16px', boxSizing: 'border-box',
+        }}>
+          <button
+            onClick={() => { setOpen(false); onSelect(null) }}
+            style={{ position: 'absolute', top: 12, right: 14, background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer', color: 'var(--color-charcoal-light)', lineHeight: 1 }}
+          >×</button>
+          {renderContent()}
+        </div>
+      </>
+    )
   }
 
   return (
