@@ -3,9 +3,8 @@ import { getCommunityGraph } from '../../api/client'
 import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
 import ForceGraph from './ForceGraph'
-import GraphSidePanel from './GraphSidePanel'
 
-export default function GraphView({ communityId, filters, onFilterToWorkgroup, onPersonSelect, refreshKey, exportRef, style }) {
+export default function GraphView({ communityId, filters, onFilterToWorkgroup, onPersonSelect, onWorkgroupSelect, refreshKey, exportRef, style }) {
   const [graphData, setGraphData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
@@ -23,7 +22,6 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, o
 
   useEffect(() => { reheat() }, [nodes, reheat])
 
-  // Expose export function to parent via ref
   useEffect(() => {
     if (!exportRef) return
     exportRef.current = () => {
@@ -43,6 +41,13 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, o
   if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
   if (!graphData) return null
 
+  function handleSelect(node) {
+    setSelected(node)
+    if (!node) return
+    if (node.type === 'person' && onPersonSelect) onPersonSelect(node.personId ?? node.id)
+    if (node.type === 'workgroup' && onWorkgroupSelect) onWorkgroupSelect(node.id)
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, ...style }}>
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
@@ -51,20 +56,11 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, o
           simLinks={simLinks}
           filters={filters}
           selected={selected}
-          onSelect={(node) => {
-            setSelected(node)
-            if (node?.type === 'person' && onPersonSelect) onPersonSelect(node.personId ?? node.id)
-          }}
+          onSelect={handleSelect}
           svgRef={svgRef}
           simRef={simRef}
           W={W}
           H={H}
-        />
-        <GraphSidePanel
-          selected={selected}
-          graphData={graphData}
-          onClose={() => setSelected(null)}
-          onFilterToWorkgroup={onFilterToWorkgroup}
         />
       </div>
     </div>
