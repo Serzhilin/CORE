@@ -1,7 +1,7 @@
 import { useState, useRef, lazy, Suspense } from 'react'
 import { useCommunity } from '../context/CommunityContext'
 import CardGrid from './CardGrid'
-import MemberSidePanel from '../components/MemberSidePanel'
+import InfoPanel from '../components/InfoPanel'
 import html2canvas from 'html2canvas'
 
 const GraphView = lazy(() => import('./graph/GraphView'))
@@ -13,8 +13,8 @@ const INITIAL_FILTER = { workgroupId: '', roleName: '', showUnavailable: true, s
 
 export default function OrganogramView() {
   const { community, loading } = useCommunity()
-  const [view, setView] = useState('graph')
-  const [selectedMember, setSelectedMember] = useState(null)
+  const [view, setView] = useState(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'cards' : 'graph')
+  const [panelSelection, setPanelSelection] = useState(null)
   const [filter, setFilter] = useState(INITIAL_FILTER)
   const cardGridRef = useRef(null)
   const graphExportRef = useRef(null)
@@ -37,12 +37,22 @@ export default function OrganogramView() {
 
   const patch = (p) => setFilter((f) => ({ ...f, ...p }))
 
+  function handleMemberClick(member) {
+    setPanelSelection({ type: 'person', id: member.personId })
+  }
+
+  function handlePersonSelect(pid) {
+    setPanelSelection({ type: 'person', id: pid })
+  }
+
+  function handleWorkgroupSelect(wgId) {
+    setPanelSelection({ type: 'workgroup', id: wgId })
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Unified filter bar */}
+      {/* Filter bar */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center', flexShrink: 0 }}>
-
-        {/* View toggle — always first */}
         <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', border: '1px solid var(--color-sand-dark)', flexShrink: 0 }}>
           {['graph', 'cards'].map((v) => (
             <button
@@ -62,7 +72,6 @@ export default function OrganogramView() {
 
         <div style={{ width: 1, height: 24, background: 'var(--color-sand-dark)', flexShrink: 0 }} />
 
-        {/* Shared filters */}
         <select value={filter.workgroupId} onChange={(e) => patch({ workgroupId: e.target.value })} style={inputStyle}>
           <option value="">All workgroups</option>
           {community.workgroups.map((wg) => (
@@ -88,28 +97,34 @@ export default function OrganogramView() {
           <input type="checkbox" checked={filter.showUnavailable} onChange={(e) => patch({ showUnavailable: e.target.checked })} />
           Show unavailable
         </label>
-
       </div>
 
-      {view === 'cards' ? (
-        <CardGrid community={community} filter={filter} onMemberClick={setSelectedMember} gridRef={cardGridRef} />
-      ) : (
-        <Suspense fallback={<div>Loading graph…</div>}>
-          <GraphView style={{ flex: 1, minHeight: 0 }}
-            communityId={community.id}
-            filters={filter}
-            refreshKey={community.workgroups.flatMap(wg => wg.roles.map(r => r.id + r.name + r.color)).join('|')}
-            onFilterToWorkgroup={(wgId) => patch({ workgroupId: wgId })}
-            onPersonSelect={(pid) => {
-              const m = community.members.find((m) => m.personId === pid)
-              if (m) setSelectedMember(m)
-            }}
-            exportRef={graphExportRef}
-          />
-        </Suspense>
-      )}
-
-      {selectedMember && <MemberSidePanel member={selectedMember} onClose={() => setSelectedMember(null)} />}
+      {/* Main content row: view + InfoPanel */}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+          {view === 'cards' ? (
+            <CardGrid community={community} filter={filter} onMemberClick={handleMemberClick} gridRef={cardGridRef} />
+          ) : (
+            <Suspense fallback={<div>Loading graph…</div>}>
+              <GraphView
+                style={{ flex: 1, minHeight: 0, height: '100%' }}
+                communityId={community.id}
+                filters={filter}
+                refreshKey={community.workgroups.flatMap(wg => wg.roles.map(r => r.id + r.name + r.color)).join('|')}
+                onFilterToWorkgroup={(wgId) => patch({ workgroupId: wgId })}
+                onPersonSelect={handlePersonSelect}
+                onWorkgroupSelect={handleWorkgroupSelect}
+                exportRef={graphExportRef}
+              />
+            </Suspense>
+          )}
+        </div>
+        <InfoPanel
+          selection={panelSelection}
+          onSelect={setPanelSelection}
+          onFilterToWorkgroup={(wgId) => patch({ workgroupId: wgId })}
+        />
+      </div>
     </div>
   )
 }
