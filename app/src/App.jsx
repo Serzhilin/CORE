@@ -5,6 +5,7 @@ import { CommunityProvider } from './context/CommunityContext'
 import LoginScreen from './components/LoginScreen'
 import TopBar from './components/TopBar'
 import OnboardingScreen from './views/OnboardingScreen'
+import DeeplinkLogin from './views/DeeplinkLogin'
 
 const OrganogramView = lazy(() => import('./views/OrganogramView'))
 const MyProfile = lazy(() => import('./views/MyProfile'))
@@ -53,11 +54,16 @@ function Layout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <UserProvider>
-        <CommunityProvider>
-          <Layout />
-        </CommunityProvider>
-      </UserProvider>
+      <Routes>
+        <Route path="/deeplink-login" element={<DeeplinkLogin />} />
+        <Route path="*" element={
+          <UserProvider>
+            <CommunityProvider>
+              <Layout />
+            </CommunityProvider>
+          </UserProvider>
+        } />
+      </Routes>
     </BrowserRouter>
   )
 }
