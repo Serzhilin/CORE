@@ -19,6 +19,13 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
     community.workgroups.flatMap((wg) => wg.members.map((wm) => wm.person_id))
   )
 
+  const firstNameCounts = {}
+  community.members.forEach((m) => {
+    const f = m.firstName || ''
+    if (f) firstNameCounts[f] = (firstNameCounts[f] || 0) + 1
+  })
+  const duplicateFirstNames = new Set(Object.keys(firstNameCounts).filter(f => firstNameCounts[f] > 1))
+
   const workgroups = community.workgroups
     .filter((wg) => !filter.workgroupId || wg.id === filter.workgroupId)
     .sort((a, b) => a.sort_order - b.sort_order)
@@ -75,7 +82,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
             </div>
             <div style={{ paddingBottom: 12 }}>
               {unassignedMembers.map((m) => (
-                <MemberRow key={m.personId} m={m} wgColor="#ccc" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} />
+                <MemberRow key={m.personId} m={m} wgColor="#ccc" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
               ))}
             </div>
           </div>
@@ -94,7 +101,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
                   <div style={{ padding: '4px 16px', fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>No members</div>
                 )}
                 {members.map((m) => (
-                  <MemberRow key={m.personId} m={m} wgColor={wg.color} roles={personRoles[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} />
+                  <MemberRow key={m.personId} m={m} wgColor={wg.color} roles={personRoles[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
                 ))}
               </div>
             </div>
@@ -105,7 +112,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
   )
 }
 
-function MemberRow({ m, wgColor, roles, onMemberClick, selected }) {
+function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial }) {
   const unavailable = !!m.availability
   const r = 6
   const svgSize = r * 2 + (roles.length > 0 ? roles.length * 5 + 4 : 0)
@@ -136,7 +143,7 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected }) {
         )
       }
       <span style={{ fontSize: '0.9rem' }}>
-        {m.firstName || m.lastName || 'Unknown'}
+        {m.firstName || m.lastName || 'Unknown'}{showLastInitial && m.lastName ? ` ${m.lastName[0]}.` : ''}
         {m.isAspirant && (
           <span style={{ marginLeft: 5, fontSize: '0.72rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic' }}>
             aspirant
