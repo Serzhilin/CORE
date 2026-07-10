@@ -10,6 +10,12 @@ declare global {
     }
 }
 
+export function isPlatformAdminEname(ename: string | null | undefined): boolean {
+    if (!ename) return false;
+    const admins = (process.env.PLATFORM_ADMIN_ENAMES || "").split(",").map((s) => s.trim()).filter(Boolean);
+    return admins.includes(ename);
+}
+
 export async function requireCommunityMember(req: Request, res: Response, next: NextFunction) {
     const communityId = req.params.cid || req.params.id;
     if (!req.user || !communityId) { res.status(403).json({ error: "Forbidden" }); return; }
