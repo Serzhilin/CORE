@@ -40,6 +40,9 @@ async function syncWorkgroupToEvault(workgroupId: string, exclude: SyncExclusion
     let memberRoles = wgmIds.length
         ? await wmrRepo().find({ where: { workgroup_membership_id: In(wgmIds) } })
         : [];
+    if (exclude.excludeRoleId) {
+        memberRoles = memberRoles.filter((r) => r.role_id !== exclude.excludeRoleId);
+    }
     if (exclude.excludeRoleAssignment) {
         const { membershipId, roleId } = exclude.excludeRoleAssignment;
         memberRoles = memberRoles.filter(
@@ -136,6 +139,7 @@ export async function updateRole(id: string, workgroupId: string, data: Partial<
 
 export async function deleteRole(id: string, workgroupId: string): Promise<void> {
     await syncWorkgroupToEvault(workgroupId, { excludeRoleId: id });
+    await wmrRepo().delete({ role_id: id });
     await roleRepo().delete({ id, workgroup_id: workgroupId });
 }
 
