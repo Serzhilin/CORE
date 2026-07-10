@@ -5,7 +5,7 @@ import { applyAvailability } from "../services/AvailabilityService";
 import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { Person } from "../database/entities/Person";
-import { getById as getCommunityById, addParticipantToEnvelope } from "../services/CommunityService";
+import { syncOrganizationToEvault } from "../services/OrganizationService";
 import { getUserMetaEnvelopeId } from "../lib/evault-client";
 import { logger } from "../lib/logger";
 
@@ -30,14 +30,14 @@ export async function addMemberHandler(req: Request, res: Response) {
 
 export async function updateMemberHandler(req: Request, res: Response) {
     const patch = Object.fromEntries(
-        Object.entries({ is_admin: req.body.is_admin, is_aspirant: req.body.is_aspirant, is_active_partner: req.body.is_active_partner, joined_at: req.body.joined_at })
+        Object.entries({ is_admin: req.body.is_admin, membership_type_id: req.body.membership_type_id, joined_at: req.body.joined_at })
             .filter(([, v]) => v !== undefined)
     );
     try {
         const membership = await AppDataSource.getRepository(CommunityMembership).findOneOrFail({
             where: { person_id: req.params.pid, community_id: req.params.cid },
         });
-        const m = await updateMember(membership.id, patch);
+        const m = await updateMember(req.params.cid, membership.id, patch);
         res.json(m);
     } catch (err: any) {
         if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Membership not found" }); return; }
@@ -118,20 +118,14 @@ export async function updateMemberPersonHandler(req: Request, res: Response) {
 }
 
 // CORE's "claim identity" moment: an admin has just set a shell Person's eName.
-// Resolve their W3DS User MetaEnvelope ID and add them to the community's Chat envelope, if linked.
+// Resolve their W3DS User MetaEnvelope ID, cache it, and re-sync the Organization envelope
+// so this member appears in members[] with a real participantId.
 async function syncClaimedIdentity(communityId: string, person: Person): Promise<void> {
     if (!person.ename) return;
-    const community = await getCommunityById(communityId);
-    if (!community) return;
 
     const metaEnvelopeId = person.meta_envelope_id ?? (await getUserMetaEnvelopeId(person.ename));
     if (!metaEnvelopeId) return;
     if (!person.meta_envelope_id) await AppDataSource.getRepository(Person).update(person.id, { meta_envelope_id: metaEnvelopeId });
 
-    const membership = await AppDataSource.getRepository(CommunityMembership).findOne({
-        where: { person_id: person.id, community_id: communityId },
-    });
-    if (membership) await AppDataSource.getRepository(CommunityMembership).update(membership.id, { meta_envelope_id: metaEnvelopeId });
-
-    await addParticipantToEnvelope(community, metaEnvelopeId);
+    await syncOrganizationToEvault(communityId);
 }

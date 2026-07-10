@@ -32,11 +32,22 @@ export async function getCommunityGraphHandler(req: Request, res: Response) {
 }
 
 export async function updateCommunityHandler(req: Request, res: Response) {
-    const { name, slug, description, logo_url, primary_color, title_font } = req.body;
+    const {
+        name, slug, description, logo_url, primary_color, title_font,
+        legal_form, official_name, kvk_number, rsin, iban, registered_address,
+        founding_date, statuten_file_uri, board_members,
+    } = req.body;
     const patch = Object.fromEntries(
-        Object.entries({ name, slug, description, logo_url, primary_color, title_font })
-            .filter(([, v]) => v !== undefined)
-    ) as Partial<Pick<Community, "name" | "slug" | "description" | "logo_url" | "primary_color" | "title_font">>;
+        Object.entries({
+            name, slug, description, logo_url, primary_color, title_font,
+            legal_form, official_name, kvk_number, rsin, iban, registered_address,
+            founding_date, statuten_file_uri, board_members,
+        }).filter(([, v]) => v !== undefined)
+    ) as Partial<Pick<Community,
+        "name" | "slug" | "description" | "logo_url" | "primary_color" | "title_font" |
+        "legal_form" | "official_name" | "kvk_number" | "rsin" | "iban" | "registered_address" |
+        "founding_date" | "statuten_file_uri" | "board_members"
+    >>;
 
     try {
         const community = await updateCommunity(req.params.id, patch);
