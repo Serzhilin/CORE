@@ -25,7 +25,7 @@ function Layout() {
   }
 
   if (!user) {
-    return <LoginScreen onSuccess={(token, person, memberships) => login(token, person, memberships)} />
+    return <LoginScreen onSuccess={(token, person, memberships, isPlatformAdmin) => login(token, person, memberships, isPlatformAdmin)} />
   }
 
   if (!memberships.length) {

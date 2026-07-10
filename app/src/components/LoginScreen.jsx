@@ -44,11 +44,11 @@ export default function LoginScreen({ onSuccess }) {
     let unsub = null
     let done = false
 
-    function finish(token, user, memberships) {
+    function finish(token, user, memberships, isPlatformAdmin) {
       if (done) return
       done = true
       if (unsub) unsub()
-      onSuccess(token, user, memberships)
+      onSuccess(token, user, memberships, isPlatformAdmin)
     }
 
     getAuthOffer()
@@ -59,8 +59,8 @@ export default function LoginScreen({ onSuccess }) {
         if (!isMobile) {
           const dataUrl = await QRCode.toDataURL(offerUrl, { width: 220, margin: 2 })
           setQrDataUrl(dataUrl)
-          unsub = subscribeToAuthSession(sessionId, ({ token, user, memberships }) =>
-            finish(token, user, memberships)
+          unsub = subscribeToAuthSession(sessionId, ({ token, user, memberships, isPlatformAdmin }) =>
+            finish(token, user, memberships, isPlatformAdmin)
           )
         }
       })
