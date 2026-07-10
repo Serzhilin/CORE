@@ -21,6 +21,9 @@ import {
     addWgMemberHandler, updateWgMemberHandler, removeWgMemberHandler,
     assignRoleHandler, unassignRoleHandler,
 } from "./controllers/WorkgroupController";
+import {
+    listMembershipTypesHandler, createMembershipTypeHandler, updateMembershipTypeHandler, deleteMembershipTypeHandler,
+} from "./controllers/OrganizationMembershipTypeController";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -99,6 +102,12 @@ app.patch("/api/workgroups/:wid/members/:pid", requireAuth, updateWgMemberHandle
 app.delete("/api/workgroups/:wid/members/:pid", requireAuth, removeWgMemberHandler);
 app.post("/api/workgroups/:wid/members/:pid/roles", requireAuth, assignRoleHandler);
 app.delete("/api/workgroups/:wid/members/:pid/roles/:rid", requireAuth, unassignRoleHandler);
+
+// ── Organization Membership Types ─────────────────────────────────────────────
+app.get("/api/communities/:cid/membership-types", requireAuth, requireCommunityMember, listMembershipTypesHandler);
+app.post("/api/communities/:cid/membership-types", requireAuth, requireCommunityAdmin, createMembershipTypeHandler);
+app.patch("/api/communities/:cid/membership-types/:tid", requireAuth, requireCommunityAdmin, updateMembershipTypeHandler);
+app.delete("/api/communities/:cid/membership-types/:tid", requireAuth, requireCommunityAdmin, deleteMembershipTypeHandler);
 
 // ── Production: serve React app ───────────────────────────────────────────────
 if (process.env.NODE_ENV === "production") {

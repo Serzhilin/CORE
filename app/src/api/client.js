@@ -90,3 +90,9 @@ export const updateWorkgroupMember = (wid, pid, data) => req('PATCH', `/workgrou
 export const removeWorkgroupMember = (wid, pid) => req('DELETE', `/workgroups/${wid}/members/${pid}`)
 export const assignRole = (wid, pid, data) => req('POST', `/workgroups/${wid}/members/${pid}/roles`, data)
 export const unassignRole = (wid, pid, rid) => req('DELETE', `/workgroups/${wid}/members/${pid}/roles/${rid}`)
+
+// ── Organization Membership Types ─────────────────────────────────────────────
+export const listMembershipTypes = (cid) => req('GET', `/communities/${cid}/membership-types`)
+export const createMembershipType = (cid, data) => req('POST', `/communities/${cid}/membership-types`, data)
+export const updateMembershipType = (cid, tid, data) => req('PATCH', `/communities/${cid}/membership-types/${tid}`, data)
+export const deleteMembershipType = (cid, tid) => req('DELETE', `/communities/${cid}/membership-types/${tid}`)
