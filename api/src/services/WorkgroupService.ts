@@ -6,7 +6,7 @@ import { WorkgroupMembership } from "../database/entities/WorkgroupMembership";
 import { WorkgroupMemberRole } from "../database/entities/WorkgroupMemberRole";
 import { Community } from "../database/entities/Community";
 import { Person } from "../database/entities/Person";
-import { createEnvelope, updateEnvelope, getUserMetaEnvelopeId } from "../lib/evault-client";
+import { createEnvelope, updateEnvelope, removeEnvelope, getUserMetaEnvelopeId } from "../lib/evault-client";
 import { ONTOLOGIES } from "../lib/w3ds/ontology";
 import { buildWorkgroupPayload } from "./workgroupPayload";
 import { logger } from "../lib/logger";
@@ -111,6 +111,11 @@ export async function updateWorkgroup(id: string, communityId: string, data: Par
 }
 
 export async function deleteWorkgroup(id: string, communityId: string): Promise<void> {
+    const wg = await wgRepo().findOneOrFail({ where: { id, community_id: communityId } });
+    if (wg.envelope_id) {
+        const community = await communityRepo().findOne({ where: { id: communityId } });
+        if (community?.ename) await removeEnvelope(community.ename, wg.envelope_id);
+    }
     await wgRepo().delete({ id, community_id: communityId });
 }
 
@@ -130,6 +135,7 @@ export async function updateRole(id: string, workgroupId: string, data: Partial<
 }
 
 export async function deleteRole(id: string, workgroupId: string): Promise<void> {
+    await syncWorkgroupToEvault(workgroupId, { excludeRoleId: id });
     await roleRepo().delete({ id, workgroup_id: workgroupId });
 }
 
@@ -148,6 +154,7 @@ export async function updateWorkgroupMember(workgroupMembershipId: string, data:
 export async function removeWorkgroupMember(workgroupId: string, personId: string): Promise<void> {
     const wm = await wgmRepo().findOne({ where: { workgroup_id: workgroupId, person_id: personId } });
     if (!wm) return;
+    await syncWorkgroupToEvault(workgroupId, { excludeMembershipId: wm.id });
     await wmrRepo().delete({ workgroup_membership_id: wm.id });
     await wgmRepo().delete(wm.id);
 }
@@ -160,6 +167,8 @@ export async function assignRole(workgroupMembershipId: string, roleId: string):
 }
 
 export async function unassignRole(workgroupMembershipId: string, roleId: string): Promise<void> {
+    const wm = await wgmRepo().findOneOrFail({ where: { id: workgroupMembershipId } });
+    await syncWorkgroupToEvault(wm.workgroup_id, { excludeRoleAssignment: { membershipId: workgroupMembershipId, roleId } });
     await wmrRepo().delete({ workgroup_membership_id: workgroupMembershipId, role_id: roleId });
 }
 
