@@ -7,6 +7,7 @@ import { getUserMetaEnvelopeId } from "../lib/evault-client";
 import { logger } from "../lib/logger";
 import { Person } from "../database/entities/Person";
 import { signToken } from "../middleware/auth";
+import { isPlatformAdminEname } from "../middleware/communityAccess";
 import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { Community } from "../database/entities/Community";
@@ -95,7 +96,8 @@ export async function epassportLogin(req: Request, res: Response) {
     const returnTo = sessionReturnTo.get(session) ?? "/";
     sessionReturnTo.delete(session);
     const memberships = await getMembershipsForPerson(person.id);
-    const payload = { token, user: serializePerson(person), memberships, returnTo };
+    const isPlatformAdmin = isPlatformAdminEname(person.ename);
+    const payload = { token, user: serializePerson(person), memberships, returnTo, isPlatformAdmin };
     sessionResults.set(session, payload);
     sessions.emit(session, payload);
     res.json(payload);
@@ -123,7 +125,7 @@ export async function devLogin(req: Request, res: Response) {
     }
     const token = signToken({ userId: person.id, ename: person.ename! });
     const memberships = await getMembershipsForPerson(person.id);
-    res.json({ token, user: serializePerson(person), memberships });
+    res.json({ token, user: serializePerson(person), memberships, isPlatformAdmin: isPlatformAdminEname(person.ename) });
 }
 
 export async function getMe(req: Request, res: Response) {
@@ -146,6 +148,7 @@ export async function getMe(req: Request, res: Response) {
             isAspirant: m.is_aspirant,
             community: communities.find((c) => c.id === m.community_id),
         })),
+        isPlatformAdmin: isPlatformAdminEname(person.ename),
     });
 }
 
