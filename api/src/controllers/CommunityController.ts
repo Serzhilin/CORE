@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createCommunity, getMyCommunities, getCommunityFull, updateCommunity, getCommunityGraph, resolveW3id, linkCommunity } from "../services/CommunityService";
+import { createCommunity, getMyCommunities, getAllCommunities, getCommunityFull, updateCommunity, getCommunityGraph, resolveW3id, linkCommunity, unlinkCommunity } from "../services/CommunityService";
 import { Community } from "../database/entities/Community";
 
 export async function listCommunities(req: Request, res: Response) {
@@ -81,6 +81,21 @@ export async function linkCommunityHandler(req: Request, res: Response) {
     } catch (err: any) {
         const mapped = w3idErrorStatus(err.message);
         if (mapped) { res.status(mapped.status).json({ error: mapped.error }); return; }
+        if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Community not found" }); return; }
+        throw err;
+    }
+}
+
+export async function listAllCommunitiesHandler(req: Request, res: Response) {
+    const communities = await getAllCommunities();
+    res.json(communities);
+}
+
+export async function unlinkCommunityHandler(req: Request, res: Response) {
+    try {
+        const community = await unlinkCommunity(req.params.id);
+        res.json(community);
+    } catch (err: any) {
         if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Community not found" }); return; }
         throw err;
     }

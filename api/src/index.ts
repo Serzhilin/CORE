@@ -9,9 +9,9 @@ import pinoHttp from "pino-http";
 import { logger } from "./lib/logger";
 import { AppDataSource } from "./database/data-source";
 import { requireAuth } from "./middleware/auth";
-import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
+import { requireCommunityMember, requireCommunityAdmin, requirePlatformAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
-import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler, resolveW3idHandler, linkCommunityHandler } from "./controllers/CommunityController";
+import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler, resolveW3idHandler, linkCommunityHandler, listAllCommunitiesHandler, unlinkCommunityHandler } from "./controllers/CommunityController";
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler } from "./controllers/MemberController";
 import { handleWebhook } from "./controllers/WebhookController";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
@@ -63,6 +63,8 @@ app.get("/api/communities/:id/graph", requireAuth, requireCommunityMember, getCo
 app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
 app.get("/api/communities/:id/resolve-w3id", requireAuth, requireCommunityAdmin, resolveW3idHandler);
 app.post("/api/communities/:id/link-w3id", requireAuth, requireCommunityAdmin, linkCommunityHandler);
+app.delete("/api/communities/:id/link-w3id", requireAuth, requireCommunityAdmin, unlinkCommunityHandler);
+app.get("/api/admin/communities", requireAuth, requirePlatformAdmin, listAllCommunitiesHandler);
 
 // ── Community Members ─────────────────────────────────────────────────────────
 app.get("/api/communities/:cid/members", requireAuth, requireCommunityMember, listMembersHandler);
