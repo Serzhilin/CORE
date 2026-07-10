@@ -12,6 +12,7 @@ const MyProfile = lazy(() => import('./views/MyProfile'))
 const MyWorkgroups = lazy(() => import('./views/MyWorkgroups'))
 const MyAvailability = lazy(() => import('./views/MyAvailability'))
 const AdminPanel = lazy(() => import('./views/AdminPanel'))
+const SuperadminPage = lazy(() => import('./views/SuperadminPage'))
 
 function Layout() {
   const { user, memberships, loading, login } = useUser()
@@ -56,6 +57,13 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/deeplink-login" element={<DeeplinkLogin />} />
+        <Route path="/superadmin" element={
+          <UserProvider>
+            <Suspense fallback={<div style={{ padding: 32, color: 'var(--color-charcoal-light)' }}>Loading…</div>}>
+              <SuperadminPage />
+            </Suspense>
+          </UserProvider>
+        } />
         <Route path="*" element={
           <UserProvider>
             <CommunityProvider>
