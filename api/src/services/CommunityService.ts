@@ -54,6 +54,10 @@ export async function getMyCommunities(personId: string): Promise<Community[]> {
     return AppDataSource.getRepository(Community).findBy({ id: In(memberships.map(m => m.community_id)) });
 }
 
+export async function getAllCommunities(): Promise<Community[]> {
+    return communityRepo().find({ order: { name: "ASC" } });
+}
+
 export async function getCommunityFull(communityId: string) {
     const community = await AppDataSource.getRepository(Community).findOne({ where: { id: communityId } });
     if (!community) return null;
@@ -346,6 +350,16 @@ export async function linkCommunity(communityId: string, w3id: string, actingPer
     }
 
     return saved;
+}
+
+/** Resets a linked community back to local-only. CORE-side only — does not touch the eVault. */
+export async function unlinkCommunity(communityId: string): Promise<Community> {
+    const community = await communityRepo().findOneOrFail({ where: { id: communityId } });
+    community.ename = null;
+    community.evault_uri = null;
+    community.community_envelope_id = null;
+    community.provisioning_status = "unlinked";
+    return communityRepo().save(community);
 }
 
 /** Adds a member's User-profile MetaEnvelope ID to the community's Chat envelope participantIds.
