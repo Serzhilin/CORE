@@ -198,6 +198,7 @@ All sync functions live in a new `OrganizationService.ts` (or extend `CommunityS
 
 - Registering the `Organization` schemaId in the W3DS Ontology service (same deferral as `Workgroup`).
 - Actual UI screens/forms for editing legalInfo, branding, boardMembers, membershipTypes — required follow-on work, to be designed at plan time.
-- Updating existing UI that reads the old booleans — `OrganogramView`'s "Show aspirants" filter and admin member forms currently branch on `is_aspirant`/`is_active_partner` and must be migrated to `membership_type_id`. Flagged as required, not designed here.
 - Cleaning up the orphaned legacy Chat MetaEnvelope in the real eVault (explicit decision: leave it).
 - Statuten version history (only the current file link is kept; no history array).
+
+**Scope amendment (2026-07-10, at plan-writing stage):** dropping `is_aspirant`/`is_active_partner` while deferring their 11 call sites would break the build — an internal contradiction not caught during brainstorming. Decision: **in scope**, not deferred. All 11 call sites (`MemberService.ts`, `MemberController.ts`, `AuthController.ts`, `CommunityService.ts`, `CommunityMembership.ts`, and 6 frontend files: `CardGrid.jsx`, `PersonNode.jsx`, `useGraphData.js`, `UserContext.jsx`, `MembersTab.jsx`, `PersonModal.jsx`, `InfoPanel.jsx`) are migrated to `membership_type_id` as part of this plan. This supersedes the "Updating existing UI that reads the old booleans" line originally listed here as out of scope.
