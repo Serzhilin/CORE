@@ -31,8 +31,16 @@ export async function requireCommunityMember(req: Request, res: Response, next: 
 }
 
 export async function requireCommunityAdmin(req: Request, res: Response, next: NextFunction) {
+    if (!req.user) { res.status(401).json({ error: "Authentication required" }); return; }
+    if (isPlatformAdminEname(req.user.ename)) { next(); return; }
     await requireCommunityMember(req, res, async () => {
         if (!req.membership?.is_admin) { res.status(403).json({ error: "Admin access required" }); return; }
         next();
     });
+}
+
+export function requirePlatformAdmin(req: Request, res: Response, next: NextFunction) {
+    if (!req.user) { res.status(401).json({ error: "Authentication required" }); return; }
+    if (!isPlatformAdminEname(req.user.ename)) { res.status(403).json({ error: "Platform admin access required" }); return; }
+    next();
 }
