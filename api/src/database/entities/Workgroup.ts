@@ -20,6 +20,10 @@ export class Workgroup {
     @Column({ type: "integer", default: 0 })
     sort_order: number;
 
+    // MetaEnvelope ID of this workgroup's envelope in the community's eVault. Null until first synced.
+    @Column({ type: "text", nullable: true })
+    envelope_id: string | null;
+
     @CreateDateColumn()
     created_at: Date;
 
