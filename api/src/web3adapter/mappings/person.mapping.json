@@ -1,6 +1,0 @@
-{
-  "_comment": "Phase 2 stub — maps Person entity to W3DS User profile",
-  "schemaId": "550e8400-e29b-41d4-a716-446655440000",
-  "tableName": "persons",
-  "fields": {}
-}

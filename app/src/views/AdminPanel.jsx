@@ -10,7 +10,7 @@ const TABS = [
   { key: 'workgroups', label: 'Workgroups' },
   { key: 'members', label: 'Members' },
   { key: 'community', label: 'Community' },
-  { key: 'availability', label: 'Availability types' },
+  { key: 'availability', label: 'Availability' },
 ]
 
 export default function AdminPanel() {

@@ -26,6 +26,11 @@ export class Person {
     @Column({ type: "text", nullable: true })
     avatar_url: string | null;
 
+    // MetaEnvelope ID of this person's W3DS User profile envelope.
+    // participantIds/admins in Chat envelopes reference this ID, not ename — cache it once resolved.
+    @Column({ type: "varchar", nullable: true })
+    meta_envelope_id: string | null;
+
     @CreateDateColumn()
     created_at: Date;
 

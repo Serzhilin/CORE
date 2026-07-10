@@ -1,5 +1,7 @@
 import { AppDataSource } from "../database/data-source";
 import { Person } from "../database/entities/Person";
+import { findEnvelopesByOntology, resolveW3dsFileUrl } from "../lib/evault-client";
+import { ONTOLOGIES } from "../lib/w3ds/ontology";
 
 const repo = () => AppDataSource.getRepository(Person);
 
@@ -13,8 +15,12 @@ export async function findById(id: string): Promise<Person | null> {
     return repo().findOne({ where: { id } });
 }
 
+export async function findByMetaEnvelopeId(metaEnvelopeId: string): Promise<Person | null> {
+    return repo().findOne({ where: { meta_envelope_id: metaEnvelopeId } });
+}
+
 export async function updatePerson(id: string, data: Partial<Pick<Person,
-    "first_name" | "last_name" | "email" | "phone" | "bio" | "avatar_url" | "ename">>): Promise<Person> {
+    "first_name" | "last_name" | "email" | "phone" | "bio" | "avatar_url" | "ename" | "meta_envelope_id">>): Promise<Person> {
     const person = await repo().findOneOrFail({ where: { id } });
     Object.assign(person, data);
     return repo().save(person);
@@ -28,45 +34,39 @@ export function displayName(p: Person): string {
 
 /** Fetch profile from eVault on first login. Returns null if unavailable. */
 export async function fetchEVaultProfile(ename: string): Promise<{ first_name: string; last_name: string } | null> {
-    const registryUrl = process.env.PUBLIC_REGISTRY_URL;
-    const platformUrl = process.env.VITE_PUBLIC_CORE_BASE_URL;
-    if (!registryUrl || !platformUrl) return null;
-    try {
-        const tokenRes = await fetch(`${registryUrl}/platforms/certification`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ platform: platformUrl }),
-        });
-        if (!tokenRes.ok) return null;
-        const { token } = await tokenRes.json() as { token: string };
+    const envelopes = await findEnvelopesByOntology(ename, ONTOLOGIES.User, 1);
+    const data = envelopes[0]?.parsed;
+    if (!data) return null;
 
-        const resolveRes = await fetch(`${registryUrl}/resolve?w3id=${encodeURIComponent(ename)}`);
-        if (!resolveRes.ok) return null;
-        const { uri } = await resolveRes.json() as { uri: string };
+    const displayNameStr = (data.displayName as string | undefined) ?? (data.name as string | undefined) ?? "";
+    const firstName = (data.firstName as string | undefined) ?? (data.givenName as string | undefined) ?? displayNameStr.split(/\s+/)[0] ?? "";
+    const lastName = (data.lastName as string | undefined) ?? (data.familyName as string | undefined) ?? displayNameStr.split(/\s+/).slice(1).join(" ") ?? "";
+    if (!firstName) return null;
+    return { first_name: firstName, last_name: lastName };
+}
 
-        const USER_SCHEMA_ID = "550e8400-e29b-41d4-a716-446655440000";
-        const gqlRes = await fetch(new URL("/graphql", uri).toString(), {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "X-ENAME": ename },
-            body: JSON.stringify({ query: `query { findMetaEnvelopesByOntology(ontology: "${USER_SCHEMA_ID}") { id parsed } }` }),
-        });
-        if (!gqlRes.ok) return null;
-        const data = await gqlRes.json() as any;
-        const envelopes: any[] = data?.data?.findMetaEnvelopesByOntology ?? [];
-        if (!envelopes.length) return null;
+/** Upsert a Person from an inbound Awareness Protocol webhook for the User ontology. */
+export async function upsertFromWebhook(
+    ename: string,
+    metaEnvelopeId: string,
+    data: Record<string, unknown>
+): Promise<Person> {
+    const byEname = await repo().findOne({ where: { ename } });
+    const byMeta = byEname ? null : await repo().findOne({ where: { meta_envelope_id: metaEnvelopeId } });
+    const existing = byEname ?? byMeta ?? repo().create();
+    existing.ename = ename;
+    existing.meta_envelope_id = metaEnvelopeId;
 
-        const merged: Record<string, any> = {};
-        for (const env of envelopes) {
-            for (const [k, v] of Object.entries(env.parsed ?? {})) {
-                if (v !== null && v !== undefined && v !== "") merged[k] = v;
-            }
-        }
-        const displayNameStr: string = merged.displayName ?? merged.name ?? "";
-        const firstName: string = merged.firstName ?? displayNameStr.split(/\s+/)[0] ?? "";
-        const lastName: string = merged.lastName ?? displayNameStr.split(/\s+/).slice(1).join(" ") ?? "";
-        if (!firstName) return null;
-        return { first_name: firstName, last_name: lastName };
-    } catch {
-        return null;
+    const displayNameStr = (data.displayName as string | undefined) ?? (data.name as string | undefined) ?? "";
+    const firstName = (data.firstName as string | undefined) ?? (data.givenName as string | undefined) ?? displayNameStr.split(/\s+/)[0];
+    const lastName = (data.lastName as string | undefined) ?? (data.familyName as string | undefined) ?? displayNameStr.split(/\s+/).slice(1).join(" ");
+    if (firstName) existing.first_name = firstName;
+    if (lastName) existing.last_name = lastName;
+    if (typeof data.bio === "string") existing.bio = data.bio;
+    if (typeof data.email === "string") existing.email = data.email;
+    if (typeof data.avatarUrl === "string") {
+        existing.avatar_url = (await resolveW3dsFileUrl(data.avatarUrl)) ?? data.avatarUrl;
     }
+
+    return repo().save(existing);
 }

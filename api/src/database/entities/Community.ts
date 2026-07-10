@@ -29,6 +29,14 @@ export class Community {
     @Column({ type: "text", nullable: true })
     evault_uri: string | null;
 
+    // MetaEnvelope ID of this community's Chat envelope (group identity), set on link.
+    @Column({ type: "text", nullable: true })
+    community_envelope_id: string | null;
+
+    // 'unlinked' (local only, no eVault) | 'linked' (attached to an existing W3DS eName)
+    @Column({ default: "unlinked" })
+    provisioning_status: string;
+
     @CreateDateColumn()
     created_at: Date;
 

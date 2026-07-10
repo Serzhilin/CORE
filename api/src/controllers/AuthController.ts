@@ -3,6 +3,8 @@ import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
 import { verifySignature } from "../lib/signature-validator";
 import { findOrCreateByEname, fetchEVaultProfile, updatePerson, displayName, findById } from "../services/PersonService";
+import { getUserMetaEnvelopeId } from "../lib/evault-client";
+import { logger } from "../lib/logger";
 import { Person } from "../database/entities/Person";
 import { signToken } from "../middleware/auth";
 import { AppDataSource } from "../database/data-source";
@@ -54,8 +56,9 @@ export async function getOffer(req: Request, res: Response) {
 }
 
 export async function epassportLogin(req: Request, res: Response) {
-    const { ename, session, signature } = req.body;
-    if (!ename || !session || !signature) { res.status(400).json({ error: "Missing ename, session, or signature" }); return; }
+    const { w3id, ename: enameField, session, signature } = req.body;
+    const ename = w3id ?? enameField;
+    if (!ename || !session || !signature) { res.status(400).json({ error: "Missing w3id, session, or signature" }); return; }
 
     const cached = sessionResults.get(session);
     if (cached) { sessionResults.delete(session); res.json(cached); return; }
@@ -77,6 +80,15 @@ export async function epassportLogin(req: Request, res: Response) {
         if (profile?.first_name) {
             person = await updatePerson(person.id, { first_name: profile.first_name, last_name: profile.last_name });
         }
+    }
+
+    if (!person.meta_envelope_id) {
+        const personId = person.id;
+        getUserMetaEnvelopeId(ename)
+            .then((metaEnvelopeId) => {
+                if (metaEnvelopeId) return updatePerson(personId, { meta_envelope_id: metaEnvelopeId });
+            })
+            .catch((err) => logger.warn(err, "meta_envelope_id resolution failed for %s", ename));
     }
 
     const token = signToken({ userId: person.id, ename: person.ename! });

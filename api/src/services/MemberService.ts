@@ -2,6 +2,9 @@ import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { Person } from "../database/entities/Person";
 import { AvailabilityLog } from "../database/entities/AvailabilityLog";
+import { getById as getCommunityById, addParticipantToEnvelope, removeParticipantFromEnvelope } from "./CommunityService";
+import { getUserMetaEnvelopeId } from "../lib/evault-client";
+import { logger } from "../lib/logger";
 
 const memberRepo = () => AppDataSource.getRepository(CommunityMembership);
 const personRepo = () => AppDataSource.getRepository(Person);
@@ -28,14 +31,33 @@ export async function addMember(
             })
         );
     }
+    let membership: CommunityMembership;
     try {
-        return await memberRepo().save(
+        membership = await memberRepo().save(
             memberRepo().create({ person_id: person.id, community_id: communityId })
         );
     } catch (err: any) {
         if (err.code === "23505") throw Object.assign(new Error("Already a member"), { code: "23505" });
         throw err;
     }
+
+    if (person.ename) {
+        syncMemberAdd(communityId, person, membership).catch((err) =>
+            logger.warn(err, "Chat envelope participant sync failed for member %s", membership.id)
+        );
+    }
+
+    return membership;
+}
+
+async function syncMemberAdd(communityId: string, person: Person, membership: CommunityMembership): Promise<void> {
+    const community = await getCommunityById(communityId);
+    if (!community) return;
+    const metaEnvelopeId = person.meta_envelope_id ?? (await getUserMetaEnvelopeId(person.ename!));
+    if (!metaEnvelopeId) return;
+    if (!person.meta_envelope_id) await personRepo().update(person.id, { meta_envelope_id: metaEnvelopeId });
+    await memberRepo().update(membership.id, { meta_envelope_id: metaEnvelopeId });
+    await addParticipantToEnvelope(community, metaEnvelopeId);
 }
 
 export async function updateMember(
@@ -48,7 +70,21 @@ export async function updateMember(
 }
 
 export async function removeMember(communityId: string, membershipId: string): Promise<void> {
+    const membership = await memberRepo().findOne({ where: { id: membershipId, community_id: communityId } });
+    if (!membership) return;
     await memberRepo().delete({ id: membershipId, community_id: communityId });
+
+    if (membership.meta_envelope_id) {
+        syncMemberRemove(communityId, membership.meta_envelope_id).catch((err) =>
+            logger.warn(err, "Chat envelope participant removal failed for member %s", membershipId)
+        );
+    }
+}
+
+async function syncMemberRemove(communityId: string, metaEnvelopeId: string): Promise<void> {
+    const community = await getCommunityById(communityId);
+    if (!community) return;
+    await removeParticipantFromEnvelope(community, metaEnvelopeId);
 }
 
 export async function getMemberAvailabilityLog(membershipId: string): Promise<AvailabilityLog[]> {

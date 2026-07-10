@@ -11,8 +11,9 @@ import { AppDataSource } from "./database/data-source";
 import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
-import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler } from "./controllers/CommunityController";
+import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler, resolveW3idHandler, linkCommunityHandler } from "./controllers/CommunityController";
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler } from "./controllers/MemberController";
+import { handleWebhook } from "./controllers/WebhookController";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
     listWorkgroupsHandler, createWorkgroupHandler, updateWorkgroupHandler, deleteWorkgroupHandler,
@@ -42,6 +43,9 @@ app.get("/api/health", (_, res) =>
     res.json({ status: "ok", db: AppDataSource.isInitialized ? "connected" : "disconnected" })
 );
 
+// ── W3DS Awareness Protocol ────────────────────────────────────────────────────
+app.post("/api/webhook", handleWebhook);
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 app.get("/api/auth/offer", authLimiter, getOffer);
@@ -57,6 +61,8 @@ app.post("/api/communities", requireAuth, createCommunityHandler);
 app.get("/api/communities/:id", requireAuth, requireCommunityMember, getCommunityHandler);
 app.get("/api/communities/:id/graph", requireAuth, requireCommunityMember, getCommunityGraphHandler);
 app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
+app.get("/api/communities/:id/resolve-w3id", requireAuth, requireCommunityAdmin, resolveW3idHandler);
+app.post("/api/communities/:id/link-w3id", requireAuth, requireCommunityAdmin, linkCommunityHandler);
 
 // ── Community Members ─────────────────────────────────────────────────────────
 app.get("/api/communities/:cid/members", requireAuth, requireCommunityMember, listMembersHandler);

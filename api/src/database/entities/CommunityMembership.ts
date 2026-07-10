@@ -36,6 +36,11 @@ export class CommunityMembership {
     @Column({ type: "date", nullable: true })
     availability_until: Date | null;
 
+    // MetaEnvelope ID of the member's User profile, cached once resolved — lets us
+    // add/remove this member from the community's Chat envelope participantIds precisely.
+    @Column({ type: "varchar", nullable: true })
+    meta_envelope_id: string | null;
+
     @CreateDateColumn()
     created_at: Date;
 

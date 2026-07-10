@@ -1,3 +1,4 @@
+import axios from "axios";
 import { AppDataSource } from "../database/data-source";
 import { In } from "typeorm";
 import { Community } from "../database/entities/Community";
@@ -8,6 +9,11 @@ import { WorkgroupMembership } from "../database/entities/WorkgroupMembership";
 import { WorkgroupMemberRole } from "../database/entities/WorkgroupMemberRole";
 import { Role } from "../database/entities/Role";
 import { Person } from "../database/entities/Person";
+import { logger } from "../lib/logger";
+import { createEnvelope, getEnvelope, updateEnvelope, findEnvelopesByOntology, getUserMetaEnvelopeId } from "../lib/evault-client";
+import { ONTOLOGIES } from "../lib/w3ds/ontology";
+
+const communityRepo = () => AppDataSource.getRepository(Community);
 
 const DEFAULT_AVAILABILITY_TYPES = [
     { name: "Vakantie", emoji: "🏖", sort_order: 0 },
@@ -34,6 +40,10 @@ export async function createCommunity(
         );
         return community;
     });
+}
+
+export async function getById(id: string): Promise<Community | null> {
+    return communityRepo().findOne({ where: { id } });
 }
 
 export async function getMyCommunities(personId: string): Promise<Community[]> {
@@ -196,8 +206,197 @@ export async function updateCommunity(
     id: string,
     data: Partial<Pick<Community, "name" | "slug" | "description" | "logo_url" | "primary_color" | "title_font">>
 ): Promise<Community> {
-    const repo = AppDataSource.getRepository(Community);
-    const community = await repo.findOneOrFail({ where: { id } });
+    const community = await communityRepo().findOneOrFail({ where: { id } });
     Object.assign(community, data);
-    return repo.save(community);
+    const saved = await communityRepo().save(community);
+
+    if (saved.provisioning_status === "linked" && saved.ename && saved.community_envelope_id) {
+        syncCommunityToEvault(saved).catch((err) =>
+            logger.warn(err, "Community envelope update failed for %s", saved.id)
+        );
+    }
+
+    return saved;
+}
+
+async function syncCommunityToEvault(community: Community): Promise<void> {
+    const envelope = await getEnvelope(community.ename!, community.community_envelope_id!);
+    if (!envelope) return;
+    await updateEnvelope({
+        vaultEname: community.ename!,
+        envelopeId: community.community_envelope_id!,
+        ontology: ONTOLOGIES.Community,
+        payload: {
+            ...envelope,
+            name: community.name,
+            description: community.description ?? envelope.description,
+            avatar: community.logo_url ?? envelope.avatar,
+            updatedAt: new Date().toISOString(),
+        },
+        acl: ["*"],
+    });
+}
+
+// ── W3DS manual link ──────────────────────────────────────────────────────────
+
+export interface W3idResolution {
+    evault_uri: string;
+    w3id: string;
+    envelopeId: string | null;
+    envelope: {
+        name: string | null;
+        logo_url: string | null;
+        description: string | null;
+        ownerEname: string | null;
+    } | null;
+}
+
+/** Resolves a candidate eName and, if it has a Chat envelope already, verifies the acting
+ *  person is recognized as its owner/admin before returning envelope details for preview. */
+export async function resolveW3id(w3id: string, actingPersonId: string): Promise<W3idResolution> {
+    const registryUrl = process.env.PUBLIC_REGISTRY_URL as string;
+    const normalized = w3id.startsWith("@") ? w3id : `@${w3id}`;
+
+    let evault_uri: string;
+    try {
+        const res = await axios.get<{ uri: string }>(
+            `${registryUrl}/resolve?w3id=${encodeURIComponent(normalized)}`,
+            { timeout: 10_000 }
+        );
+        evault_uri = res.data.uri;
+    } catch {
+        throw new Error("w3id_not_found");
+    }
+
+    const envelopes = await findEnvelopesByOntology(normalized, ONTOLOGIES.Community);
+    if (envelopes.length === 0) {
+        return { evault_uri, w3id: normalized, envelopeId: null, envelope: null };
+    }
+
+    const env = envelopes[0];
+    const payload = env.parsed ?? {};
+    const ownerField = (payload.owner as string | null) ?? null;
+    const adminsField = Array.isArray(payload.admins) ? (payload.admins as string[]) : [];
+
+    const actor = await AppDataSource.getRepository(Person).findOneOrFail({ where: { id: actingPersonId } });
+    if (!actor.ename) throw new Error("actor_has_no_ename");
+    const metaId = actor.meta_envelope_id ?? (await getUserMetaEnvelopeId(actor.ename));
+    const isAdminByMetaId = metaId ? adminsField.includes(metaId) : false;
+    const isAdminByOwner = ownerField === actor.ename;
+    if (!isAdminByMetaId && !isAdminByOwner) throw new Error("not_admin");
+
+    return {
+        evault_uri,
+        w3id: normalized,
+        envelopeId: env.id,
+        envelope: {
+            name: (payload.name as string) ?? null,
+            logo_url: (payload.avatar as string | null) ?? null,
+            description: (payload.description as string) ?? null,
+            ownerEname: ownerField,
+        },
+    };
+}
+
+/** Manually links an already-created local Community to an existing W3DS eName the acting
+ *  person owns/administers. If the eName has no Chat envelope yet, creates one. */
+export async function linkCommunity(communityId: string, w3id: string, actingPersonId: string): Promise<Community> {
+    const community = await communityRepo().findOneOrFail({ where: { id: communityId } });
+    if (community.provisioning_status === "linked") throw new Error("already_linked");
+
+    const resolution = await resolveW3id(w3id, actingPersonId);
+
+    const existingW3id = await communityRepo().findOne({ where: { ename: resolution.w3id } });
+    if (existingW3id) throw new Error("w3id_already_linked");
+
+    community.ename = resolution.w3id;
+    community.evault_uri = resolution.evault_uri;
+    community.provisioning_status = "linked";
+    community.community_envelope_id = resolution.envelopeId;
+    if (resolution.envelope?.name) community.name = resolution.envelope.name;
+    if (resolution.envelope?.logo_url) community.logo_url = resolution.envelope.logo_url;
+    if (resolution.envelope?.description) community.description = resolution.envelope.description;
+    const saved = await communityRepo().save(community);
+
+    if (!resolution.envelopeId) {
+        const actor = await AppDataSource.getRepository(Person).findOneOrFail({ where: { id: actingPersonId } });
+        const now = new Date().toISOString();
+        getUserMetaEnvelopeId(actor.ename!)
+            .then((adminMetaId) =>
+                createEnvelope({
+                    vaultEname: resolution.w3id,
+                    ontology: ONTOLOGIES.Community,
+                    payload: {
+                        ename: resolution.w3id,
+                        name: saved.name,
+                        type: "group",
+                        description: saved.description ?? `${saved.name} — W3DS community`,
+                        avatar: saved.logo_url,
+                        owner: actor.ename,
+                        admins: adminMetaId ? [adminMetaId] : [],
+                        participantIds: adminMetaId ? [adminMetaId] : [],
+                        createdAt: now,
+                        updatedAt: now,
+                    },
+                    acl: ["*"],
+                })
+            )
+            .then((envelopeId) => communityRepo().update(saved.id, { community_envelope_id: envelopeId }))
+            .catch((err) => logger.warn(err, "Community envelope write failed for linked community %s", saved.id));
+    }
+
+    return saved;
+}
+
+/** Adds a member's User-profile MetaEnvelope ID to the community's Chat envelope participantIds.
+ *  No-op if the community isn't linked to a W3DS eName. */
+export async function addParticipantToEnvelope(community: Community, metaEnvelopeId: string): Promise<void> {
+    if (community.provisioning_status !== "linked" || !community.ename || !community.community_envelope_id) return;
+    const envelope = await getEnvelope(community.ename, community.community_envelope_id);
+    if (!envelope) return;
+    const participantIds = Array.isArray(envelope.participantIds) ? (envelope.participantIds as string[]) : [];
+    if (participantIds.includes(metaEnvelopeId)) return;
+    await updateEnvelope({
+        vaultEname: community.ename,
+        envelopeId: community.community_envelope_id,
+        ontology: ONTOLOGIES.Community,
+        payload: { ...envelope, participantIds: [...participantIds, metaEnvelopeId], updatedAt: new Date().toISOString() },
+        acl: ["*"],
+    });
+}
+
+/** Removes a member's MetaEnvelope ID from the community's Chat envelope participantIds. */
+export async function removeParticipantFromEnvelope(community: Community, metaEnvelopeId: string): Promise<void> {
+    if (community.provisioning_status !== "linked" || !community.ename || !community.community_envelope_id) return;
+    const envelope = await getEnvelope(community.ename, community.community_envelope_id);
+    if (!envelope) return;
+    const participantIds = Array.isArray(envelope.participantIds) ? (envelope.participantIds as string[]) : [];
+    if (!participantIds.includes(metaEnvelopeId)) return;
+    await updateEnvelope({
+        vaultEname: community.ename,
+        envelopeId: community.community_envelope_id,
+        ontology: ONTOLOGIES.Community,
+        payload: {
+            ...envelope,
+            participantIds: participantIds.filter((id) => id !== metaEnvelopeId),
+            updatedAt: new Date().toISOString(),
+        },
+        acl: ["*"],
+    });
+}
+
+/** Inbound Awareness Protocol sync: another platform changed this community's Chat envelope.
+ *  Refreshes our cached display fields only — Postgres stays the source of truth for membership. */
+export async function syncFromChatWebhook(
+    w3id: string,
+    metaEnvelopeId: string,
+    data: Record<string, unknown>
+): Promise<void> {
+    const community = await communityRepo().findOne({ where: { ename: w3id } });
+    if (!community) return;
+    if (typeof data.name === "string") community.name = data.name;
+    if (typeof data.description === "string") community.description = data.description;
+    if (typeof data.avatar === "string") community.logo_url = data.avatar;
+    community.community_envelope_id = metaEnvelopeId;
+    await communityRepo().save(community);
 }

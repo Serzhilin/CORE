@@ -1,6 +1,0 @@
-{
-  "_comment": "Phase 2 stub — maps Community entity to W3DS GroupManifest",
-  "schemaId": "a8bfb7cf-3200-4b25-9ea9-ee41100f212e",
-  "tableName": "communities",
-  "fields": {}
-}

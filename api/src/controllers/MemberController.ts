@@ -4,6 +4,10 @@ import { updatePerson } from "../services/PersonService";
 import { applyAvailability } from "../services/AvailabilityService";
 import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
+import { Person } from "../database/entities/Person";
+import { getById as getCommunityById, addParticipantToEnvelope } from "../services/CommunityService";
+import { getUserMetaEnvelopeId } from "../lib/evault-client";
+import { logger } from "../lib/logger";
 
 export async function listMembersHandler(req: Request, res: Response) {
     res.json(await listMembers(req.params.cid));
@@ -69,9 +73,8 @@ export async function setMyAvailability(req: Request, res: Response) {
 }
 
 export async function setMemberAvailability(req: Request, res: Response) {
-    // Verify membership belongs to this community
     const existing = await AppDataSource.getRepository(CommunityMembership).findOne({
-        where: { id: req.params.pid, community_id: req.params.cid },
+        where: { person_id: req.params.pid, community_id: req.params.cid },
     });
     if (!existing) { res.status(404).json({ error: "Membership not found in this community" }); return; }
 
@@ -80,7 +83,7 @@ export async function setMemberAvailability(req: Request, res: Response) {
         res.status(400).json({ error: "Invalid until date" }); return;
     }
     try {
-        const updated = await applyAvailability(req.params.pid, {
+        const updated = await applyAvailability(existing.id, {
             type_id: type_id ?? null,
             reason: reason ?? null,
             until: until ? new Date(until) : null,
@@ -101,10 +104,34 @@ export async function updateMemberPersonHandler(req: Request, res: Response) {
     const { ename } = req.body;
     try {
         const person = await updatePerson(req.params.pid, { ename: ename ?? null });
+        if (ename) {
+            syncClaimedIdentity(req.params.cid, person).catch((err) =>
+                logger.warn(err, "Chat envelope sync failed after identity claim for person %s", person.id)
+            );
+        }
         res.json(person);
     } catch (err: any) {
         if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Person not found" }); return; }
         if (err.code === "23505") { res.status(409).json({ error: "eName already in use" }); return; }
         throw err;
     }
+}
+
+// CORE's "claim identity" moment: an admin has just set a shell Person's eName.
+// Resolve their W3DS User MetaEnvelope ID and add them to the community's Chat envelope, if linked.
+async function syncClaimedIdentity(communityId: string, person: Person): Promise<void> {
+    if (!person.ename) return;
+    const community = await getCommunityById(communityId);
+    if (!community) return;
+
+    const metaEnvelopeId = person.meta_envelope_id ?? (await getUserMetaEnvelopeId(person.ename));
+    if (!metaEnvelopeId) return;
+    if (!person.meta_envelope_id) await AppDataSource.getRepository(Person).update(person.id, { meta_envelope_id: metaEnvelopeId });
+
+    const membership = await AppDataSource.getRepository(CommunityMembership).findOne({
+        where: { person_id: person.id, community_id: communityId },
+    });
+    if (membership) await AppDataSource.getRepository(CommunityMembership).update(membership.id, { meta_envelope_id: metaEnvelopeId });
+
+    await addParticipantToEnvelope(community, metaEnvelopeId);
 }

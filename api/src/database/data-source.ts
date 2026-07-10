@@ -11,7 +11,6 @@ import { Workgroup } from "./entities/Workgroup";
 import { Role } from "./entities/Role";
 import { WorkgroupMembership } from "./entities/WorkgroupMembership";
 import { WorkgroupMemberRole } from "./entities/WorkgroupMemberRole";
-import { CoreSubscriber } from "../web3adapter/subscriber";
 
 config({ path: path.resolve(__dirname, "../../../.env") });
 
@@ -34,6 +33,5 @@ export const AppDataSource = new DataSource({
         AvailabilityType, AvailabilityLog,
         Workgroup, Role, WorkgroupMembership, WorkgroupMemberRole,
     ],
-    subscribers: [CoreSubscriber],
     logging: false,
 });

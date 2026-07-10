@@ -1,15 +1,30 @@
 import { useState } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
 import EmojiPicker from '../../components/EmojiPicker'
-import { createAvailabilityType, updateAvailabilityType, archiveAvailabilityType } from '../../api/client'
+import {
+  createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
+  setMemberAvailability,
+} from '../../api/client'
+
+const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function AvailabilityTab() {
-  const { communityId, availabilityTypes, refresh } = useCommunity()
+  const { communityId, community, availabilityTypes, refresh } = useCommunity()
+
+  // Types CRUD
   const [atForm, setAtForm] = useState({ name: '', emoji: '' })
   const [atSaving, setAtSaving] = useState(false)
   const [editingAt, setEditingAt] = useState(null)
 
-  async function handleAdd(e) {
+  // Member availability form
+  const [avForm, setAvForm] = useState({ personId: '', type_id: '', reason: '', until: '' })
+  const [avSaving, setAvSaving] = useState(false)
+
+  const unavailableMembers = (community?.members || [])
+    .filter(m => m.availability)
+    .sort((a, b) => (a.firstName || '').localeCompare(b.firstName || ''))
+
+  async function handleAddType(e) {
     e.preventDefault()
     if (!atForm.name || !atForm.emoji) return
     setAtSaving(true)
@@ -17,37 +32,133 @@ export default function AvailabilityTab() {
       await createAvailabilityType(communityId, atForm)
       await refresh()
       setAtForm({ name: '', emoji: '' })
-    } catch (err) {
-      alert('Error: ' + err.message)
-    } finally {
-      setAtSaving(false)
-    }
+    } catch (err) { alert('Error: ' + err.message) }
+    finally { setAtSaving(false) }
   }
 
-  async function handleUpdate(id, data) {
-    try {
-      await updateAvailabilityType(communityId, id, data)
-      await refresh()
-      setEditingAt(null)
-    } catch (err) {
-      alert('Error: ' + err.message)
-    }
+  async function handleUpdateType(id, data) {
+    try { await updateAvailabilityType(communityId, id, data); await refresh(); setEditingAt(null) }
+    catch (err) { alert('Error: ' + err.message) }
   }
 
-  async function handleArchive(id) {
+  async function handleArchiveType(id) {
     if (!confirm('Archive this availability type?')) return
-    try {
-      await archiveAvailabilityType(communityId, id)
-      await refresh()
-    } catch (err) {
-      alert(err.message)
-    }
+    try { await archiveAvailabilityType(communityId, id); await refresh() }
+    catch (err) { alert(err.message) }
   }
 
-  const rowStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
+  async function handleSetAvailability(e) {
+    e.preventDefault()
+    if (!avForm.personId || !avForm.type_id) return
+    setAvSaving(true)
+    try {
+      await setMemberAvailability(communityId, avForm.personId, {
+        type_id: avForm.type_id,
+        reason: avForm.reason || null,
+        until: avForm.until || null,
+      })
+      await refresh()
+      setAvForm({ personId: '', type_id: '', reason: '', until: '' })
+    } catch (err) { alert(err.message) }
+    finally { setAvSaving(false) }
+  }
+
+  async function handleClearAvailability(personId) {
+    try { await setMemberAvailability(communityId, personId, { clear: true }); await refresh() }
+    catch (err) { alert(err.message) }
+  }
+
+  async function handleEditAvailability(m) {
+    setAvForm({
+      personId: m.personId,
+      type_id: m.availability.type.id,
+      reason: m.availability.reason || '',
+      until: m.availability.until ? m.availability.until.slice(0, 10) : '',
+    })
+  }
+
+  const trashIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+    </svg>
+  )
 
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+    <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+      {/* Currently unavailable */}
+      <div className="card" style={{ padding: 28 }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+          Currently unavailable
+        </h3>
+        {unavailableMembers.length === 0 ? (
+          <p style={{ color: 'var(--color-charcoal-light)', fontSize: '0.9rem', margin: 0 }}>Everyone is available.</p>
+        ) : (
+          unavailableMembers.map(m => {
+            const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
+            return (
+              <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>
+                <span style={{ fontSize: '1.1rem' }}>{m.availability.type.emoji}</span>
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{name}</span>
+                  <span style={{ marginLeft: 8, fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>{m.availability.type.name}</span>
+                  {m.availability.reason && <span style={{ marginLeft: 6, fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>— {m.availability.reason}</span>}
+                  {m.availability.until && <span style={{ marginLeft: 6, fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}>until {new Date(m.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>}
+                </div>
+                <button onClick={() => handleEditAvailability(m)} className="btn-secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>Edit</button>
+                <button onClick={() => handleClearAvailability(m.personId)} title="Clear availability" style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}>{trashIcon}</button>
+              </div>
+            )
+          })
+        )}
+
+        {/* Set availability form */}
+        <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--color-sand)' }}>
+          <h4 style={{ margin: '0 0 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+            {avForm.personId ? 'Edit availability' : 'Set availability'}
+          </h4>
+          <form onSubmit={handleSetAvailability} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Member</label>
+              <select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} style={inputStyle} required>
+                <option value="">Select…</option>
+                {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map(m => (
+                  <option key={m.personId} value={m.personId}>
+                    {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Type</label>
+              <select value={avForm.type_id} onChange={(e) => setAvForm(f => ({ ...f, type_id: e.target.value }))} style={inputStyle} required>
+                <option value="">Select…</option>
+                {availabilityTypes.map(t => (
+                  <option key={t.id} value={t.id}>{t.emoji} {t.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Reason</label>
+              <input style={{ ...inputStyle, width: 160 }} value={avForm.reason} onChange={(e) => setAvForm(f => ({ ...f, reason: e.target.value }))} placeholder="Optional" />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Until</label>
+              <input type="date" style={inputStyle} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button type="submit" className="btn-primary" disabled={avSaving || !avForm.personId || !avForm.type_id} style={{ fontSize: '0.85rem' }}>
+                {avForm.personId && unavailableMembers.some(m => m.personId === avForm.personId) ? 'Update' : 'Set'}
+              </button>
+              {avForm.personId && (
+                <button type="button" className="btn-secondary" onClick={() => setAvForm({ personId: '', type_id: '', reason: '', until: '' })} style={{ fontSize: '0.85rem' }}>Cancel</button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Availability types */}
       <div className="card" style={{ padding: 28 }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
           Availability types
@@ -58,8 +169,8 @@ export default function AvailabilityTab() {
               {editingAt?.id === t.id ? (
                 <>
                   <EmojiPicker value={editingAt.emoji} onChange={(emoji) => setEditingAt((a) => ({ ...a, emoji }))} />
-                  <input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} style={{ flex: 1, ...rowStyle }} />
-                  <button className="btn-primary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => handleUpdate(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</button>
+                  <input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} style={{ flex: 1, ...inputStyle }} />
+                  <button className="btn-primary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => handleUpdateType(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</button>
                   <button className="btn-secondary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => setEditingAt(null)}>Cancel</button>
                 </>
               ) : (
@@ -67,7 +178,7 @@ export default function AvailabilityTab() {
                   <span style={{ fontSize: '1.1rem' }}>{t.emoji}</span>
                   <span style={{ flex: 1 }}>{t.name}</span>
                   <button className="btn-secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</button>
-                  <button style={{ background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => handleArchive(t.id)}>Archive</button>
+                  <button style={{ background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => handleArchiveType(t.id)}>Archive</button>
                 </>
               )}
             </div>
@@ -76,12 +187,13 @@ export default function AvailabilityTab() {
             <p style={{ color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}>No availability types yet.</p>
           )}
         </div>
-        <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8 }}>
+        <form onSubmit={handleAddType} style={{ display: 'flex', gap: 8 }}>
           <EmojiPicker value={atForm.emoji} onChange={(emoji) => setAtForm((f) => ({ ...f, emoji }))} />
-          <input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1, ...rowStyle }} />
+          <input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1, ...inputStyle }} />
           <button type="submit" className="btn-primary" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</button>
         </form>
       </div>
+
     </div>
   )
 }
