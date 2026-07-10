@@ -88,6 +88,16 @@ const GQL_FIND_BY_ONTOLOGY = `
   }
 `
 
+const GQL_REMOVE = `
+  mutation RemoveMetaEnvelope($id: ID!) {
+    removeMetaEnvelope(id: $id) {
+      deletedId
+      success
+      errors { message code }
+    }
+  }
+`
+
 export async function createEnvelope(input: EnvelopeInput): Promise<string> {
   const data = await gqlRequest<{
     createMetaEnvelope: {
@@ -115,6 +125,15 @@ export async function updateEnvelope(input: UpdateInput): Promise<void> {
   })
   if (data.updateMetaEnvelope.errors?.length) {
     throw new Error(data.updateMetaEnvelope.errors[0]?.message ?? 'updateEnvelope failed')
+  }
+}
+
+export async function removeEnvelope(vaultEname: string, envelopeId: string): Promise<void> {
+  const data = await gqlRequest<{
+    removeMetaEnvelope: { deletedId: string | null; success: boolean; errors?: Array<{ message?: string }> }
+  }>(vaultEname, GQL_REMOVE, { id: envelopeId })
+  if (!data.removeMetaEnvelope.success || data.removeMetaEnvelope.errors?.length) {
+    throw new Error(data.removeMetaEnvelope.errors?.[0]?.message ?? 'removeEnvelope failed')
   }
 }
 
