@@ -21,6 +21,9 @@ export class CommunityMembership {
     @Column({ default: false })
     is_active_partner: boolean;
 
+    @Column({ type: "uuid", nullable: true })
+    membership_type_id: string | null;
+
     @Column({ type: "date", nullable: true })
     joined_at: Date | null;
 

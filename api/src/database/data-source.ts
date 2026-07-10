@@ -11,6 +11,7 @@ import { Workgroup } from "./entities/Workgroup";
 import { Role } from "./entities/Role";
 import { WorkgroupMembership } from "./entities/WorkgroupMembership";
 import { WorkgroupMemberRole } from "./entities/WorkgroupMemberRole";
+import { OrganizationMembershipType } from "./entities/OrganizationMembershipType";
 
 config({ path: path.resolve(__dirname, "../../../.env") });
 
@@ -32,6 +33,7 @@ export const AppDataSource = new DataSource({
         Person, Community, CommunityMembership,
         AvailabilityType, AvailabilityLog,
         Workgroup, Role, WorkgroupMembership, WorkgroupMemberRole,
+        OrganizationMembershipType,
     ],
     logging: false,
 });

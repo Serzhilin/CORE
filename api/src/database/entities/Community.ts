@@ -29,6 +29,36 @@ export class Community {
     @Column({ type: "text", nullable: true })
     evault_uri: string | null;
 
+    @Column({ type: "text", nullable: true })
+    organization_envelope_id: string | null;
+
+    @Column({ type: "text", nullable: true })
+    legal_form: string | null;
+
+    @Column({ type: "text", nullable: true })
+    official_name: string | null;
+
+    @Column({ type: "text", nullable: true })
+    kvk_number: string | null;
+
+    @Column({ type: "text", nullable: true })
+    rsin: string | null;
+
+    @Column({ type: "text", nullable: true })
+    iban: string | null;
+
+    @Column({ type: "text", nullable: true })
+    registered_address: string | null;
+
+    @Column({ type: "date", nullable: true })
+    founding_date: Date | null;
+
+    @Column({ type: "text", nullable: true })
+    statuten_file_uri: string | null;
+
+    @Column({ type: "jsonb", default: () => "'[]'" })
+    board_members: { eName: string; role: string }[];
+
     // MetaEnvelope ID of this community's Chat envelope (group identity), set on link.
     @Column({ type: "text", nullable: true })
     community_envelope_id: string | null;
