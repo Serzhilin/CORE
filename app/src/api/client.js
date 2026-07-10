@@ -54,6 +54,8 @@ export const resolveCommunityW3id = (id, w3id) => req('GET', `/communities/${id}
 export const linkCommunityW3id = (id, w3id) => req('POST', `/communities/${id}/link-w3id`, { w3id })
 export const unlinkCommunityW3id = (id) => req('DELETE', `/communities/${id}/link-w3id`)
 export const adminListAllCommunities = () => req('GET', '/admin/communities')
+export const adminResolveEname = (w3id) => req('GET', `/admin/communities/resolve-w3id?w3id=${encodeURIComponent(w3id)}`)
+export const adminCreateCommunity = (w3id, slug) => req('POST', '/admin/communities', { w3id, slug })
 
 // ── Members ───────────────────────────────────────────────────────────────────
 export const listMembers = (cid) => req('GET', `/communities/${cid}/members`)

@@ -79,24 +79,6 @@ export default function TopBar() {
           }}>
             {community?.name || 'CORE'}
           </span>
-
-          {memberships.length > 1 && (
-            <select
-              value={communityId || ''}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => switchCommunity(e.target.value)}
-              style={{
-                padding: '4px 8px', borderRadius: 6, fontSize: '0.8rem',
-                border: '1px solid var(--color-sand-dark)', background: 'white', cursor: 'pointer',
-              }}
-            >
-              {memberships.map((m) => (
-                <option key={m.communityId} value={m.communityId}>
-                  {m.community?.name || m.communityId}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
 
         {/* Right: avatar + dropdown */}
@@ -149,6 +131,29 @@ export default function TopBar() {
                 <MenuItem onClick={() => { setShowMenu(false); navigate('/admin') }}>
                   ⚙️ Admin
                 </MenuItem>
+              )}
+
+              {memberships.length > 1 && (
+                <>
+                  <div style={{ borderTop: '1px solid var(--color-sand)', padding: '8px 16px 2px', fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-charcoal-light)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    Communities
+                  </div>
+                  {memberships.map((m) => (
+                    <MenuItem
+                      key={m.communityId}
+                      onClick={() => { setShowMenu(false); switchCommunity(m.communityId); navigate('/') }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ flex: 1, fontWeight: m.communityId === communityId ? 600 : 400 }}>
+                          {m.community?.name || m.communityId}
+                        </span>
+                        {m.communityId === communityId && (
+                          <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--color-terracotta)', flexShrink: 0 }} />
+                        )}
+                      </span>
+                    </MenuItem>
+                  ))}
+                </>
               )}
 
               <div style={{ borderTop: '1px solid var(--color-sand)' }}>

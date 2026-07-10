@@ -362,6 +362,79 @@ export async function unlinkCommunity(communityId: string): Promise<Community> {
     return communityRepo().save(community);
 }
 
+export type EnameGroupPreview = {
+    evault_uri: string;
+    w3id: string;
+    envelopeId: string;
+    envelope: { name: string; logo_url: string | null; description: string | null };
+};
+
+/** Platform-admin-only: resolves an eName and reads its Chat/Community envelope for preview.
+ *  Unlike resolveW3id, performs no local-ownership check. Read-only — never writes to the eVault.
+ *  Throws "group_not_found" if the eName has no Chat envelope yet. */
+export async function resolveEnameForNewCommunity(w3id: string): Promise<EnameGroupPreview> {
+    const registryUrl = process.env.PUBLIC_REGISTRY_URL as string;
+    const normalized = w3id.startsWith("@") ? w3id : `@${w3id}`;
+
+    let evault_uri: string;
+    try {
+        const res = await axios.get<{ uri: string }>(
+            `${registryUrl}/resolve?w3id=${encodeURIComponent(normalized)}`,
+            { timeout: 10_000 }
+        );
+        evault_uri = res.data.uri;
+    } catch {
+        throw new Error("w3id_not_found");
+    }
+
+    const envelopes = await findEnvelopesByOntology(normalized, ONTOLOGIES.Community);
+    if (envelopes.length === 0) throw new Error("group_not_found");
+
+    const env = envelopes[0];
+    const payload = env.parsed ?? {};
+
+    return {
+        evault_uri,
+        w3id: normalized,
+        envelopeId: env.id,
+        envelope: {
+            name: (payload.name as string) ?? normalized,
+            logo_url: (payload.avatar as string | null) ?? null,
+            description: (payload.description as string | null) ?? null,
+        },
+    };
+}
+
+/** Platform-admin-only: creates a new local Community row directly from an existing eVault
+ *  group, already linked. Read-only against the eVault — never writes an envelope. */
+export async function createCommunityFromEname(w3id: string, slug: string): Promise<Community> {
+    const resolution = await resolveEnameForNewCommunity(w3id);
+
+    const existingEname = await communityRepo().findOne({ where: { ename: resolution.w3id } });
+    if (existingEname) throw new Error("w3id_already_linked");
+
+    return AppDataSource.transaction(async (manager) => {
+        const community = await manager.save(
+            manager.create(Community, {
+                name: resolution.envelope.name,
+                slug,
+                description: resolution.envelope.description,
+                logo_url: resolution.envelope.logo_url,
+                ename: resolution.w3id,
+                evault_uri: resolution.evault_uri,
+                community_envelope_id: resolution.envelopeId,
+                provisioning_status: "linked",
+            })
+        );
+        await manager.save(
+            DEFAULT_AVAILABILITY_TYPES.map((t) =>
+                manager.create(AvailabilityType, { ...t, community_id: community.id })
+            )
+        );
+        return community;
+    });
+}
+
 /** Adds a member's User-profile MetaEnvelope ID to the community's Chat envelope participantIds.
  *  No-op if the community isn't linked to a W3DS eName. */
 export async function addParticipantToEnvelope(community: Community, metaEnvelopeId: string): Promise<void> {

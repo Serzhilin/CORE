@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createCommunity, getMyCommunities, getAllCommunities, getCommunityFull, updateCommunity, getCommunityGraph, resolveW3id, linkCommunity, unlinkCommunity } from "../services/CommunityService";
+import { createCommunity, getMyCommunities, getAllCommunities, getCommunityFull, updateCommunity, getCommunityGraph, resolveW3id, linkCommunity, unlinkCommunity, resolveEnameForNewCommunity, createCommunityFromEname } from "../services/CommunityService";
 import { Community } from "../database/entities/Community";
 
 export async function listCommunities(req: Request, res: Response) {
@@ -55,6 +55,7 @@ function w3idErrorStatus(message: string): { status: number; error: string } | n
         case "actor_has_no_ename": return { status: 400, error: "You must be logged in via W3DS to link a community" };
         case "already_linked": return { status: 409, error: "Community is already linked to a W3DS eName" };
         case "w3id_already_linked": return { status: 409, error: "That eName is already linked to another community" };
+        case "group_not_found": return { status: 404, error: "No group envelope found for that eName yet" };
         default: return null;
     }
 }
@@ -97,6 +98,34 @@ export async function unlinkCommunityHandler(req: Request, res: Response) {
         res.json(community);
     } catch (err: any) {
         if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Community not found" }); return; }
+        throw err;
+    }
+}
+
+export async function adminResolveEnameHandler(req: Request, res: Response) {
+    const { w3id } = req.query;
+    if (typeof w3id !== "string" || !w3id) { res.status(400).json({ error: "w3id query param required" }); return; }
+    try {
+        const resolution = await resolveEnameForNewCommunity(w3id);
+        res.json(resolution);
+    } catch (err: any) {
+        const mapped = w3idErrorStatus(err.message);
+        if (mapped) { res.status(mapped.status).json({ error: mapped.error }); return; }
+        throw err;
+    }
+}
+
+export async function createCommunityFromEnameHandler(req: Request, res: Response) {
+    const { w3id, slug } = req.body;
+    if (!w3id || !slug) { res.status(400).json({ error: "w3id and slug are required" }); return; }
+    if (!/^[a-z0-9-]+$/.test(slug)) { res.status(400).json({ error: "Slug must be lowercase letters, numbers, and hyphens only" }); return; }
+    try {
+        const community = await createCommunityFromEname(w3id, slug);
+        res.status(201).json(community);
+    } catch (err: any) {
+        if (err.code === "23505") { res.status(409).json({ error: "Slug already taken" }); return; }
+        const mapped = w3idErrorStatus(err.message);
+        if (mapped) { res.status(mapped.status).json({ error: mapped.error }); return; }
         throw err;
     }
 }
