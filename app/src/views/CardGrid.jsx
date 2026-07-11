@@ -35,7 +35,6 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
     return members
       .filter(Boolean)
       .filter((m) => filter.showUnavailable !== false || !m.availability)
-      .filter((m) => filter.showAspirants !== false || !m.isAspirant)
       .filter((m) => !q ||
         (m.firstName || '').toLowerCase().includes(q) ||
         (m.lastName || '').toLowerCase().includes(q))
@@ -136,17 +135,15 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
             {roles.map((role, i) => (
               <circle key={role.id} r={r + 3 + i * 5} fill="none" stroke={role.color} strokeWidth={1.5} opacity={0.85} />
             ))}
-            <circle r={r} fill={wgColor} fillOpacity={m.isAspirant ? 0.35 : 0.85}
-              stroke={m.isAspirant ? wgColor : 'white'} strokeWidth={1}
-              strokeDasharray={m.isAspirant ? '3,2' : 'none'} />
+            <circle r={r} fill={wgColor} fillOpacity={0.85} stroke="white" strokeWidth={1} />
           </svg>
         )
       }
       <span style={{ fontSize: '0.9rem' }}>
         {m.firstName || m.lastName || 'Unknown'}{showLastInitial && m.lastName ? ` ${m.lastName[0]}.` : ''}
-        {m.isAspirant && (
+        {m.membershipType && (
           <span style={{ marginLeft: 5, fontSize: '0.72rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic' }}>
-            aspirant
+            {m.membershipType.emoji ? `${m.membershipType.emoji} ` : ''}{m.membershipType.name}
           </span>
         )}
         {roles.map((role) => (

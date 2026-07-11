@@ -8,7 +8,6 @@ export function useGraphData(graphData, filters) {
 
     let visiblePersons = persons
     if (!filters.showUnavailable) visiblePersons = visiblePersons.filter(p => !p.availability)
-    if (!filters.showAspirants) visiblePersons = visiblePersons.filter(p => !p.isAspirant)
     if (filters.workgroupId) {
       visiblePersons = visiblePersons.filter(p =>
         p.memberships.some(m => m.workgroupId === filters.workgroupId)
@@ -49,7 +48,6 @@ export function useGraphData(graphData, filters) {
         type: 'person',
         personId: p.id,
         name: [p.firstName, p.lastName].filter(Boolean).join(' '),
-        isAspirant: p.isAspirant,
         isUnassigned: p.memberships.length === 0,
         hasRole,
         color: colors[0] ?? '#aaa',

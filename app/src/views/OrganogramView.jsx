@@ -9,7 +9,7 @@ const GraphView = lazy(() => import('./graph/GraphView'))
 const inputStyle = { padding: '6px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', background: 'white', fontSize: '0.9rem' }
 const checkStyle = { display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem', cursor: 'pointer' }
 
-const INITIAL_FILTER = { workgroupId: '', roleName: '', showUnavailable: true, showAspirants: true, search: '' }
+const INITIAL_FILTER = { workgroupId: '', roleName: '', showUnavailable: true, search: '' }
 
 export default function OrganogramView() {
   const { community, loading } = useCommunity()

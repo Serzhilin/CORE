@@ -8,10 +8,9 @@ export default function PersonNode({ node, dimmed, selected, showName, onClick, 
       <circle
         r={r}
         fill={node.isUnassigned ? '#ccc' : node.color}
-        fillOpacity={node.isAspirant ? 0.35 : 0.85}
-        stroke={node.isUnassigned ? '#aaa' : (node.isAspirant ? node.color : 'white')}
-        strokeWidth={node.isAspirant ? 2 : 1.5}
-        strokeDasharray={node.isAspirant ? '3,2' : 'none'}
+        fillOpacity={0.85}
+        stroke={node.isUnassigned ? '#aaa' : 'white'}
+        strokeWidth={1.5}
         opacity={opacity}
       />
       {roleColors.map((color, i) => (

@@ -5,7 +5,7 @@ const UserContext = createContext(null)
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null)           // full person object from /api/me
-  const [memberships, setMemberships] = useState([]) // [{communityId, isAdmin, isAspirant, community}]
+  const [memberships, setMemberships] = useState([]) // [{communityId, isAdmin, community}]
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
 
