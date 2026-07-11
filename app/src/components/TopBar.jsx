@@ -51,8 +51,7 @@ export default function TopBar() {
   return (
     <header style={{
       background: 'white',
-      borderBottom: '1px solid var(--color-sand)',
-      padding: '0 24px',
+      padding: '0 32px',
       position: 'sticky',
       top: 0,
       zIndex: 200,
