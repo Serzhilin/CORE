@@ -85,14 +85,6 @@ export default function TopBar() {
           )}
         </div>
 
-        {/* Center: page title / filters slot — centered on the full header, independent of logo/avatar widths */}
-        <div style={{
-          position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-          display: 'flex', alignItems: 'center', gap: 10, maxWidth: '60%', zIndex: 1,
-        }}>
-          {slot}
-        </div>
-
         {/* Right: avatar + dropdown */}
         <div ref={menuRef} style={{ position: 'relative' }}>
           <button
@@ -177,6 +169,9 @@ export default function TopBar() {
           )}
         </div>
       </div>
+
+      {/* Page title / filters slot — centered on the header on desktop, drops to its own full-width row on mobile */}
+      {slot && <div className="topbar-slot-row">{slot}</div>}
     </header>
   )
 }

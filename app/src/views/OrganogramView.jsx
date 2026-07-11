@@ -28,7 +28,7 @@ export default function OrganogramView() {
 
   useSetTopBarSlot(
     community ? (
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'nowrap', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ display: 'flex', height: 34, boxSizing: 'border-box', borderRadius: 0, overflow: 'hidden', border: '2px solid var(--color-charcoal)', boxShadow: 'var(--block-shadow-sm)', flexShrink: 0 }}>
           {['graph', 'cards'].map((v) => (
             <button

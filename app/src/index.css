@@ -299,6 +299,31 @@ label {
   }
 }
 
+/* ── TopBar slot (page title / filters) ───────────────────────────────────── */
+.topbar-slot-row {
+  position: absolute;
+  left: 50%;
+  top: 38px;
+  transform: translate(-50%, -50%);
+  max-width: 60%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1;
+}
+@media (max-width: 640px) {
+  .topbar-slot-row {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    max-width: 100%;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 0 14px;
+  }
+}
+
 /* ── Rich text (agenda editor + display) ──────────────────────────────────── */
 .agenda-html ol,
 .ProseMirror ol {
