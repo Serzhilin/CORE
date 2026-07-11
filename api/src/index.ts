@@ -11,9 +11,10 @@ import { AppDataSource } from "./database/data-source";
 import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin, requirePlatformAdmin } from "./middleware/communityAccess";
 import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe, uploadProfileImageHandler } from "./controllers/AuthController";
-import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler, resolveW3idHandler, linkCommunityHandler, listAllCommunitiesHandler, unlinkCommunityHandler, adminResolveEnameHandler, createCommunityFromEnameHandler } from "./controllers/CommunityController";
-import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler } from "./controllers/MemberController";
+import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler, resolveW3idHandler, linkCommunityHandler, listAllCommunitiesHandler, unlinkCommunityHandler, adminResolveEnameHandler, createCommunityFromEnameHandler, uploadStatutenFileHandler } from "./controllers/CommunityController";
+import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler, lookupEnameHandler } from "./controllers/MemberController";
 import { handleWebhook } from "./controllers/WebhookController";
+import { startPolling } from "./services/AaaSService";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
     listWorkgroupsHandler, createWorkgroupHandler, updateWorkgroupHandler, deleteWorkgroupHandler,
@@ -65,6 +66,7 @@ app.post("/api/communities", requireAuth, createCommunityHandler);
 app.get("/api/communities/:id", requireAuth, requireCommunityMember, getCommunityHandler);
 app.get("/api/communities/:id/graph", requireAuth, requireCommunityMember, getCommunityGraphHandler);
 app.patch("/api/communities/:id", requireAuth, requireCommunityAdmin, updateCommunityHandler);
+app.post("/api/communities/:id/statuten-file", requireAuth, requireCommunityAdmin, uploadStatutenFileHandler);
 app.get("/api/communities/:id/resolve-w3id", requireAuth, requireCommunityAdmin, resolveW3idHandler);
 app.post("/api/communities/:id/link-w3id", requireAuth, requireCommunityAdmin, linkCommunityHandler);
 app.delete("/api/communities/:id/link-w3id", requireAuth, requireCommunityAdmin, unlinkCommunityHandler);
@@ -74,6 +76,7 @@ app.post("/api/admin/communities", requireAuth, requirePlatformAdmin, createComm
 
 // ── Community Members ─────────────────────────────────────────────────────────
 app.get("/api/communities/:cid/members", requireAuth, requireCommunityMember, listMembersHandler);
+app.get("/api/communities/:cid/members/lookup-ename", requireAuth, requireCommunityAdmin, lookupEnameHandler);
 app.post("/api/communities/:cid/members", requireAuth, requireCommunityAdmin, addMemberHandler);
 app.patch("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAdmin, updateMemberHandler);
 app.delete("/api/communities/:cid/members/:pid", requireAuth, requireCommunityAdmin, deleteMemberHandler);
@@ -126,6 +129,7 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 AppDataSource.initialize()
     .then(() => {
         app.listen(port, () => logger.info(`CORE API running on :${port}`));
+        startPolling();
     })
     .catch((err) => {
         logger.error(err, "DB init failed");

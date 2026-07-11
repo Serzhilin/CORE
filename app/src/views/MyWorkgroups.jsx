@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
+import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { addWorkgroupMember, removeWorkgroupMember, assignRole, unassignRole } from '../api/client'
 
-const inputStyle = { padding: '6px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem', background: 'white' }
+const inputStyle = { padding: '6px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem', background: 'white' }
 
 export default function MyWorkgroups() {
   const { user } = useUser()
@@ -60,10 +61,12 @@ export default function MyWorkgroups() {
     setBusy((s) => ({ ...s, [wg.id]: false }))
   }
 
+  useSetTopBarSlot(
+    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>My workgroups</span>
+  )
+
   return (
     <div style={{ maxWidth: 620, margin: '0 auto' }}>
-      <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: 24 }}>My workgroups</h2>
-
       {/* Joined workgroups */}
       {joined.length === 0 ? (
         <div className="card" style={{ padding: 28, color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 32 }}>
@@ -108,7 +111,7 @@ export default function MyWorkgroups() {
                   <span
                     key={r.id}
                     style={{
-                      fontSize: '0.8rem', padding: '3px 10px', borderRadius: 20,
+                      fontSize: '0.8rem', padding: '3px 10px', borderRadius: 0,
                       background: `${r.color}20`, border: `1px solid ${r.color}66`,
                       color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center', gap: 5,
                     }}
@@ -149,7 +152,7 @@ export default function MyWorkgroups() {
               <div
                 key={wg.id}
                 style={{
-                  background: 'var(--color-cream-dark)', borderRadius: 10,
+                  background: 'var(--color-cream-dark)', borderRadius: 0,
                   border: '1px solid var(--color-sand)', padding: '12px 18px',
                   display: 'flex', alignItems: 'center', gap: 12,
                 }}

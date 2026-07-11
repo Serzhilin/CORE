@@ -141,9 +141,9 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
       }
       <span style={{ fontSize: '0.9rem' }}>
         {m.firstName || m.lastName || 'Unknown'}{showLastInitial && m.lastName ? ` ${m.lastName[0]}.` : ''}
-        {m.membershipType && (
-          <span style={{ marginLeft: 5, fontSize: '0.72rem', color: 'var(--color-charcoal-light)', fontStyle: 'italic' }}>
-            {m.membershipType.emoji ? `${m.membershipType.emoji} ` : ''}{m.membershipType.name}
+        {m.membershipType?.emoji && (
+          <span title={m.membershipType.name} className="emoji-mono" style={{ marginLeft: 5, fontSize: '0.85rem' }}>
+            {m.membershipType.emoji}
           </span>
         )}
         {roles.map((role) => (

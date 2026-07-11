@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useCommunity } from '../context/CommunityContext'
+import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
 
 const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 8,
+  width: '100%', padding: '10px 14px', borderRadius: 0,
   border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white',
   boxSizing: 'border-box',
 }
@@ -55,17 +56,19 @@ export default function MyAvailability() {
     }
   }
 
+  useSetTopBarSlot(
+    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>My availability</span>
+  )
+
   return (
     <div style={{ maxWidth: 520, margin: '0 auto' }}>
-      <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: 24 }}>My availability</h2>
-
       {current && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
-          background: 'var(--color-sand)', borderRadius: 10, padding: '12px 18px', marginBottom: 20,
+          background: 'var(--color-sand)', borderRadius: 0, padding: '12px 18px', marginBottom: 20,
           fontSize: '0.95rem',
         }}>
-          <span style={{ fontSize: '1.3rem' }}>{current.type.emoji}</span>
+          <span className="emoji-mono" style={{ fontSize: '1.3rem' }}>{current.type.emoji}</span>
           <div>
             <div style={{ fontWeight: 600 }}>{current.type.name}</div>
             {current.reason && <div style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>{current.reason}</div>}
@@ -76,7 +79,7 @@ export default function MyAvailability() {
 
       {!current && (
         <div style={{
-          background: 'var(--color-cream-dark)', borderRadius: 10, padding: '12px 18px', marginBottom: 20,
+          background: 'var(--color-cream-dark)', borderRadius: 0, padding: '12px 18px', marginBottom: 20,
           fontSize: '0.9rem', color: 'var(--color-charcoal-light)',
         }}>
           You are currently marked as available in {community?.name}.
@@ -93,7 +96,7 @@ export default function MyAvailability() {
             <select style={inputStyle} value={form.type_id} onChange={(e) => setForm((f) => ({ ...f, type_id: e.target.value }))}>
               <option value="">Available (no status)</option>
               {availabilityTypes.map((t) => (
-                <option key={t.id} value={t.id}>{t.emoji} {t.name}</option>
+                <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
           </div>

@@ -7,7 +7,7 @@ import {
   assignRole, unassignRole,
 } from '../../api/client'
 
-const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
+const inputStyle = { padding: '7px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function WorkgroupsTab() {
   const { communityId, community, refresh } = useCommunity()
@@ -125,8 +125,7 @@ export default function WorkgroupsTab() {
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <h3 style={{ margin: 0, fontFamily: 'var(--font-title)' }}>Workgroups</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
         <button className="btn-primary" onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</button>
       </div>
 
@@ -355,7 +354,7 @@ export default function WorkgroupsTab() {
                                         fontSize: '0.75rem',
                                         background: role.color + '22',
                                         border: `1px solid ${role.color}`,
-                                        borderRadius: 4,
+                                        borderRadius: 0,
                                         padding: '2px 8px',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -444,7 +443,7 @@ export default function WorkgroupsTab() {
                             type="color"
                             defaultValue={wg.color}
                             onChange={(e) => updateWorkgroup(communityId, wg.id, { color: e.target.value }).then(refresh)}
-                            style={{ width: 40, height: 36, border: 'none', padding: 0, cursor: 'pointer', borderRadius: 6 }}
+                            style={{ width: 40, height: 36, border: 'none', padding: 0, cursor: 'pointer', borderRadius: 0 }}
                           />
                           <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', fontFamily: 'monospace' }}>{wg.color}</span>
                         </div>

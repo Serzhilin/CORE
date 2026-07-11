@@ -2,6 +2,8 @@ import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { AvailabilityLog } from "../database/entities/AvailabilityLog";
 import { AvailabilityType } from "../database/entities/AvailabilityType";
+import { syncAvailabilityToEvault } from "./AvailabilityEnvelopeService";
+import { logger } from "../lib/logger";
 
 export interface AvailabilityState {
     type_id: string | null;
@@ -129,6 +131,9 @@ export async function applyAvailability(
         m.availability_until = next.until;
         const saved = await qr.manager.save(CommunityMembership, m);
         await qr.commitTransaction();
+        syncAvailabilityToEvault(saved.community_id).catch((err) =>
+            logger.warn(err, "Availability envelope sync failed for membership %s", membershipId)
+        );
         return saved;
     } catch (err) {
         await qr.rollbackTransaction();

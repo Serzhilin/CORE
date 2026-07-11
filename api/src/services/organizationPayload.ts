@@ -1,8 +1,3 @@
-export interface OrganizationPayloadBoardMember {
-    eName: string;
-    role: string;
-}
-
 export interface OrganizationPayloadMembershipType {
     id: string;
     name: string;
@@ -19,6 +14,7 @@ export interface OrganizationPayloadMember {
 
 export interface OrganizationPayloadInput {
     communityEname: string;
+    name: string | null;
     legalForm: string | null;
     officialName: string | null;
     kvkNumber: string | null;
@@ -30,12 +26,13 @@ export interface OrganizationPayloadInput {
     // columns deserialize to strings, not Dates). Callers must pass it through unchanged.
     foundingDate: string | null;
     statutenFileUri: string | null;
-    boardMembers: OrganizationPayloadBoardMember[];
     logoUrl: string | null;
+    photoUrl: string | null;
     primaryColor: string;
     titleFont: string;
     membershipTypes: OrganizationPayloadMembershipType[];
     members: OrganizationPayloadMember[];
+    admins: string[];
 }
 
 interface LegalInfoPayload {
@@ -47,11 +44,11 @@ interface LegalInfoPayload {
     registeredAddress?: string;
     foundingDate?: string;
     statutenFileUri?: string;
-    boardMembers: OrganizationPayloadBoardMember[];
 }
 
 interface BrandingPayload {
     logoUrl: string | null;
+    photoUrl: string | null;
     primaryColor: string;
     titleFont: string;
 }
@@ -64,14 +61,16 @@ interface MembershipTypePayload {
 }
 
 export interface OrganizationEnvelopePayload {
+    name: string | null;
     legalInfo: LegalInfoPayload;
     branding: BrandingPayload;
     membershipTypes: MembershipTypePayload[];
     members: OrganizationPayloadMember[];
+    admins: string[];
 }
 
 export function buildOrganizationPayload(input: OrganizationPayloadInput): OrganizationEnvelopePayload {
-    const legalInfo: LegalInfoPayload = { boardMembers: input.boardMembers };
+    const legalInfo: LegalInfoPayload = {};
     if (input.legalForm) legalInfo.legalForm = input.legalForm;
     if (input.officialName) legalInfo.officialName = input.officialName;
     if (input.kvkNumber) legalInfo.kvkNumber = input.kvkNumber;
@@ -82,9 +81,11 @@ export function buildOrganizationPayload(input: OrganizationPayloadInput): Organ
     if (input.statutenFileUri) legalInfo.statutenFileUri = input.statutenFileUri;
 
     return {
+        name: input.name,
         legalInfo,
         branding: {
             logoUrl: input.logoUrl,
+            photoUrl: input.photoUrl,
             primaryColor: input.primaryColor,
             titleFont: input.titleFont,
         },
@@ -94,5 +95,6 @@ export function buildOrganizationPayload(input: OrganizationPayloadInput): Organ
             return mt;
         }),
         members: input.members,
+        admins: input.admins,
     };
 }

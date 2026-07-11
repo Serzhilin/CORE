@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { resolveCommunityW3id, linkCommunityW3id, unlinkCommunityW3id } from '../api/client'
 
 const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 8,
+  width: '100%', padding: '10px 14px', borderRadius: 0,
   border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white', boxSizing: 'border-box',
 }
 
@@ -95,7 +95,7 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
           {w3idError && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)' }}>{w3idError}</div>}
 
           {w3idPreview && (
-            <div style={{ border: '1px solid var(--color-sand)', borderRadius: 8, padding: 14, fontSize: '0.85rem' }}>
+            <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 14, fontSize: '0.85rem' }}>
               {w3idPreview.envelope ? (
                 <>
                   <div><strong>{w3idPreview.envelope.name || w3idPreview.w3id}</strong></div>

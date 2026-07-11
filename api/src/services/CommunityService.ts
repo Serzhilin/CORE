@@ -114,6 +114,8 @@ export async function getCommunityFull(communityId: string) {
                 firstName: person?.first_name ?? null,
                 lastName: person?.last_name ?? null,
                 email: person?.email ?? null,
+                phone: person?.phone ?? null,
+                website: person?.website ?? null,
                 avatarUrl: person?.avatar_url ?? null,
                 bio: person?.bio ?? null,
                 ename: person?.ename ?? null,
@@ -218,20 +220,12 @@ export async function getCommunityGraph(communityId: string) {
 export async function updateCommunity(
     id: string,
     data: Partial<Pick<Community,
-        "name" | "slug" | "description" | "logo_url" | "primary_color" | "title_font" |
+        "name" | "slug" | "description" | "logo_url" | "photo_url" | "primary_color" | "title_font" |
         "legal_form" | "official_name" | "kvk_number" | "rsin" | "iban" | "registered_address" |
-        "founding_date" | "statuten_file_uri" | "board_members"
+        "founding_date" | "statuten_file_uri"
     >>
 ): Promise<Community> {
     const community = await communityRepo().findOneOrFail({ where: { id } });
-
-    const isBoardMemberRemoval = data.board_members !== undefined && data.board_members.length < community.board_members.length;
-
-    if (isBoardMemberRemoval) {
-        await syncOrganizationToEvault(id, { boardMembersOverride: data.board_members });
-        Object.assign(community, data);
-        return communityRepo().save(community);
-    }
 
     Object.assign(community, data);
     const saved = await communityRepo().save(community);

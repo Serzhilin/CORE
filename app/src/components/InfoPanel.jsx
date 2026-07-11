@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react'
 import { useCommunity } from '../context/CommunityContext'
 
 const PANEL_WIDTH = 300
-const TAB_WIDTH = 28
+
+function formatDots(dateStr) {
+  const d = new Date(dateStr)
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`
+}
 
 function accentColor(selection, community) {
   if (!selection || selection.type === 'community') return 'var(--color-terracotta)'
@@ -39,7 +43,7 @@ function CommunityView({ community, onSelect }) {
           <div
             key={wg.id}
             onClick={() => onSelect({ type: 'workgroup', id: wg.id })}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px', cursor: 'pointer', borderRadius: 6 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px', cursor: 'pointer', borderRadius: 0 }}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--color-cream)'}
             onMouseLeave={e => e.currentTarget.style.background = 'none'}
           >
@@ -79,7 +83,7 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
             <div
               key={member.personId}
               onClick={() => onSelect({ type: 'person', id: member.personId, fromWorkgroup: wg.id })}
-              style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '5px 4px', cursor: 'pointer', borderRadius: 5 }}
+              style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '5px 4px', cursor: 'pointer', borderRadius: 0 }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--color-cream)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}
             >
@@ -97,7 +101,7 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
 
       <button
         onClick={() => onFilterToWorkgroup(wg.id)}
-        style={{ fontSize: '0.75rem', color: wg.color, background: 'none', border: `1px solid ${wg.color}`, borderRadius: 5, padding: '5px 10px', cursor: 'pointer', width: '100%' }}
+        style={{ fontSize: '0.75rem', color: wg.color, background: 'none', border: `1px solid ${wg.color}`, borderRadius: 0, padding: '5px 10px', cursor: 'pointer', width: '100%' }}
       >
         Filter to this workgroup
       </button>
@@ -125,16 +129,21 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         {member.avatarUrl
-          ? <img src={member.avatarUrl} alt="" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-          : <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--color-sand-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 700, color: 'white', flexShrink: 0 }}>{initial}</div>
+          ? <img src={member.avatarUrl} alt="" style={{ width: 104, height: 104, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+          : <div style={{ width: 104, height: 104, borderRadius: '50%', background: 'var(--color-sand-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.2rem', fontWeight: 700, color: 'white', flexShrink: 0 }}>{initial}</div>
         }
         <div>
-          <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '0.95rem', lineHeight: 1.3 }}>{name}</div>
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
-            {member.isAdmin && <span style={{ fontSize: '0.68rem', background: 'var(--color-sand)', borderRadius: 4, padding: '1px 6px' }}>Admin</span>}
+          <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.3rem', lineHeight: 1.3 }}>{name}</div>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center', marginTop: 4 }}>
+            {member.isAdmin && <span style={{ fontSize: '0.68rem', background: 'var(--color-sand)', borderRadius: 0, padding: '1px 6px' }}>Admin</span>}
             {member.membershipType && (
-              <span style={{ fontSize: '0.68rem', background: '#FFF3CD', borderRadius: 4, padding: '1px 6px' }}>
-                {member.membershipType.emoji ? `${member.membershipType.emoji} ` : ''}{member.membershipType.name}
+              <span style={{ fontSize: '0.68rem', border: '1px solid var(--color-sand-dark)', borderRadius: 0, padding: '1px 6px' }}>
+                {member.membershipType.emoji ? <span className="emoji-mono">{member.membershipType.emoji} </span> : ''}{member.membershipType.name}
+              </span>
+            )}
+            {member.joinedAt && (
+              <span style={{ fontSize: '0.68rem', color: 'var(--color-charcoal-light)' }}>
+                Joined on {formatDots(member.joinedAt)}
               </span>
             )}
           </div>
@@ -142,12 +151,12 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
       </div>
 
       {member.bio && (
-        <div style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', lineHeight: 1.6, borderTop: '1px solid var(--color-sand)', paddingTop: 10 }}>{member.bio}</div>
+        <div style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', lineHeight: 1.6 }}>{member.bio}</div>
       )}
 
       {member.availability && (
-        <div style={{ background: 'var(--color-sand)', borderRadius: 8, padding: '9px 12px', fontSize: '0.85rem' }}>
-          <span style={{ marginRight: 5 }}>{member.availability.type.emoji}</span>
+        <div style={{ background: 'var(--color-sand)', borderRadius: 0, padding: '9px 12px', fontSize: '0.85rem', borderTop: '1px solid var(--color-sand-dark)', marginTop: 4, paddingTop: '9px' }}>
+          <span className="emoji-mono" style={{ marginRight: 5 }}>{member.availability.type.emoji}</span>
           <span style={{ fontWeight: 500 }}>{member.availability.type.name}</span>
           {member.availability.reason && <span style={{ color: 'var(--color-charcoal-light)' }}> — {member.availability.reason}</span>}
           {member.availability.until && (
@@ -155,6 +164,14 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
               Until {new Date(member.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
           )}
+        </div>
+      )}
+
+      {(member.email || member.phone || member.website) && (
+        <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {member.email && <div style={{ fontSize: '0.82rem' }}>{member.email}</div>}
+          {member.phone && <div style={{ fontSize: '0.82rem' }}>{member.phone}</div>}
+          {member.website && <div style={{ fontSize: '0.82rem' }}><a href={member.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-charcoal)' }}>{member.website}</a></div>}
         </div>
       )}
 
@@ -167,18 +184,12 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
               {roles.length > 0 && (
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
                   {roles.map(r => (
-                    <span key={r.id} style={{ fontSize: '0.72rem', background: r.color + '22', border: `1px solid ${r.color}66`, borderRadius: 4, padding: '1px 6px' }}>{r.name}</span>
+                    <span key={r.id} style={{ fontSize: '0.72rem', background: r.color + '22', border: `1px solid ${r.color}66`, borderRadius: 0, padding: '1px 6px' }}>{r.name}</span>
                   ))}
                 </div>
               )}
             </div>
           ))}
-        </div>
-      )}
-
-      {member.joinedAt && (
-        <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 10, fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
-          Member since {new Date(member.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
         </div>
       )}
     </div>
@@ -192,7 +203,8 @@ export default function InfoPanel({ selection, onSelect, onFilterToWorkgroup }) 
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (selection) setOpen(true)
+    if (!selection) return
+    if (isMobile || selection.type === 'person') setOpen(true)
   }, [selection])
 
   if (!community) return null
@@ -252,28 +264,29 @@ export default function InfoPanel({ selection, onSelect, onFilterToWorkgroup }) 
   }
 
   return (
-    <div style={{ display: 'flex', flexShrink: 0 }}>
-      <div
+    <div style={{ position: 'relative', display: 'flex', flexShrink: 0 }}>
+      <button
         onClick={() => setOpen(v => !v)}
-        style={{
-          width: TAB_WIDTH, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', background: 'white',
-          borderLeft: `3px solid ${accent}`,
-          transition: 'border-color 0.2s',
-          userSelect: 'none',
-        }}
         title={open ? 'Close panel' : 'Open panel'}
+        style={{
+          position: 'absolute', top: '50%', left: 0, transform: 'translate(-50%, -50%)',
+          width: 28, height: 28, padding: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: accent, color: '#fff',
+          border: '2px solid var(--color-charcoal)',
+          cursor: 'pointer', userSelect: 'none', zIndex: 10,
+        }}
       >
-        <span style={{ fontSize: '1rem', color: accent, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-block' }}>›</span>
-      </div>
+        <span style={{ fontSize: '0.9rem', lineHeight: 1, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-block' }}>›</span>
+      </button>
 
       <div style={{
         width: open ? PANEL_WIDTH : 0,
         overflow: 'hidden',
         transition: 'width 0.2s ease',
         background: 'white',
-        borderLeft: '1px solid var(--color-sand)',
-        boxShadow: open ? '-4px 0 16px rgba(44,44,44,0.06)' : 'none',
+        border: open ? '2px solid var(--color-charcoal)' : 'none',
+        boxShadow: open ? 'var(--block-shadow)' : 'none',
       }}>
         <div style={{ width: PANEL_WIDTH, height: '100%', overflowY: 'auto', padding: '20px 16px', boxSizing: 'border-box' }}>
           {renderContent()}

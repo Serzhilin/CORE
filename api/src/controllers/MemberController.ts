@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { listMembers, addMember, updateMember, removeMember, getMemberAvailabilityLog } from "../services/MemberService";
-import { updatePerson } from "../services/PersonService";
+import { updatePerson, fetchEVaultProfile } from "../services/PersonService";
 import { applyAvailability } from "../services/AvailabilityService";
 import { AppDataSource } from "../database/data-source";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
@@ -14,18 +14,26 @@ export async function listMembersHandler(req: Request, res: Response) {
 }
 
 export async function addMemberHandler(req: Request, res: Response) {
-    const { first_name, last_name, email } = req.body;
+    const { first_name, last_name, email, ename } = req.body;
     if (!first_name || !last_name) {
         res.status(400).json({ error: "first_name and last_name are required" });
         return;
     }
     try {
-        const m = await addMember(req.params.cid, { first_name, last_name, email });
+        const m = await addMember(req.params.cid, { first_name, last_name, email, ename });
         res.status(201).json(m);
     } catch (err: any) {
         if (err.code === "23505") { res.status(409).json({ error: "Person is already a member" }); return; }
         throw err;
     }
+}
+
+export async function lookupEnameHandler(req: Request, res: Response) {
+    const ename = String(req.query.ename ?? "").trim();
+    if (!ename) { res.status(400).json({ error: "ename is required" }); return; }
+    const profile = await fetchEVaultProfile(ename);
+    if (!profile) { res.status(404).json({ error: "No eVault profile found for this eName" }); return; }
+    res.json(profile);
 }
 
 export async function updateMemberHandler(req: Request, res: Response) {

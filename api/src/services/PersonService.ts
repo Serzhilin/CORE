@@ -20,7 +20,7 @@ export async function findByMetaEnvelopeId(metaEnvelopeId: string): Promise<Pers
 }
 
 export async function updatePerson(id: string, data: Partial<Pick<Person,
-    "first_name" | "last_name" | "email" | "phone" | "bio" | "avatar_url" | "display_name" | "banner_url" | "ename" | "meta_envelope_id">>): Promise<Person> {
+    "first_name" | "last_name" | "email" | "phone" | "website" | "location" | "birth_date" | "bio" | "avatar_url" | "display_name" | "banner_url" | "ename" | "meta_envelope_id">>): Promise<Person> {
     const person = await repo().findOneOrFail({ where: { id } });
     Object.assign(person, data);
     return repo().save(person);
@@ -58,6 +58,11 @@ export async function upsertFromWebhook(
     if (lastName) existing.last_name = lastName;
     if (typeof data.bio === "string") existing.bio = data.bio;
     if (typeof data.displayName === "string") existing.display_name = data.displayName;
+    if (typeof data.email === "string") existing.email = data.email;
+    if (typeof data.phone === "string") existing.phone = data.phone;
+    if (typeof data.website === "string") existing.website = data.website;
+    if (typeof data.location === "string") existing.location = data.location;
+    if (typeof data.birthDate === "string") existing.birth_date = data.birthDate;
     if (typeof data.avatarUrl === "string") {
         existing.avatar_url = (await resolveW3dsFileUrl(data.avatarUrl)) ?? data.avatarUrl;
     }

@@ -20,6 +20,15 @@ export class Person {
     @Column({ type: "varchar", nullable: true })
     phone: string | null;
 
+    @Column({ type: "varchar", nullable: true })
+    website: string | null;
+
+    @Column({ type: "varchar", nullable: true })
+    location: string | null;
+
+    @Column({ type: "varchar", nullable: true })
+    birth_date: string | null;
+
     @Column({ type: "text", nullable: true })
     bio: string | null;
 

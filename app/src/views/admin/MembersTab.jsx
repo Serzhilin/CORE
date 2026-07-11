@@ -1,33 +1,62 @@
 import { useState, useEffect } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
-import { addMember, updateMember, updateMemberPerson, removeMember, listMembershipTypes } from '../../api/client'
+import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
-const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
+const inputStyle = { padding: '7px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function MembersTab() {
   const { communityId, community, refresh } = useCommunity()
   const [adding, setAdding] = useState(false)
-  const [addForm, setAddForm] = useState({ first_name: '', last_name: '', email: '', membership_type_id: '', joined_at: '' })
+  const [addForm, setAddForm] = useState({ ename: '', first_name: '', last_name: '', membership_type_id: '', joined_at: '' })
   const [addSaving, setAddSaving] = useState(false)
+  const [checking, setChecking] = useState(false)
+  const [checkError, setCheckError] = useState(null)
+  const [enameChecked, setEnameChecked] = useState(false)
   const [membershipTypes, setMembershipTypes] = useState([])
+  const [copiedId, setCopiedId] = useState(null)
+  const [hoverCell, setHoverCell] = useState(null)
+  const [editingCell, setEditingCell] = useState(null)
 
   useEffect(() => {
     listMembershipTypes(communityId).then(setMembershipTypes).catch(() => setMembershipTypes([]))
   }, [communityId])
 
+  function resetAddForm() {
+    setAddForm({ ename: '', first_name: '', last_name: '', membership_type_id: '', joined_at: '' })
+    setEnameChecked(false)
+    setCheckError(null)
+  }
+
+  async function handleCheckEname() {
+    const ename = addForm.ename.trim()
+    if (!ename) return
+    setChecking(true)
+    setCheckError(null)
+    try {
+      const profile = await lookupMemberEname(communityId, ename)
+      setAddForm((f) => ({ ...f, first_name: profile.first_name, last_name: profile.last_name }))
+      setEnameChecked(true)
+    } catch (err) {
+      setEnameChecked(false)
+      setCheckError(err.message)
+    } finally {
+      setChecking(false)
+    }
+  }
+
   async function handleAdd(e) {
     e.preventDefault()
     setAddSaving(true)
     try {
-      const { membership_type_id, joined_at, ...rest } = addForm
-      const newMembership = await addMember(communityId, rest)
+      const { membership_type_id, joined_at, ename, first_name, last_name } = addForm
+      const newMembership = await addMember(communityId, { ename, first_name, last_name })
       const extras = {}
       if (membership_type_id) extras.membership_type_id = membership_type_id
       if (joined_at) extras.joined_at = joined_at
       if (Object.keys(extras).length) await updateMember(communityId, newMembership.person_id, extras)
       await refresh()
       setAdding(false)
-      setAddForm({ first_name: '', last_name: '', email: '', membership_type_id: '', joined_at: '' })
+      resetAddForm()
     } catch (err) {
       alert('Error: ' + err.message)
     } finally {
@@ -44,6 +73,21 @@ export default function MembersTab() {
     }
   }
 
+  async function handleCopyEname(personId, ename) {
+    if (!ename) return
+    try {
+      await navigator.clipboard.writeText(ename)
+      setCopiedId(personId)
+      setTimeout(() => setCopiedId((id) => (id === personId ? null : id)), 1500)
+    } catch (err) { alert(err.message) }
+  }
+
+  const pencilIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+    </svg>
+  )
+
   async function handleRemove(pid, name) {
     if (!confirm(`Remove ${name} from this community?`)) return
     try {
@@ -56,9 +100,8 @@ export default function MembersTab() {
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <h3 style={{ margin: 0, fontFamily: 'var(--font-title)' }}>Members</h3>
-        <button className="btn-primary" onClick={() => setAdding(true)} style={{ fontSize: '0.85rem' }}>Add member</button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
+        <button className="btn-primary" onClick={() => { resetAddForm(); setAdding(true) }} style={{ fontSize: '0.85rem' }}>Add member</button>
       </div>
 
       {adding && (
@@ -66,16 +109,36 @@ export default function MembersTab() {
           <h4 style={{ margin: '0 0 16px' }}>Add member</h4>
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>eName</label>
+              <input
+                style={{ ...inputStyle, fontFamily: 'monospace', width: 220 }}
+                placeholder="@uuid…"
+                value={addForm.ename}
+                disabled={enameChecked}
+                onChange={(e) => { setAddForm((f) => ({ ...f, ename: e.target.value })); setEnameChecked(false); setCheckError(null) }}
+              />
+            </div>
+            {!enameChecked ? (
+              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
+                <button type="button" className="btn-secondary" disabled={checking || !addForm.ename.trim()} onClick={handleCheckEname} style={{ fontSize: '0.85rem' }}>
+                  {checking ? 'Checking…' : 'Check eName'}
+                </button>
+                <button type="button" className="btn-secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
+              </div>
+            ) : null}
+          </form>
+          {checkError && (
+            <p style={{ color: 'var(--color-red)', fontSize: '0.85rem', margin: '10px 0 0' }}>{checkError}</p>
+          )}
+          {enameChecked && (
+          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end', marginTop: 14 }}>
+            <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>First name</label>
-              <input style={inputStyle} value={addForm.first_name} onChange={(e) => setAddForm((f) => ({ ...f, first_name: e.target.value }))} />
+              <span style={{ display: 'block', padding: '7px 10px', fontSize: '0.9rem' }}>{addForm.first_name}</span>
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Last name</label>
-              <input style={inputStyle} value={addForm.last_name} onChange={(e) => setAddForm((f) => ({ ...f, last_name: e.target.value }))} />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Email</label>
-              <input type="email" style={inputStyle} value={addForm.email} onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))} />
+              <span style={{ display: 'block', padding: '7px 10px', fontSize: '0.9rem' }}>{addForm.last_name}</span>
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Joined</label>
@@ -86,7 +149,7 @@ export default function MembersTab() {
               <select style={inputStyle} value={addForm.membership_type_id} onChange={(e) => setAddForm((f) => ({ ...f, membership_type_id: e.target.value }))}>
                 <option value="">—</option>
                 {membershipTypes.map((t) => (
-                  <option key={t.id} value={t.id}>{t.emoji ? `${t.emoji} ` : ''}{t.name}</option>
+                  <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
             </div>
@@ -95,6 +158,7 @@ export default function MembersTab() {
               <button type="button" className="btn-secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
             </div>
           </form>
+          )}
         </div>
       )}
 
@@ -102,7 +166,7 @@ export default function MembersTab() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
-              {['Name', 'Email', 'eName', 'Membership type', 'Joined', ''].map((h) => (
+              {['Name', 'Email', 'Phone', 'eName', 'Membership type', 'Joined', ''].map((h) => (
                 <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -114,36 +178,93 @@ export default function MembersTab() {
                 <tr key={m.personId} style={{ background: idx % 2 === 0 ? 'transparent' : 'var(--color-cream)' }}>
                   <td style={{ padding: '10px 14px', fontWeight: 500 }}>{name}</td>
                   <td style={{ padding: '10px 14px', color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>{m.email || '—'}</td>
+                  <td style={{ padding: '10px 14px', color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>{m.phone || '—'}</td>
                   <td style={{ padding: '10px 14px' }}>
-                    <input
-                      style={{ ...inputStyle, fontSize: '0.8rem', padding: '4px 8px', width: 200, fontFamily: 'monospace' }}
-                      defaultValue={m.ename || ''}
-                      placeholder="@uuid…"
-                      onBlur={(e) => {
-                        const val = e.target.value.trim() || null
-                        if (val !== (m.ename || null)) updateMemberPerson(communityId, m.personId, { ename: val }).then(refresh).catch((err) => alert(err.message))
-                      }}
-                    />
+                    {m.ename ? (
+                      <span
+                        onClick={() => handleCopyEname(m.personId, m.ename)}
+                        title="Click to copy"
+                        style={{ fontSize: '0.8rem', fontFamily: 'monospace', cursor: 'pointer', color: 'var(--color-charcoal-light)' }}
+                      >
+                        {'@' + m.ename.replace(/^@/, '').slice(0, 6) + '...'}
+                        {copiedId === m.personId && (
+                          <span style={{ marginLeft: 6, color: 'var(--color-green, #2e7d32)', fontSize: '0.75rem' }}>Copied!</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>—</span>
+                    )}
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
-                    <select
-                      style={{ ...inputStyle, fontSize: '0.8rem', padding: '4px 8px' }}
-                      value={m.membershipTypeId || ''}
-                      onChange={(e) => handleUpdate(m.personId, { membership_type_id: e.target.value || null })}
-                    >
-                      <option value="">—</option>
-                      {membershipTypes.map((t) => (
-                        <option key={t.id} value={t.id}>{t.emoji ? `${t.emoji} ` : ''}{t.name}</option>
-                      ))}
-                    </select>
+                  <td
+                    style={{ padding: '10px 14px' }}
+                    onMouseEnter={() => setHoverCell(`${m.personId}:type`)}
+                    onMouseLeave={() => setHoverCell((c) => (c === `${m.personId}:type` ? null : c))}
+                  >
+                    {editingCell === `${m.personId}:type` ? (
+                      <select
+                        autoFocus
+                        style={{ ...inputStyle, fontSize: '0.8rem', padding: '4px 8px' }}
+                        value={m.membershipTypeId || ''}
+                        onChange={(e) => { handleUpdate(m.personId, { membership_type_id: e.target.value || null }); setEditingCell(null) }}
+                        onBlur={() => setEditingCell(null)}
+                      >
+                        <option value="">—</option>
+                        {membershipTypes.map((t) => (
+                          <option key={t.id} value={t.id}>{t.name}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        {(() => {
+                          const t = membershipTypes.find((t) => t.id === m.membershipTypeId)
+                          return t ? <span title={t.name} className="emoji-mono" style={{ fontSize: '1rem' }}>{t.emoji || t.name}</span> : <span style={{ color: 'var(--color-charcoal-light)' }}>—</span>
+                        })()}
+                        <button
+                          onClick={() => setEditingCell(`${m.personId}:type`)}
+                          title="Edit membership type"
+                          style={{
+                            background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer',
+                            padding: 2, display: 'inline-flex', flexShrink: 0,
+                            visibility: hoverCell === `${m.personId}:type` ? 'visible' : 'hidden',
+                          }}
+                        >
+                          {pencilIcon}
+                        </button>
+                      </span>
+                    )}
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
-                    <input
-                      type="date"
-                      value={m.joinedAt ? m.joinedAt.slice(0, 10) : ''}
-                      onChange={(e) => handleUpdate(m.personId, { joined_at: e.target.value || null })}
-                      style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem' }}
-                    />
+                  <td
+                    style={{ padding: '10px 14px' }}
+                    onMouseEnter={() => setHoverCell(`${m.personId}:joined`)}
+                    onMouseLeave={() => setHoverCell((c) => (c === `${m.personId}:joined` ? null : c))}
+                  >
+                    {editingCell === `${m.personId}:joined` ? (
+                      <input
+                        type="date"
+                        autoFocus
+                        value={m.joinedAt ? m.joinedAt.slice(0, 10) : ''}
+                        onChange={(e) => { handleUpdate(m.personId, { joined_at: e.target.value || null }); setEditingCell(null) }}
+                        onBlur={() => setEditingCell(null)}
+                        style={{ padding: '4px 8px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem' }}
+                      />
+                    ) : (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
+                          {m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                        </span>
+                        <button
+                          onClick={() => setEditingCell(`${m.personId}:joined`)}
+                          title="Edit joined date"
+                          style={{
+                            background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer',
+                            padding: 2, display: 'inline-flex', flexShrink: 0,
+                            visibility: hoverCell === `${m.personId}:joined` ? 'visible' : 'hidden',
+                          }}
+                        >
+                          {pencilIcon}
+                        </button>
+                      </span>
+                    )}
                   </td>
                   <td style={{ padding: '10px 14px' }}>
                     <button

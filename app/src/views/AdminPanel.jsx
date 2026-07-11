@@ -1,6 +1,7 @@
 import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom'
 import { useCommunity } from '../context/CommunityContext'
 import { useUser } from '../context/UserContext'
+import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CommunityTab from './admin/CommunityTab'
 import MembersTab from './admin/MembersTab'
 import WorkgroupsTab from './admin/WorkgroupsTab'
@@ -24,6 +25,10 @@ export default function AdminPanel() {
     wg.members?.some((wm) => wm.person_id === user?.id && wm.is_workgroup_admin)
   ) ?? false
 
+  useSetTopBarSlot(
+    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>Admin</span>
+  )
+
   if (!isAdmin && !isWorkgroupAdmin) {
     return <div style={{ color: 'var(--color-charcoal-light)', padding: 32 }}>Access denied.</div>
   }
@@ -34,8 +39,6 @@ export default function AdminPanel() {
 
   return (
     <div>
-      <h2 style={{ fontFamily: 'var(--font-title)', marginBottom: 24 }}>Admin</h2>
-
       <div style={{ display: 'flex', gap: 4, marginBottom: 28, borderBottom: '2px solid var(--color-sand)' }}>
         {visibleTabs.map((t) => (
           <button
@@ -46,7 +49,7 @@ export default function AdminPanel() {
               padding: '10px 20px', fontWeight: activeKey === t.key ? 700 : 400,
               color: activeKey === t.key ? 'var(--color-terracotta)' : 'var(--color-charcoal-light)',
               borderBottom: activeKey === t.key ? '2px solid var(--color-terracotta)' : '2px solid transparent',
-              marginBottom: -2, fontSize: '0.95rem', fontFamily: 'Inter, sans-serif',
+              marginBottom: -2, fontSize: '0.95rem', fontFamily: 'var(--font-sans)',
             }}
           >
             {t.label}

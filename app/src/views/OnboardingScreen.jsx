@@ -24,7 +24,7 @@ export default function OnboardingScreen() {
           Ask your community admin to add you. Share your eName:
         </p>
         <div style={{
-          background: 'var(--color-sand)', borderRadius: 8, padding: '12px 16px',
+          background: 'var(--color-sand)', borderRadius: 0, padding: '12px 16px',
           fontFamily: 'monospace', fontSize: '1rem', display: 'flex',
           alignItems: 'center', justifyContent: 'space-between', gap: 8,
         }}>

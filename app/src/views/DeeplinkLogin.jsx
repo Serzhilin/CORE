@@ -57,14 +57,14 @@ export default function DeeplinkLogin() {
 
   if (!error) {
     return (
-      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif', color: '#555' }}>
+      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', color: '#555' }}>
         Authenticating…
       </div>
     )
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16, fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16, fontFamily: 'var(--font-sans)' }}>
       <p style={{ color: '#e53e3e' }}>{error}</p>
       <a href="/" style={{ color: '#2563EB' }}>Back to home</a>
     </div>

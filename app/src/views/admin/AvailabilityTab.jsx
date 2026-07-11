@@ -6,7 +6,7 @@ import {
   setMemberAvailability,
 } from '../../api/client'
 
-const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
+const inputStyle = { padding: '7px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function AvailabilityTab() {
   const { communityId, community, availabilityTypes, refresh } = useCommunity()
@@ -94,11 +94,12 @@ export default function AvailabilityTab() {
         {unavailableMembers.length === 0 ? (
           <p style={{ color: 'var(--color-charcoal-light)', fontSize: '0.9rem', margin: 0 }}>Everyone is available.</p>
         ) : (
-          unavailableMembers.map(m => {
+          unavailableMembers.map((m, i) => {
             const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
+            const isLast = i === unavailableMembers.length - 1
             return (
-              <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>
-                <span style={{ fontSize: '1.1rem' }}>{m.availability.type.emoji}</span>
+              <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: isLast ? 'none' : '1px solid var(--color-sand)' }}>
+                <span className="emoji-mono" style={{ fontSize: '1.1rem' }}>{m.availability.type.emoji}</span>
                 <div style={{ flex: 1 }}>
                   <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{name}</span>
                   <span style={{ marginLeft: 8, fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>{m.availability.type.name}</span>
@@ -117,10 +118,10 @@ export default function AvailabilityTab() {
           <h4 style={{ margin: '0 0 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
             {avForm.personId ? 'Edit availability' : 'Set availability'}
           </h4>
-          <form onSubmit={handleSetAvailability} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <form onSubmit={handleSetAvailability} style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 380 }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Member</label>
-              <select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} style={inputStyle} required>
+              <select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} style={{ ...inputStyle, width: '100%' }} required>
                 <option value="">Select…</option>
                 {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map(m => (
                   <option key={m.personId} value={m.personId}>
@@ -131,20 +132,20 @@ export default function AvailabilityTab() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Type</label>
-              <select value={avForm.type_id} onChange={(e) => setAvForm(f => ({ ...f, type_id: e.target.value }))} style={inputStyle} required>
+              <select value={avForm.type_id} onChange={(e) => setAvForm(f => ({ ...f, type_id: e.target.value }))} style={{ ...inputStyle, width: '100%' }} required>
                 <option value="">Select…</option>
                 {availabilityTypes.map(t => (
-                  <option key={t.id} value={t.id}>{t.emoji} {t.name}</option>
+                  <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Reason</label>
-              <input style={{ ...inputStyle, width: 160 }} value={avForm.reason} onChange={(e) => setAvForm(f => ({ ...f, reason: e.target.value }))} placeholder="Optional" />
+              <input style={{ ...inputStyle, width: '100%' }} value={avForm.reason} onChange={(e) => setAvForm(f => ({ ...f, reason: e.target.value }))} placeholder="Optional" />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Until</label>
-              <input type="date" style={inputStyle} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
+              <input type="date" style={{ ...inputStyle, width: '100%' }} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
               <button type="submit" className="btn-primary" disabled={avSaving || !avForm.personId || !avForm.type_id} style={{ fontSize: '0.85rem' }}>
@@ -175,7 +176,7 @@ export default function AvailabilityTab() {
                 </>
               ) : (
                 <>
-                  <span style={{ fontSize: '1.1rem' }}>{t.emoji}</span>
+                  <span className="emoji-mono" style={{ fontSize: '1.1rem' }}>{t.emoji}</span>
                   <span style={{ flex: 1 }}>{t.name}</span>
                   <button className="btn-secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</button>
                   <button style={{ background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => handleArchiveType(t.id)}>Archive</button>

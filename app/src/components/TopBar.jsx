@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
+import { useTopBarSlot } from '../context/TopBarSlotContext'
 
 function CommunityLogo({ src }) {
   const [failed, setFailed] = useState(false)
@@ -11,7 +12,7 @@ function CommunityLogo({ src }) {
       src={src}
       alt="logo"
       onError={() => setFailed(true)}
-      style={{ height: 32, maxWidth: 100, objectFit: 'contain', flexShrink: 0 }}
+      style={{ height: 48, maxWidth: 150, objectFit: 'contain', flexShrink: 0 }}
     />
   )
 }
@@ -19,6 +20,7 @@ function CommunityLogo({ src }) {
 export default function TopBar() {
   const { user, memberships, logout } = useUser()
   const { communityId, community, myMembership, switchCommunity } = useCommunity()
+  const { slot } = useTopBarSlot()
   const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef(null)
@@ -59,7 +61,7 @@ export default function TopBar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 56,
+        height: 76,
       }}>
 
         {/* Left: community logo + name (click → home) */}
@@ -68,17 +70,27 @@ export default function TopBar() {
           style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, cursor: 'pointer' }}
         >
           {community?.logo_url && <CommunityLogo src={community.logo_url} />}
-          <span style={{
-            fontFamily: 'var(--font-title)',
-            fontWeight: 700,
-            fontSize: '1.05rem',
-            color: 'var(--color-charcoal)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
-            {community?.name || 'CORE'}
-          </span>
+          {!community?.logo_url && (
+            <span style={{
+              fontFamily: 'var(--font-title)',
+              fontWeight: 700,
+              fontSize: '1.05rem',
+              color: 'var(--color-charcoal)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {community?.name || 'CORE'}
+            </span>
+          )}
+        </div>
+
+        {/* Center: page title / filters slot — centered on the full header, independent of logo/avatar widths */}
+        <div style={{
+          position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+          display: 'flex', alignItems: 'center', gap: 10, maxWidth: '60%', zIndex: 1,
+        }}>
+          {slot}
         </div>
 
         {/* Right: avatar + dropdown */}
@@ -87,12 +99,12 @@ export default function TopBar() {
             onClick={() => setShowMenu(v => !v)}
             title={user?.firstName || user?.ename}
             style={{
-              width: 34, height: 34, borderRadius: '50%',
+              width: 51, height: 51, borderRadius: '50%',
               background: isAdmin ? 'var(--color-terracotta)' : 'var(--color-sand-dark)',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.88rem', color: 'white', fontWeight: 600,
-              fontFamily: 'Inter, sans-serif', flexShrink: 0,
+              fontSize: '1.3rem', color: 'white', fontWeight: 600,
+              fontFamily: 'var(--font-sans)', flexShrink: 0,
               overflow: 'hidden', padding: 0,
             }}
           >
@@ -104,8 +116,8 @@ export default function TopBar() {
           {showMenu && (
             <div style={{
               position: 'absolute', top: 42, right: 0, zIndex: 1000,
-              background: 'white', border: '1px solid var(--color-sand)',
-              borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+              background: 'white', border: '2px solid var(--color-charcoal)',
+              borderRadius: 0, boxShadow: 'var(--block-shadow)',
               minWidth: 200, overflow: 'hidden',
             }}>
               <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-sand)' }}>
@@ -115,21 +127,21 @@ export default function TopBar() {
               </div>
 
               <MenuItem onClick={() => { setShowMenu(false); navigate('/') }}>
-                🏡 My community
+                My community
               </MenuItem>
               <MenuItem onClick={() => { setShowMenu(false); navigate('/profile') }}>
-                👋 My profile
+                My profile
               </MenuItem>
               <MenuItem onClick={() => { setShowMenu(false); navigate('/my-workgroups') }}>
-                🔧 My workgroups
+                My workgroups
               </MenuItem>
               <MenuItem onClick={() => { setShowMenu(false); navigate('/my-availability') }}>
-                📅 My availability
+                My availability
               </MenuItem>
 
               {(isAdmin || isWorkgroupAdmin) && (
                 <MenuItem onClick={() => { setShowMenu(false); navigate('/admin') }}>
-                  ⚙️ Admin
+                  Admin
                 </MenuItem>
               )}
 
@@ -179,7 +191,7 @@ function MenuItem({ onClick, children, danger = false }) {
       style={{
         display: 'block', width: '100%', textAlign: 'left',
         padding: '10px 16px', border: 'none', cursor: 'pointer',
-        fontSize: '0.88rem', fontFamily: 'Inter, sans-serif',
+        fontSize: '0.88rem', fontFamily: 'var(--font-sans)',
         background: hover ? 'var(--color-cream)' : 'white',
         color: danger ? 'var(--color-red)' : 'var(--color-charcoal)',
       }}

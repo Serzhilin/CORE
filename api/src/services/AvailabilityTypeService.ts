@@ -1,6 +1,8 @@
 import { AppDataSource } from "../database/data-source";
 import { AvailabilityType } from "../database/entities/AvailabilityType";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
+import { syncAvailabilityToEvault } from "./AvailabilityEnvelopeService";
+import { logger } from "../lib/logger";
 
 const repo = () => AppDataSource.getRepository(AvailabilityType);
 
@@ -16,7 +18,7 @@ export async function createAvailabilityType(
     data: { name: string; emoji: string }
 ): Promise<AvailabilityType> {
     const maxOrder = (await repo().maximum("sort_order", { community_id: communityId })) as number | null;
-    return repo().save(
+    const saved = await repo().save(
         repo().create({
             community_id: communityId,
             name: data.name,
@@ -24,6 +26,10 @@ export async function createAvailabilityType(
             sort_order: (maxOrder ?? -1) + 1,
         })
     );
+    syncAvailabilityToEvault(communityId).catch((err) =>
+        logger.warn(err, "Availability envelope sync failed for community %s", communityId)
+    );
+    return saved;
 }
 
 export async function updateAvailabilityType(
@@ -34,7 +40,11 @@ export async function updateAvailabilityType(
     const at = await repo().findOneOrFail({ where: { id, community_id: communityId, is_archived: false } });
     const patch = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
     Object.assign(at, patch);
-    return repo().save(at);
+    const saved = await repo().save(at);
+    syncAvailabilityToEvault(communityId).catch((err) =>
+        logger.warn(err, "Availability envelope sync failed for community %s", communityId)
+    );
+    return saved;
 }
 
 export async function archiveAvailabilityType(id: string, communityId: string): Promise<void> {
@@ -45,4 +55,7 @@ export async function archiveAvailabilityType(id: string, communityId: string): 
     if (inUse > 0) throw Object.assign(new Error("Type is currently in use"), { code: "IN_USE" });
     at.is_archived = true;
     await repo().save(at);
+    syncAvailabilityToEvault(communityId).catch((err) =>
+        logger.warn(err, "Availability envelope sync failed for community %s", communityId)
+    );
 }

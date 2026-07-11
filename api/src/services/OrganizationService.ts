@@ -15,7 +15,6 @@ const personRepo = () => AppDataSource.getRepository(Person);
 export interface OrgSyncExclusions {
 	excludeMembershipId?: string;
 	excludeMembershipTypeId?: string;
-	boardMembersOverride?: { eName: string; role: string }[];
 }
 
 export async function syncOrganizationToEvault(communityId: string, exclude: OrgSyncExclusions = {}): Promise<void> {
@@ -33,6 +32,7 @@ export async function syncOrganizationToEvault(communityId: string, exclude: Org
 	}
 
 	const members: { participantId: string; eName: string; dateJoined: string | null; membershipTypeId: string | null }[] = [];
+	const admins: string[] = [];
 	for (const m of memberships) {
 		const person = await personRepo().findOne({ where: { id: m.person_id } });
 		if (!person?.ename) continue;
@@ -48,12 +48,12 @@ export async function syncOrganizationToEvault(communityId: string, exclude: Org
 			dateJoined: m.joined_at ? String(m.joined_at) : null,
 			membershipTypeId: m.membership_type_id,
 		});
+		if (m.is_admin) admins.push(metaId);
 	}
-
-	const boardMembers = exclude.boardMembersOverride ?? community.board_members;
 
 	const payload = buildOrganizationPayload({
 		communityEname: community.ename,
+		name: community.name,
 		legalForm: community.legal_form,
 		officialName: community.official_name,
 		kvkNumber: community.kvk_number,
@@ -64,12 +64,13 @@ export async function syncOrganizationToEvault(communityId: string, exclude: Org
 		// deserializes to a plain 'YYYY-MM-DD' string at runtime — String() is a safe passthrough.
 		foundingDate: community.founding_date ? String(community.founding_date) : null,
 		statutenFileUri: community.statuten_file_uri,
-		boardMembers,
 		logoUrl: community.logo_url,
+		photoUrl: community.photo_url,
 		primaryColor: community.primary_color,
 		titleFont: community.title_font,
 		membershipTypes: membershipTypes.map((t) => ({ id: t.id, name: t.name, description: t.description, emoji: t.emoji })),
 		members,
+		admins,
 	});
 
 	if (community.organization_envelope_id) {

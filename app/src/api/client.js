@@ -32,19 +32,43 @@ export const devLogin = (ename) => req('POST', '/auth/dev-login', { ename: ename
 export const getMe = () => req('GET', '/me')
 export const updateMe = (data) => req('PATCH', '/me', data)
 
-export function uploadProfileImage(field, file) {
+function downscaleImage(file, maxPx, mimeType = 'image/jpeg', quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    const objectUrl = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl)
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height))
+      const w = Math.round(img.width * scale)
+      const h = Math.round(img.height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL(mimeType, quality))
+    }
+    img.onerror = reject
+    img.src = objectUrl
+  })
+}
+
+// JPEG has no alpha channel — re-encoding a transparent PNG/SVG through it bakes the
+// transparent pixels to black. Preserve PNG for source formats that can carry alpha.
+function pickDownscaleMimeType(file) {
+  return (file.type === 'image/svg+xml' || file.type === 'image/png') ? 'image/png' : 'image/jpeg'
+}
+
+export async function uploadProfileImage(field, file, maxPx) {
+  const mimeType = pickDownscaleMimeType(file)
+  const dataUrl = await downscaleImage(file, maxPx, mimeType)
+  return req('POST', '/profile/image', { field, file: { name: file.name, type: mimeType, data: dataUrl } })
+}
+
+function fileToDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onload = async () => {
-      try {
-        const [, base64] = String(reader.result).split(',')
-        const result = await req('POST', '/profile/image', { field, file: { name: file.name, type: file.type, data: base64 } })
-        resolve(result)
-      } catch (err) {
-        reject(err)
-      }
-    }
-    reader.onerror = () => reject(reader.error)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = reject
     reader.readAsDataURL(file)
   })
 }
@@ -74,8 +98,20 @@ export const adminListAllCommunities = () => req('GET', '/admin/communities')
 export const adminResolveEname = (w3id) => req('GET', `/admin/communities/resolve-w3id?w3id=${encodeURIComponent(w3id)}`)
 export const adminCreateCommunity = (w3id, slug) => req('POST', '/admin/communities', { w3id, slug })
 
+export async function uploadCommunityImage(cid, field, file, maxPx = 512) {
+  const mimeType = pickDownscaleMimeType(file)
+  const dataUrl = await downscaleImage(file, maxPx, mimeType)
+  return updateCommunity(cid, { [field]: dataUrl })
+}
+
+export async function uploadStatutenFile(cid, file) {
+  const dataUrl = await fileToDataUrl(file)
+  return req('POST', `/communities/${cid}/statuten-file`, { file: { name: file.name, type: file.type, data: dataUrl } })
+}
+
 // ── Members ───────────────────────────────────────────────────────────────────
 export const listMembers = (cid) => req('GET', `/communities/${cid}/members`)
+export const lookupMemberEname = (cid, ename) => req('GET', `/communities/${cid}/members/lookup-ename?ename=${encodeURIComponent(ename)}`)
 export const addMember = (cid, data) => req('POST', `/communities/${cid}/members`, data)
 export const updateMember = (cid, pid, data) => req('PATCH', `/communities/${cid}/members/${pid}`, data)
 export const removeMember = (cid, pid) => req('DELETE', `/communities/${cid}/members/${pid}`)

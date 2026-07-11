@@ -47,9 +47,10 @@ export default function EmojiPicker({ value, onChange }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         title="Pick emoji"
+        className={value ? 'emoji-mono' : ''}
         style={{
           width: 48, height: 36, fontSize: '1.2rem', cursor: 'pointer',
-          borderRadius: 6, border: '1px solid var(--color-sand-dark)',
+          borderRadius: 0, border: '1px solid var(--color-sand-dark)',
           background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxSizing: 'border-box',
         }}
@@ -61,7 +62,7 @@ export default function EmojiPicker({ value, onChange }) {
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, zIndex: 100,
           background: 'white', border: '1px solid var(--color-sand-dark)',
-          borderRadius: 10, boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+          borderRadius: 0, boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
           padding: 14, width: 260,
         }}>
           {CATEGORIES.map((cat) => (
@@ -75,9 +76,10 @@ export default function EmojiPicker({ value, onChange }) {
                     key={e}
                     type="button"
                     onClick={() => pick(e)}
+                    className="emoji-mono"
                     style={{
                       width: 32, height: 32, fontSize: '1.1rem', cursor: 'pointer',
-                      borderRadius: 6, border: 'none',
+                      borderRadius: 0, border: 'none',
                       background: value === e ? 'var(--color-sand)' : 'transparent',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}

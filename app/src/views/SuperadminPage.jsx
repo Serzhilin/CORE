@@ -5,7 +5,7 @@ import W3dsLinkCard from '../components/W3dsLinkCard'
 import { adminListAllCommunities, adminResolveEname, adminCreateCommunity } from '../api/client'
 
 const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 8,
+  width: '100%', padding: '10px 14px', borderRadius: 0,
   border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white', boxSizing: 'border-box',
 }
 
@@ -76,7 +76,7 @@ function AddCommunityCard({ onCreated }) {
         {error && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)' }}>{error}</div>}
 
         {preview && (
-          <div style={{ border: '1px solid var(--color-sand)', borderRadius: 8, padding: 14, fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 14, fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <strong>{preview.envelope.name}</strong>
               {preview.envelope.description && <div style={{ marginTop: 4 }}>{preview.envelope.description}</div>}
@@ -120,7 +120,7 @@ export default function SuperadminPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'Inter, sans-serif', color: 'var(--color-charcoal-light)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)', color: 'var(--color-charcoal-light)' }}>
         Loading…
       </div>
     )
@@ -132,14 +132,14 @@ export default function SuperadminPage() {
 
   if (!isPlatformAdmin) {
     return (
-      <div style={{ padding: 32, fontFamily: 'Inter, sans-serif', color: 'var(--color-red)' }}>
+      <div style={{ padding: 32, fontFamily: 'var(--font-sans)', color: 'var(--color-red)' }}>
         Platform admin access required.
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: 32, fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ maxWidth: 720, margin: '0 auto', padding: 32, fontFamily: 'var(--font-sans)' }}>
       <h1 style={{ fontFamily: 'var(--font-title)', margin: '0 0 24px' }}>Superadmin — Communities</h1>
 
       {listError && <div style={{ color: 'var(--color-red)', marginBottom: 16 }}>{listError}</div>}
@@ -157,7 +157,7 @@ export default function SuperadminPage() {
               <div style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>/{c.slug}</div>
             </div>
             <span style={{
-              fontSize: '0.78rem', padding: '3px 10px', borderRadius: 999,
+              fontSize: '0.78rem', padding: '3px 10px', borderRadius: 0,
               background: c.provisioning_status === 'linked' ? 'var(--color-green, #dcfce7)' : 'var(--color-sand)',
               color: c.provisioning_status === 'linked' ? '#166534' : 'var(--color-charcoal-light)',
             }}>

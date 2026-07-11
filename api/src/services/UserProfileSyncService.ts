@@ -30,6 +30,11 @@ export async function syncUserProfileToEvault(personId: string, overrides: UserP
         bio: person.bio,
         avatarUrl: overrides.avatarUrl ?? (existing.avatarUrl as string | undefined) ?? null,
         bannerUrl: overrides.bannerUrl ?? (existing.bannerUrl as string | undefined) ?? null,
+        email: person.email,
+        phone: person.phone,
+        website: person.website,
+        location: person.location,
+        birthDate: person.birth_date,
     });
 
     await updateEnvelope({ vaultEname: person.ename, envelopeId, ontology: ONTOLOGIES.User, payload, acl: ["*"] });

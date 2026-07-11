@@ -5,6 +5,7 @@ export default function AvailabilityBadge({ availability, inline = false }) {
 
   return (
     <span
+      className="emoji-mono"
       title={tooltip || type.name}
       style={{
         cursor: 'default',

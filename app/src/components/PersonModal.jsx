@@ -48,10 +48,10 @@ export default function PersonModal({ member, onClose }) {
                 {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
               </h2>
               <div style={{ display: 'flex', gap: 4 }}>
-                {member.isAdmin && <span style={{ fontSize: '0.75rem', background: 'var(--color-sand)', borderRadius: 4, padding: '2px 8px' }}>Admin</span>}
+                {member.isAdmin && <span style={{ fontSize: '0.75rem', background: 'var(--color-sand)', borderRadius: 0, padding: '2px 8px' }}>Admin</span>}
                 {member.membershipType && (
-                  <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 4, padding: '2px 8px' }}>
-                    {member.membershipType.emoji ? `${member.membershipType.emoji} ` : ''}{member.membershipType.name}
+                  <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 0, padding: '2px 8px' }}>
+                    {member.membershipType.emoji ? <span className="emoji-mono">{member.membershipType.emoji} </span> : ''}{member.membershipType.name}
                   </span>
                 )}
               </div>
@@ -69,7 +69,7 @@ export default function PersonModal({ member, onClose }) {
 
         {/* Availability */}
         {member.availability && (
-          <div style={{ background: 'var(--color-sand)', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: '0.9rem' }}>
+          <div style={{ background: 'var(--color-sand)', borderRadius: 0, padding: '10px 14px', marginBottom: 16, fontSize: '0.9rem' }}>
             <AvailabilityBadge availability={member.availability} /> {member.availability.type.name}
             {member.availability.reason && <span style={{ color: 'var(--color-charcoal-light)' }}> — {member.availability.reason}</span>}
             {member.availability.until && <span style={{ color: 'var(--color-charcoal-light)' }}> (until {member.availability.until})</span>}

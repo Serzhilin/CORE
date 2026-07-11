@@ -1,12 +1,13 @@
 import { useState, useRef, lazy, Suspense } from 'react'
 import { useCommunity } from '../context/CommunityContext'
+import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CardGrid from './CardGrid'
 import InfoPanel from '../components/InfoPanel'
 import html2canvas from 'html2canvas'
 
 const GraphView = lazy(() => import('./graph/GraphView'))
 
-const inputStyle = { padding: '6px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', background: 'white', fontSize: '0.9rem' }
+const inputStyle = { padding: '0 10px', height: 34, boxSizing: 'border-box', appearance: 'none', WebkitAppearance: 'none', borderRadius: 0, border: '2px solid var(--color-charcoal)', boxShadow: 'var(--block-shadow-sm)', background: 'white', fontSize: '0.9rem' }
 const checkStyle = { display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem', cursor: 'pointer' }
 
 const INITIAL_FILTER = { workgroupId: '', roleName: '', showUnavailable: true, search: '' }
@@ -19,48 +20,23 @@ export default function OrganogramView() {
   const cardGridRef = useRef(null)
   const graphExportRef = useRef(null)
 
-  if (loading) return <div style={{ color: 'var(--color-charcoal-light)' }}>Loading…</div>
-  if (!community) return null
-
-  const allRoleNames = [...new Set(
+  const allRoleNames = community ? [...new Set(
     community.workgroups.flatMap((wg) => wg.roles.map((r) => r.name))
-  )].sort()
-
-  async function exportPng() {
-    if (!cardGridRef.current) return
-    const canvas = await html2canvas(cardGridRef.current, { backgroundColor: '#F5F0E8', useCORS: true })
-    const a = document.createElement('a')
-    a.download = 'organogram.png'
-    a.href = canvas.toDataURL()
-    a.click()
-  }
+  )].sort() : []
 
   const patch = (p) => setFilter((f) => ({ ...f, ...p }))
 
-  function handleMemberClick(member) {
-    setPanelSelection({ type: 'person', id: member.personId })
-  }
-
-  function handlePersonSelect(pid) {
-    setPanelSelection({ type: 'person', id: pid })
-  }
-
-  function handleWorkgroupSelect(wgId) {
-    setPanelSelection({ type: 'workgroup', id: wgId })
-  }
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Filter bar */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center', flexShrink: 0 }}>
-        <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', border: '1px solid var(--color-sand-dark)', flexShrink: 0 }}>
+  useSetTopBarSlot(
+    community ? (
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'nowrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', height: 34, boxSizing: 'border-box', borderRadius: 0, overflow: 'hidden', border: '2px solid var(--color-charcoal)', boxShadow: 'var(--block-shadow-sm)', flexShrink: 0 }}>
           {['graph', 'cards'].map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
               style={{
-                padding: '6px 14px', border: 'none', cursor: 'pointer',
-                fontSize: '0.9rem', fontWeight: 500, fontFamily: 'Inter, sans-serif',
+                padding: '0 14px', height: '100%', boxSizing: 'border-box', border: 'none', cursor: 'pointer',
+                fontSize: '0.9rem', fontWeight: 500, fontFamily: 'var(--font-sans)',
                 background: view === v ? 'var(--color-terracotta)' : 'white',
                 color: view === v ? 'white' : 'var(--color-charcoal-light)',
               }}
@@ -98,10 +74,39 @@ export default function OrganogramView() {
           Show unavailable
         </label>
       </div>
+    ) : null,
+    [community, view, filter, allRoleNames.join('|')]
+  )
 
+  if (loading) return <div style={{ color: 'var(--color-charcoal-light)' }}>Loading…</div>
+  if (!community) return null
+
+  async function exportPng() {
+    if (!cardGridRef.current) return
+    const canvas = await html2canvas(cardGridRef.current, { backgroundColor: '#F5F0E8', useCORS: true })
+    const a = document.createElement('a')
+    a.download = 'organogram.png'
+    a.href = canvas.toDataURL()
+    a.click()
+  }
+
+  function handleMemberClick(member) {
+    setPanelSelection({ type: 'person', id: member.personId })
+  }
+
+  function handlePersonSelect(pid) {
+    setPanelSelection({ type: 'person', id: pid })
+  }
+
+  function handleWorkgroupSelect(wgId) {
+    setPanelSelection({ type: 'workgroup', id: wgId })
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Main content row: view + InfoPanel */}
       <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        <div style={{ flex: 1, minWidth: 0, overflow: view === 'cards' ? 'auto' : 'hidden' }}>
+        <div style={{ flex: 1, minWidth: 0, overflow: view === 'cards' ? 'auto' : 'visible' }}>
           {view === 'cards' ? (
             <CardGrid community={community} filter={filter} onMemberClick={handleMemberClick} gridRef={cardGridRef} selectedPersonId={panelSelection?.type === 'person' ? panelSelection.id : null} />
           ) : (
@@ -111,7 +116,8 @@ export default function OrganogramView() {
                 communityId={community.id}
                 filters={filter}
                 refreshKey={community.workgroups.flatMap(wg => wg.roles.map(r => r.id + r.name + r.color)).join('|')}
-                onFilterToWorkgroup={(wgId) => patch({ workgroupId: wgId })}
+                selection={panelSelection}
+                onSelectionClear={() => setPanelSelection(null)}
                 onPersonSelect={handlePersonSelect}
                 onWorkgroupSelect={handleWorkgroupSelect}
                 exportRef={graphExportRef}

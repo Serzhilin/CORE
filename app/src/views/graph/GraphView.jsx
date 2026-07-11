@@ -4,10 +4,9 @@ import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
 import ForceGraph from './ForceGraph'
 
-export default function GraphView({ communityId, filters, onFilterToWorkgroup, onPersonSelect, onWorkgroupSelect, refreshKey, exportRef, style }) {
+export default function GraphView({ communityId, filters, selection, onSelectionClear, onPersonSelect, onWorkgroupSelect, refreshKey, exportRef, style }) {
   const [graphData, setGraphData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [selected, setSelected] = useState(null)
   const svgRef = useRef(null)
 
   useEffect(() => {
@@ -42,8 +41,7 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, o
   if (!graphData) return null
 
   function handleSelect(node) {
-    setSelected(node)
-    if (!node) return
+    if (!node) { if (onSelectionClear) onSelectionClear(); return }
     if (node.type === 'person' && onPersonSelect) onPersonSelect(node.personId ?? node.id)
     if (node.type === 'workgroup' && onWorkgroupSelect) onWorkgroupSelect(node.id)
   }
@@ -55,7 +53,7 @@ export default function GraphView({ communityId, filters, onFilterToWorkgroup, o
           simNodes={simNodes}
           simLinks={simLinks}
           filters={filters}
-          selected={selected}
+          selected={selection}
           onSelect={handleSelect}
           svgRef={svgRef}
           simRef={simRef}

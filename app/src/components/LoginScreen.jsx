@@ -15,7 +15,7 @@ function OfferLink({ offer, copied, onCopy }) {
         title="Copy link"
         style={{
           flexShrink: 0, background: 'none', border: '1px solid var(--color-sand)',
-          borderRadius: 5, padding: '3px 6px', cursor: 'pointer',
+          borderRadius: 0, padding: '3px 6px', cursor: 'pointer',
           fontSize: '0.7rem', color: copied ? 'var(--color-terracotta)' : 'var(--color-charcoal-light)',
           lineHeight: 1,
         }}
@@ -116,7 +116,7 @@ export default function LoginScreen({ onSuccess }) {
 
               {/* Loading placeholder */}
               {status === 'loading' && (
-                <div style={{ width: 220, height: 220, background: 'var(--color-sand)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 220, height: 220, background: 'var(--color-sand)', borderRadius: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>Preparing…</span>
                 </div>
               )}
@@ -131,7 +131,7 @@ export default function LoginScreen({ onSuccess }) {
               {/* Desktop: QR code + w3ds:// link */}
               {status === 'waiting' && !isMobile && qrDataUrl && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <div style={{ padding: 12, background: 'white', borderRadius: 10, border: '1px solid var(--color-sand)', display: 'inline-block' }}>
+                  <div style={{ padding: 12, background: 'white', borderRadius: 0, border: '1px solid var(--color-sand)', display: 'inline-block' }}>
                     <img src={qrDataUrl} alt="QR code" width={200} height={200} style={{ display: 'block' }} />
                   </div>
                   {offer && <OfferLink offer={offer} copied={copied} onCopy={copyOffer} />}
@@ -145,7 +145,7 @@ export default function LoginScreen({ onSuccess }) {
                     href={offer}
                     style={{
                       display: 'inline-flex', justifyContent: 'center', padding: '12px 28px',
-                      background: '#2563EB', color: 'white', borderRadius: 8, fontWeight: 600,
+                      background: '#2563EB', color: 'white', borderRadius: 0, fontWeight: 600,
                       fontSize: '1rem', textDecoration: 'none', width: '100%', boxSizing: 'border-box',
                     }}
                   >
@@ -166,7 +166,7 @@ export default function LoginScreen({ onSuccess }) {
               )}
 
               {/* W3DS info box */}
-              <div style={{ background: 'rgba(0,0,0,0.04)', borderRadius: 8, padding: '12px 16px', fontSize: '0.82rem', lineHeight: 1.6, textAlign: 'left', color: 'var(--color-charcoal-light)' }}>
+              <div style={{ background: 'rgba(0,0,0,0.04)', borderRadius: 0, padding: '12px 16px', fontSize: '0.82rem', lineHeight: 1.6, textAlign: 'left', color: 'var(--color-charcoal-light)' }}>
                 This app uses W3DS — a decentralised identity standard — to authenticate without passwords.
                 Your identity is stored in your wallet, never on our servers.
               </div>

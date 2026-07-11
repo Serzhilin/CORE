@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { createCommunity, getMyCommunities, getAllCommunities, getCommunityFull, updateCommunity, getCommunityGraph, resolveW3id, linkCommunity, unlinkCommunity, resolveEnameForNewCommunity, createCommunityFromEname } from "../services/CommunityService";
+import { createCommunity, getMyCommunities, getAllCommunities, getCommunityFull, updateCommunity, getCommunityGraph, resolveW3id, linkCommunity, unlinkCommunity, resolveEnameForNewCommunity, createCommunityFromEname, getById } from "../services/CommunityService";
 import { Community } from "../database/entities/Community";
+import { uploadFile } from "../lib/evault-client";
 
 export async function listCommunities(req: Request, res: Response) {
     const communities = await getMyCommunities(req.user!.userId);
@@ -33,20 +34,20 @@ export async function getCommunityGraphHandler(req: Request, res: Response) {
 
 export async function updateCommunityHandler(req: Request, res: Response) {
     const {
-        name, slug, description, logo_url, primary_color, title_font,
+        name, slug, description, logo_url, photo_url, primary_color, title_font,
         legal_form, official_name, kvk_number, rsin, iban, registered_address,
-        founding_date, statuten_file_uri, board_members,
+        founding_date, statuten_file_uri,
     } = req.body;
     const patch = Object.fromEntries(
         Object.entries({
-            name, slug, description, logo_url, primary_color, title_font,
+            name, slug, description, logo_url, photo_url, primary_color, title_font,
             legal_form, official_name, kvk_number, rsin, iban, registered_address,
-            founding_date, statuten_file_uri, board_members,
+            founding_date, statuten_file_uri,
         }).filter(([, v]) => v !== undefined)
     ) as Partial<Pick<Community,
-        "name" | "slug" | "description" | "logo_url" | "primary_color" | "title_font" |
+        "name" | "slug" | "description" | "logo_url" | "photo_url" | "primary_color" | "title_font" |
         "legal_form" | "official_name" | "kvk_number" | "rsin" | "iban" | "registered_address" |
-        "founding_date" | "statuten_file_uri" | "board_members"
+        "founding_date" | "statuten_file_uri"
     >>;
 
     try {
@@ -56,6 +57,24 @@ export async function updateCommunityHandler(req: Request, res: Response) {
         if (err.code === "23505") { res.status(409).json({ error: "Slug already taken" }); return; }
         if (err.name === "EntityNotFoundError") { res.status(404).json({ error: "Community not found" }); return; }
         throw err;
+    }
+}
+
+export async function uploadStatutenFileHandler(req: Request, res: Response) {
+    const { file } = req.body as { file?: { name: string; type: string; data: string } };
+    if (!file?.data || !file?.name) { res.status(400).json({ error: "file with name and data is required" }); return; }
+
+    const community = await getById(req.params.id);
+    if (!community) { res.status(404).json({ error: "Community not found" }); return; }
+    if (!community.ename) { res.status(400).json({ error: "Community is not linked to a W3DS eName yet" }); return; }
+
+    try {
+        const base64 = file.data.includes(",") ? file.data.slice(file.data.indexOf(",") + 1) : file.data;
+        const { uri, publicUrl } = await uploadFile(community.ename, file.name, file.type || "application/octet-stream", base64);
+        const updated = await updateCommunity(community.id, { statuten_file_uri: uri });
+        res.json({ uri, url: publicUrl ?? uri, community: updated });
+    } catch (err: any) {
+        res.status(502).json({ error: "Failed to upload statuten file: " + err.message });
     }
 }
 

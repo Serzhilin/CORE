@@ -17,6 +17,10 @@ export class Community {
     @Column({ type: "text", nullable: true })
     logo_url: string | null;
 
+    // Group photo (distinct from logo) — e.g. a photo of the community's members/space.
+    @Column({ type: "text", nullable: true })
+    photo_url: string | null;
+
     @Column({ default: "#C4622D" })
     primary_color: string;
 
@@ -31,6 +35,9 @@ export class Community {
 
     @Column({ type: "text", nullable: true })
     organization_envelope_id: string | null;
+
+    @Column({ type: "text", nullable: true })
+    availability_envelope_id: string | null;
 
     @Column({ type: "text", nullable: true })
     legal_form: string | null;
@@ -55,9 +62,6 @@ export class Community {
 
     @Column({ type: "text", nullable: true })
     statuten_file_uri: string | null;
-
-    @Column({ type: "jsonb", default: () => "'[]'" })
-    board_members: { eName: string; role: string }[];
 
     // 'unlinked' (local only, no eVault) | 'linked' (attached to an existing W3DS eName)
     @Column({ default: "unlinked" })

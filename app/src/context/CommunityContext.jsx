@@ -44,6 +44,11 @@ export function CommunityProvider({ children }) {
   // Load whenever the selected community changes
   useEffect(() => { loadCommunity(communityId) }, [communityId, loadCommunity])
 
+  // Drive the app's block-shadow accent from the community's own brand color
+  useEffect(() => {
+    document.documentElement.style.setProperty('--block-shadow-color', community?.primary_color || '#2C2C2C')
+  }, [community?.primary_color])
+
   const switchCommunity = useCallback((id) => {
     localStorage.setItem('core_community_id', id)
     setCommunityId(id)
