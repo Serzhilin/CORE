@@ -15,12 +15,6 @@ export class CommunityMembership {
     @Column({ default: false })
     is_admin: boolean;
 
-    @Column({ default: false })
-    is_aspirant: boolean;
-
-    @Column({ default: false })
-    is_active_partner: boolean;
-
     @Column({ type: "uuid", nullable: true })
     membership_type_id: string | null;
 
@@ -39,8 +33,8 @@ export class CommunityMembership {
     @Column({ type: "date", nullable: true })
     availability_until: Date | null;
 
-    // MetaEnvelope ID of the member's User profile, cached once resolved — lets us
-    // add/remove this member from the community's Chat envelope participantIds precisely.
+    // MetaEnvelope ID of the member's User profile, cached once resolved — feeds the
+    // Organization envelope's members[].participantId on every sync.
     @Column({ type: "varchar", nullable: true })
     meta_envelope_id: string | null;
 
