@@ -1,28 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCommunity } from '../../context/CommunityContext'
-import { addMember, updateMember, updateMemberPerson, removeMember } from '../../api/client'
+import { addMember, updateMember, updateMemberPerson, removeMember, listMembershipTypes } from '../../api/client'
 
 const inputStyle = { padding: '7px 10px', borderRadius: 6, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function MembersTab() {
   const { communityId, community, refresh } = useCommunity()
   const [adding, setAdding] = useState(false)
-  const [addForm, setAddForm] = useState({ first_name: '', last_name: '', email: '', is_aspirant: false, is_active_partner: false, joined_at: '' })
+  const [addForm, setAddForm] = useState({ first_name: '', last_name: '', email: '', membership_type_id: '', joined_at: '' })
   const [addSaving, setAddSaving] = useState(false)
+  const [membershipTypes, setMembershipTypes] = useState([])
+
+  useEffect(() => {
+    listMembershipTypes(communityId).then(setMembershipTypes).catch(() => setMembershipTypes([]))
+  }, [communityId])
 
   async function handleAdd(e) {
     e.preventDefault()
     setAddSaving(true)
     try {
-      const newMembership = await addMember(communityId, addForm)
+      const { membership_type_id, joined_at, ...rest } = addForm
+      const newMembership = await addMember(communityId, rest)
       const extras = {}
-      if (addForm.is_aspirant) extras.is_aspirant = true
-      if (addForm.is_active_partner) extras.is_active_partner = true
-      if (addForm.joined_at) extras.joined_at = addForm.joined_at
+      if (membership_type_id) extras.membership_type_id = membership_type_id
+      if (joined_at) extras.joined_at = joined_at
       if (Object.keys(extras).length) await updateMember(communityId, newMembership.person_id, extras)
       await refresh()
       setAdding(false)
-      setAddForm({ first_name: '', last_name: '', email: '', is_aspirant: false, is_active_partner: false, joined_at: '' })
+      setAddForm({ first_name: '', last_name: '', email: '', membership_type_id: '', joined_at: '' })
     } catch (err) {
       alert('Error: ' + err.message)
     } finally {
@@ -76,15 +81,14 @@ export default function MembersTab() {
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Joined</label>
               <input type="date" style={inputStyle} value={addForm.joined_at} onChange={(e) => setAddForm((f) => ({ ...f, joined_at: e.target.value }))} />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'flex-end', paddingBottom: 2 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', cursor: 'pointer' }}>
-                <input type="checkbox" checked={addForm.is_aspirant} onChange={(e) => setAddForm((f) => ({ ...f, is_aspirant: e.target.checked }))} />
-                Aspirant
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', cursor: 'pointer' }}>
-                <input type="checkbox" checked={addForm.is_active_partner} onChange={(e) => setAddForm((f) => ({ ...f, is_active_partner: e.target.checked }))} />
-                Active partner
-              </label>
+            <div>
+              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Membership type</label>
+              <select style={inputStyle} value={addForm.membership_type_id} onChange={(e) => setAddForm((f) => ({ ...f, membership_type_id: e.target.value }))}>
+                <option value="">—</option>
+                {membershipTypes.map((t) => (
+                  <option key={t.id} value={t.id}>{t.emoji ? `${t.emoji} ` : ''}{t.name}</option>
+                ))}
+              </select>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
               <button type="submit" className="btn-primary" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</button>
@@ -98,7 +102,7 @@ export default function MembersTab() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
-              {['Name', 'Email', 'eName', 'Aspirant', 'Active partner', 'Joined', ''].map((h) => (
+              {['Name', 'Email', 'eName', 'Membership type', 'Joined', ''].map((h) => (
                 <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -122,12 +126,16 @@ export default function MembersTab() {
                     />
                   </td>
                   <td style={{ padding: '10px 14px' }}>
-                    <input type="checkbox" checked={m.isAspirant}
-                      onChange={(e) => handleUpdate(m.personId, { is_aspirant: e.target.checked })} />
-                  </td>
-                  <td style={{ padding: '10px 14px' }}>
-                    <input type="checkbox" checked={m.isActivePartner ?? false}
-                      onChange={(e) => handleUpdate(m.personId, { is_active_partner: e.target.checked })} />
+                    <select
+                      style={{ ...inputStyle, fontSize: '0.8rem', padding: '4px 8px' }}
+                      value={m.membershipTypeId || ''}
+                      onChange={(e) => handleUpdate(m.personId, { membership_type_id: e.target.value || null })}
+                    >
+                      <option value="">—</option>
+                      {membershipTypes.map((t) => (
+                        <option key={t.id} value={t.id}>{t.emoji ? `${t.emoji} ` : ''}{t.name}</option>
+                      ))}
+                    </select>
                   </td>
                   <td style={{ padding: '10px 14px' }}>
                     <input

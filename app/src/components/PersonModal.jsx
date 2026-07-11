@@ -49,8 +49,11 @@ export default function PersonModal({ member, onClose }) {
               </h2>
               <div style={{ display: 'flex', gap: 4 }}>
                 {member.isAdmin && <span style={{ fontSize: '0.75rem', background: 'var(--color-sand)', borderRadius: 4, padding: '2px 8px' }}>Admin</span>}
-                {member.isAspirant && <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 4, padding: '2px 8px' }}>Aspirant</span>}
-                {member.isActivePartner && <span style={{ fontSize: '0.75rem', background: '#E8F5E9', borderRadius: 4, padding: '2px 8px' }}>Active partner</span>}
+                {member.membershipType && (
+                  <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 4, padding: '2px 8px' }}>
+                    {member.membershipType.emoji ? `${member.membershipType.emoji} ` : ''}{member.membershipType.name}
+                  </span>
+                )}
               </div>
             </div>
           </div>

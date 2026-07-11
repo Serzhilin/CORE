@@ -132,8 +132,11 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
           <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '0.95rem', lineHeight: 1.3 }}>{name}</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
             {member.isAdmin && <span style={{ fontSize: '0.68rem', background: 'var(--color-sand)', borderRadius: 4, padding: '1px 6px' }}>Admin</span>}
-            {member.isAspirant && <span style={{ fontSize: '0.68rem', background: '#FFF3CD', borderRadius: 4, padding: '1px 6px' }}>Aspirant</span>}
-            {member.isActivePartner && <span style={{ fontSize: '0.68rem', background: '#E8F5E9', borderRadius: 4, padding: '1px 6px' }}>Active partner</span>}
+            {member.membershipType && (
+              <span style={{ fontSize: '0.68rem', background: '#FFF3CD', borderRadius: 4, padding: '1px 6px' }}>
+                {member.membershipType.emoji ? `${member.membershipType.emoji} ` : ''}{member.membershipType.name}
+              </span>
+            )}
           </div>
         </div>
       </div>
