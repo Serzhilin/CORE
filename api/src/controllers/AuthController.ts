@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
 import { verifySignature } from "../lib/signature-validator";
-import { findOrCreateByEname, fetchEVaultProfile, updatePerson, displayName, findById } from "../services/PersonService";
-import { getUserMetaEnvelopeId } from "../lib/evault-client";
+import { findOrCreateByEname, fetchEVaultProfile, updatePerson, findById } from "../services/PersonService";
+import { getUserMetaEnvelopeId, uploadFile, resolveW3dsFileUrl } from "../lib/evault-client";
+import { syncUserProfileToEvault } from "../services/UserProfileSyncService";
 import { logger } from "../lib/logger";
 import { Person } from "../database/entities/Person";
 import { signToken } from "../middleware/auth";
@@ -24,11 +25,12 @@ function serializePerson(p: Person) {
         ename: p.ename,
         firstName: p.first_name,
         lastName: p.last_name,
-        displayName: displayName(p),
+        displayName: p.display_name,
         email: p.email,
         phone: p.phone,
         bio: p.bio,
         avatarUrl: p.avatar_url,
+        bannerUrl: p.banner_url,
     };
 }
 
@@ -150,13 +152,40 @@ export async function getMe(req: Request, res: Response) {
     });
 }
 
-export async function updateMe(req: Request, res: Response) {
-    const { first_name, last_name, email, phone, bio, avatar_url } = req.body;
+export async function updateMe(req: Request, res: Response, next: NextFunction) {
+    const { email, phone, bio, avatar_url, display_name } = req.body;
     try {
-        const person = await updatePerson(req.user!.userId, { first_name, last_name, email, phone, bio, avatar_url });
+        const personId = req.user!.userId;
+        const person = await updatePerson(personId, { email, phone, bio, avatar_url, display_name });
         res.json(serializePerson(person));
+        if (bio !== undefined || display_name !== undefined) {
+            syncUserProfileToEvault(personId).catch((err) => logger.warn(err, "user profile eVault sync failed for %s", personId));
+        }
     } catch (err: any) {
         if (err.code === "23505") { res.status(409).json({ error: "Email already in use" }); return; }
-        throw err;
+        next(err);
+    }
+}
+
+export async function uploadProfileImageHandler(req: Request, res: Response, next: NextFunction) {
+    const { field, file } = req.body; // field: 'avatar_url' | 'banner_url'; file: { name, type, data }
+    if (field !== "avatar_url" && field !== "banner_url") { res.status(400).json({ error: "field must be avatar_url or banner_url" }); return; }
+    if (!file?.data || !file?.name || !file?.type) { res.status(400).json({ error: "file with name, type, data is required" }); return; }
+
+    try {
+        const personId = req.user!.userId;
+        const person = await findById(personId);
+        if (!person?.ename) { res.status(400).json({ error: "No eName linked to this account yet" }); return; }
+
+        const { uri, publicUrl } = await uploadFile(person.ename, file.name, file.type, file.data);
+        const resolvedUrl = publicUrl ?? (await resolveW3dsFileUrl(uri));
+
+        await updatePerson(personId, { [field]: resolvedUrl } as Partial<Pick<Person, "avatar_url" | "banner_url">>);
+        res.json({ url: resolvedUrl });
+
+        const overrideKey = field === "avatar_url" ? "avatarUrl" : "bannerUrl";
+        syncUserProfileToEvault(personId, { [overrideKey]: uri }).catch((err) => logger.warn(err, "user profile eVault sync failed for %s", personId));
+    } catch (err) {
+        next(err);
     }
 }

@@ -10,7 +10,7 @@ import { logger } from "./lib/logger";
 import { AppDataSource } from "./database/data-source";
 import { requireAuth } from "./middleware/auth";
 import { requireCommunityMember, requireCommunityAdmin, requirePlatformAdmin } from "./middleware/communityAccess";
-import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe } from "./controllers/AuthController";
+import { getOffer, epassportLogin, sseAuthStream, devLogin, getMe, updateMe, uploadProfileImageHandler } from "./controllers/AuthController";
 import { listCommunities, createCommunityHandler, getCommunityHandler, updateCommunityHandler, getCommunityGraphHandler, resolveW3idHandler, linkCommunityHandler, listAllCommunitiesHandler, unlinkCommunityHandler, adminResolveEnameHandler, createCommunityFromEnameHandler } from "./controllers/CommunityController";
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler } from "./controllers/MemberController";
 import { handleWebhook } from "./controllers/WebhookController";
@@ -57,6 +57,7 @@ app.post("/api/auth/dev-login", devLogin);
 app.get("/api/auth/sessions/:id", sseAuthStream);
 app.get("/api/me", requireAuth, getMe);
 app.patch("/api/me", requireAuth, updateMe);
+app.post("/api/profile/image", requireAuth, uploadProfileImageHandler);
 
 // ── Communities ───────────────────────────────────────────────────────────────
 app.get("/api/communities", requireAuth, listCommunities);

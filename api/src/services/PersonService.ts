@@ -26,12 +26,6 @@ export async function updatePerson(id: string, data: Partial<Pick<Person,
     return repo().save(person);
 }
 
-export function displayName(p: Person): string {
-    if (p.first_name && p.last_name) return `${p.first_name} ${p.last_name}`;
-    if (p.first_name) return p.first_name;
-    return p.ename ?? p.id;
-}
-
 /** Fetch profile from eVault on first login. Returns null if unavailable. */
 export async function fetchEVaultProfile(ename: string): Promise<{ first_name: string; last_name: string } | null> {
     const envelopes = await findEnvelopesByOntology(ename, ONTOLOGIES.User, 1);
