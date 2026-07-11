@@ -386,7 +386,7 @@ export async function resolveEnameForNewCommunity(w3id: string): Promise<EnameGr
 }
 
 /** Platform-admin-only: creates a new local Community row directly from an existing eVault
- *  group, already linked. Read-only against the eVault — never writes an envelope. */
+ *  group, already linked, then syncs an Organization envelope to the linked eVault. */
 export async function createCommunityFromEname(w3id: string, slug: string): Promise<Community> {
     const resolution = await resolveEnameForNewCommunity(w3id);
 

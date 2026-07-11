@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { listMembers, addMember, updateMember, removeMember, getMemberAvailabilityLog } from "../services/MemberService";
 import { updatePerson } from "../services/PersonService";
 import { applyAvailability } from "../services/AvailabilityService";
@@ -45,13 +45,17 @@ export async function updateMemberHandler(req: Request, res: Response) {
     }
 }
 
-export async function deleteMemberHandler(req: Request, res: Response) {
-    const membership = await AppDataSource.getRepository(CommunityMembership).findOne({
-        where: { person_id: req.params.pid, community_id: req.params.cid },
-    });
-    if (!membership) { res.status(404).json({ error: "Membership not found" }); return; }
-    await removeMember(req.params.cid, membership.id);
-    res.status(204).send();
+export async function deleteMemberHandler(req: Request, res: Response, next: NextFunction) {
+    try {
+        const membership = await AppDataSource.getRepository(CommunityMembership).findOne({
+            where: { person_id: req.params.pid, community_id: req.params.cid },
+        });
+        if (!membership) { res.status(404).json({ error: "Membership not found" }); return; }
+        await removeMember(req.params.cid, membership.id);
+        res.status(204).send();
+    } catch (err) {
+        next(err);
+    }
 }
 
 export async function setMyAvailability(req: Request, res: Response) {
@@ -106,7 +110,7 @@ export async function updateMemberPersonHandler(req: Request, res: Response) {
         const person = await updatePerson(req.params.pid, { ename: ename ?? null });
         if (ename) {
             syncClaimedIdentity(req.params.cid, person).catch((err) =>
-                logger.warn(err, "Chat envelope sync failed after identity claim for person %s", person.id)
+                logger.warn(err, "Organization envelope sync failed after identity claim for person %s", person.id)
             );
         }
         res.json(person);
