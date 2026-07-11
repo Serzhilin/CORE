@@ -32,6 +32,23 @@ export const devLogin = (ename) => req('POST', '/auth/dev-login', { ename: ename
 export const getMe = () => req('GET', '/me')
 export const updateMe = (data) => req('PATCH', '/me', data)
 
+export function uploadProfileImage(field, file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = async () => {
+      try {
+        const [, base64] = String(reader.result).split(',')
+        const result = await req('POST', '/profile/image', { field, file: { name: file.name, type: file.type, data: base64 } })
+        resolve(result)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+}
+
 export function subscribeToAuthSession(sessionId, onLogin) {
   const es = new EventSource(`${SSE_BASE}/auth/sessions/${sessionId}`)
   es.onmessage = (e) => {
