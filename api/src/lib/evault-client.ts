@@ -209,6 +209,40 @@ export async function getUserMetaEnvelopeId(ename: string): Promise<string | nul
   }
 }
 
+const GQL_UPLOAD = `
+  mutation UploadFile($input: UploadFileInput!) {
+    uploadFile(input: $input) {
+      uri
+      metaEnvelopeId
+      publicUrl
+      errors { field message code }
+    }
+  }
+`
+
+export async function uploadFile(
+  vaultEname: string,
+  filename: string,
+  contentType: string,
+  content: string,
+  acl: string[] = ['*']
+): Promise<{ uri: string; publicUrl: string | null }> {
+  const data = await gqlRequest<{
+    uploadFile: {
+      uri: string
+      metaEnvelopeId: string
+      publicUrl: string | null
+      errors?: Array<{ message?: string }>
+    }
+  }>(vaultEname, GQL_UPLOAD, {
+    input: { filename, contentType, content, acl },
+  })
+  if (data.uploadFile.errors?.length) {
+    throw new Error(data.uploadFile.errors[0]?.message ?? 'uploadFile failed')
+  }
+  return { uri: data.uploadFile.uri, publicUrl: data.uploadFile.publicUrl ?? null }
+}
+
 /**
  * Resolves a w3ds://file URI to its public HTTP URL.
  * Format: w3ds://file?id=@<ename>/<metaEnvelopeId>
