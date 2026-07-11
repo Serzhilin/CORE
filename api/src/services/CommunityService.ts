@@ -9,6 +9,7 @@ import { WorkgroupMembership } from "../database/entities/WorkgroupMembership";
 import { WorkgroupMemberRole } from "../database/entities/WorkgroupMemberRole";
 import { Role } from "../database/entities/Role";
 import { Person } from "../database/entities/Person";
+import { OrganizationMembershipType } from "../database/entities/OrganizationMembershipType";
 import { logger } from "../lib/logger";
 import { createEnvelope, updateEnvelope, findEnvelopesByOntology, getUserMetaEnvelopeId } from "../lib/evault-client";
 import { ONTOLOGIES } from "../lib/w3ds/ontology";
@@ -96,6 +97,12 @@ export async function getCommunityFull(communityId: string) {
         : [];
     const atMap = Object.fromEntries(availabilityTypes.map((t) => [t.id, t]));
 
+    const membershipTypes = await AppDataSource.getRepository(OrganizationMembershipType).find({
+        where: { community_id: communityId },
+        order: { sort_order: "ASC" },
+    });
+    const mtMap = Object.fromEntries(membershipTypes.map((t) => [t.id, t]));
+
     return {
         ...community,
         members: memberships.map((m) => {
@@ -111,8 +118,10 @@ export async function getCommunityFull(communityId: string) {
                 bio: person?.bio ?? null,
                 ename: person?.ename ?? null,
                 isAdmin: m.is_admin,
-                isAspirant: m.is_aspirant,
-                isActivePartner: m.is_active_partner,
+                membershipTypeId: m.membership_type_id,
+                membershipType: m.membership_type_id && mtMap[m.membership_type_id]
+                    ? { id: mtMap[m.membership_type_id].id, name: mtMap[m.membership_type_id].name, emoji: mtMap[m.membership_type_id].emoji }
+                    : null,
                 joinedAt: m.joined_at,
                 availability: at
                     ? {
@@ -190,7 +199,6 @@ export async function getCommunityGraph(communityId: string) {
                 id: cm.person_id,
                 firstName: person?.first_name ?? null,
                 lastName: person?.last_name ?? null,
-                isAspirant: cm.is_aspirant,
                 isAdmin: cm.is_admin,
                 availability: at ? { name: at.name, emoji: at.emoji } : null,
                 memberships: myMemberships.map((wm) => {

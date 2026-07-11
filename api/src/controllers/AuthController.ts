@@ -41,7 +41,6 @@ async function getMembershipsForPerson(personId: string) {
     return memberships.map((m) => ({
         communityId: m.community_id,
         isAdmin: m.is_admin,
-        isAspirant: m.is_aspirant,
         community: communities.find((c) => c.id === m.community_id),
     }));
 }
@@ -145,7 +144,6 @@ export async function getMe(req: Request, res: Response) {
         memberships: memberships.map((m) => ({
             communityId: m.community_id,
             isAdmin: m.is_admin,
-            isAspirant: m.is_aspirant,
             community: communities.find((c) => c.id === m.community_id),
         })),
         isPlatformAdmin: isPlatformAdminEname(person.ename),
