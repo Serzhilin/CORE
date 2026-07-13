@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -102,7 +102,7 @@ export default function MembersTab() {
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
-        <button className="btn-primary" onClick={() => { resetAddForm(); setAdding(true) }} style={{ fontSize: '0.85rem' }}>Add member</button>
+        <Button onClick={() => { resetAddForm(); setAdding(true) }} style={{ fontSize: '0.85rem' }}>Add member</Button>
       </div>
 
       {adding && (
@@ -121,10 +121,10 @@ export default function MembersTab() {
             </div>
             {!enameChecked ? (
               <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
-                <button type="button" className="btn-secondary" disabled={checking || !addForm.ename.trim()} onClick={handleCheckEname} style={{ fontSize: '0.85rem' }}>
+                <Button type="button" variant="secondary" disabled={checking || !addForm.ename.trim()} onClick={handleCheckEname} style={{ fontSize: '0.85rem' }}>
                   {checking ? 'Checking…' : 'Check eName'}
-                </button>
-                <button type="button" className="btn-secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
+                </Button>
+                <Button type="button" variant="secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</Button>
               </div>
             ) : null}
           </form>
@@ -155,8 +155,8 @@ export default function MembersTab() {
               </select>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
-              <button type="submit" className="btn-primary" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</button>
-              <button type="button" className="btn-secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
+              <Button type="submit" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</Button>
+              <Button type="button" variant="secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</Button>
             </div>
           </form>
           )}

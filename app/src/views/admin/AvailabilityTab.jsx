@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import EmojiPicker from '../../components/EmojiPicker'
 import {
@@ -107,7 +107,7 @@ export default function AvailabilityTab() {
                   {m.availability.reason && <span style={{ marginLeft: 6, fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>— {m.availability.reason}</span>}
                   {m.availability.until && <span style={{ marginLeft: 6, fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}>until {new Date(m.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>}
                 </div>
-                <button onClick={() => handleEditAvailability(m)} className="btn-secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>Edit</button>
+                <Button onClick={() => handleEditAvailability(m)} variant="secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>Edit</Button>
                 <button onClick={() => handleClearAvailability(m.personId)} title="Clear availability" style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}>{trashIcon}</button>
               </div>
             )
@@ -149,11 +149,11 @@ export default function AvailabilityTab() {
               <input type="date" style={{ ...inputStyle, width: '100%' }} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
-              <button type="submit" className="btn-primary" disabled={avSaving || !avForm.personId || !avForm.type_id} style={{ fontSize: '0.85rem' }}>
+              <Button type="submit" disabled={avSaving || !avForm.personId || !avForm.type_id} style={{ fontSize: '0.85rem' }}>
                 {avForm.personId && unavailableMembers.some(m => m.personId === avForm.personId) ? 'Update' : 'Set'}
-              </button>
+              </Button>
               {avForm.personId && (
-                <button type="button" className="btn-secondary" onClick={() => setAvForm({ personId: '', type_id: '', reason: '', until: '' })} style={{ fontSize: '0.85rem' }}>Cancel</button>
+                <Button type="button" variant="secondary" onClick={() => setAvForm({ personId: '', type_id: '', reason: '', until: '' })} style={{ fontSize: '0.85rem' }}>Cancel</Button>
               )}
             </div>
           </form>
@@ -172,14 +172,14 @@ export default function AvailabilityTab() {
                 <>
                   <EmojiPicker value={editingAt.emoji} onChange={(emoji) => setEditingAt((a) => ({ ...a, emoji }))} />
                   <input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} style={{ flex: 1, ...inputStyle }} />
-                  <button className="btn-primary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => handleUpdateType(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</button>
-                  <button className="btn-secondary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => setEditingAt(null)}>Cancel</button>
+                  <Button style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => handleUpdateType(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</Button>
+                  <Button variant="secondary" style={{ fontSize: '0.8rem', padding: '4px 10px' }} onClick={() => setEditingAt(null)}>Cancel</Button>
                 </>
               ) : (
                 <>
                   <span className="emoji-mono" style={{ fontSize: '1.1rem' }}>{t.emoji}</span>
                   <span style={{ flex: 1 }}>{t.name}</span>
-                  <button className="btn-secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</button>
+                  <Button variant="secondary" style={{ fontSize: '0.75rem', padding: '3px 8px' }} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</Button>
                   <button style={{ background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => handleArchiveType(t.id)}>Archive</button>
                 </>
               )}
@@ -192,7 +192,7 @@ export default function AvailabilityTab() {
         <form onSubmit={handleAddType} style={{ display: 'flex', gap: 8 }}>
           <EmojiPicker value={atForm.emoji} onChange={(emoji) => setAtForm((f) => ({ ...f, emoji }))} />
           <input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1, ...inputStyle }} />
-          <button type="submit" className="btn-primary" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</button>
+          <Button type="submit" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</Button>
         </form>
       </Card>
 

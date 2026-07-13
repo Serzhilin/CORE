@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
@@ -213,11 +213,11 @@ export default function CommunityTab() {
                   <input type="file" accept="image/svg+xml,image/png,image/jpeg" onChange={handleLogoUpload} style={{ display: 'none' }} disabled={logoSaving} />
                 </label>
                 {logo && (
-                  <button type="button" className="btn-secondary" title="Remove logo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removeLogo} disabled={logoSaving}>
+                  <Button type="button" variant="secondary" title="Remove logo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removeLogo} disabled={logoSaving}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
                     </svg>
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -244,11 +244,11 @@ export default function CommunityTab() {
                   <input type="file" accept="image/png,image/jpeg" onChange={handlePhotoUpload} style={{ display: 'none' }} disabled={photoSaving} />
                 </label>
                 {photo && (
-                  <button type="button" className="btn-secondary" title="Remove photo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removePhoto} disabled={photoSaving}>
+                  <Button type="button" variant="secondary" title="Remove photo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removePhoto} disabled={photoSaving}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
                     </svg>
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -273,7 +273,7 @@ export default function CommunityTab() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+            <Button type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
             {saveMsg && <span style={{ fontSize: '0.85rem', color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>{saveMsg}</span>}
           </div>
         </form>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -69,9 +69,9 @@ function AddCommunityCard({ onCreated }) {
             value={enameInput}
             onChange={(e) => { setEnameInput(e.target.value); setPreview(null) }}
           />
-          <button type="button" className="btn-secondary" onClick={handlePreview} disabled={resolving || !enameInput.trim()}>
+          <Button type="button" variant="secondary" onClick={handlePreview} disabled={resolving || !enameInput.trim()}>
             {resolving ? 'Resolving…' : 'Preview'}
-          </button>
+          </Button>
         </div>
 
         {error && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)' }}>{error}</div>}
@@ -90,9 +90,9 @@ function AddCommunityCard({ onCreated }) {
                 onChange={(e) => setSlug(e.target.value)}
               />
             </label>
-            <button type="button" className="btn-primary" onClick={handleCreate} disabled={creating || !slug.trim()}>
+            <Button type="button" onClick={handleCreate} disabled={creating || !slug.trim()}>
               {creating ? 'Creating…' : `Create community linked to ${preview.w3id}`}
-            </button>
+            </Button>
           </div>
         )}
       </div>

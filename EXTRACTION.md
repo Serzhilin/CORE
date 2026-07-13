@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card component done. Button next.
+## Status: token + base-style batches done. Card, Button components done. Input next (unused-in-CORE, per user decision).
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -62,7 +62,8 @@ not just moving CSS.
 
 - [x] `Card` (from `.card` / `.card-warm`)
   - Created in `ecommons-ui/src/components/Card.tsx` + `Card.css` (ecommons-ui commit `883cfca`), `variant?: 'default' | 'warm'` prop maps to `.card`/`.card-warm`. Swapped all 22 usage sites across 13 CORE files (`AvailabilityTab.jsx`, `MyWorkgroups.jsx`, `MyProfile.jsx`, `PersonModal.jsx`, `MyAvailability.jsx`, `OnboardingScreen.jsx`, `CardGrid.jsx`, `SuperadminPage.jsx`, `MembersTab.jsx`, `CommunityTab.jsx`, `WorkgroupsTab.jsx`, `W3dsLinkCard.jsx`, `LoginScreen.jsx`) to `<Card>`/`<Card variant="warm">` from `@ecommons/ui`. Removed `.card`/`.card-warm` from CORE's `app/src/index.css`. Verified `vite build` clean, zero remaining `className="card"` matches.
-- [ ] `Button` (from `.btn-primary` / `.btn-secondary` / `.btn-danger` / `.btn-green` — variant prop)
+- [x] `Button` (from `.btn-primary` / `.btn-secondary` / `.btn-danger` / `.btn-green` — variant prop)
+  - Created in `ecommons-ui/src/components/Button.tsx` + `Button.css` (ecommons-ui commit `7c47f58`), `variant?: 'primary' | 'secondary' | 'danger' | 'green'` prop (default `'primary'`), all 4 CSS blocks moved byte-identical (danger/green unused in CORE, built anyway per the dead-CSS decision above). Swapped all `<button>` usage sites across 8 CORE files (`MembersTab.jsx`, `W3dsLinkCard.jsx`, `MyProfile.jsx`, `SuperadminPage.jsx`, `WorkgroupsTab.jsx`, `AvailabilityTab.jsx`, `CommunityTab.jsx`, `MyAvailability.jsx`) to `<Button>`/`<Button variant="secondary">` from `@ecommons/ui`. **Left untouched:** 3 `<label className="btn-secondary">` sites in `CommunityTab.jsx` (statuten/logo/photo upload triggers) — these are `<label>` elements wrapping a hidden `<input type="file">`, not `<button>`s, so they can't become `<Button>` (a real `<button>` there would lose the native label-for-file-input click behavior); they still pick up the `.btn-secondary` styling via the CSS shipped in `ecommons-ui`. Removed `.btn-primary`/`.btn-secondary`/`.btn-danger`/`.btn-green` from CORE's `app/src/index.css`. Verified `vite build` clean.
 - [ ] `Input` (from `.input`, incl. `textarea.input`) — several files hand-roll an equivalent inline `inputStyle` object instead of using the class (`OrganogramView`, `MyAvailability`, `MyWorkgroups`, `W3dsLinkCard`, `CommunityTab`, `MembersTab`, `WorkgroupsTab`, `AvailabilityTab`, `MyProfile`) — extraction is a chance to converge these, but that's a visible-behavior-adjacent call (some have `padding: '7px 10px'` vs `'10px 14px'`, some borders `1px solid var(--color-sand-dark)` vs the real `.input`'s `2px solid var(--color-charcoal)`) — **will ask before unifying these, since some already visibly diverge from `.input`**
 - [ ] `Badge` (from `.badge` + `-orange`/`-green`/`-red`/`-gray`/`-blue`)
 - [ ] `Modal` (from `.modal-overlay` + `.modal` — currently hand-rolled inline wherever a dialog is needed, e.g. `PersonModal.jsx`)

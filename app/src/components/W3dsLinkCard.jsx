@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { resolveCommunityW3id, linkCommunityW3id, unlinkCommunityW3id } from '../api/client'
 
 const inputStyle = {
@@ -71,9 +71,9 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
           <div>Linked to <strong>{community.ename}</strong></div>
           <div style={{ color: 'var(--color-charcoal-light)', fontSize: '0.82rem', marginTop: 4 }}>{community.evault_uri}</div>
           {w3idError && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)', marginTop: 8 }}>{w3idError}</div>}
-          <button type="button" className="btn-secondary" style={{ marginTop: 12, color: 'var(--color-red)' }} onClick={handleUnlink} disabled={w3idUnlinking}>
+          <Button type="button" variant="secondary" style={{ marginTop: 12, color: 'var(--color-red)' }} onClick={handleUnlink} disabled={w3idUnlinking}>
             {w3idUnlinking ? 'Unlinking…' : 'Unlink'}
-          </button>
+          </Button>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -88,9 +88,9 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
               value={w3idInput}
               onChange={(e) => { setW3idInput(e.target.value); setW3idPreview(null) }}
             />
-            <button type="button" className="btn-secondary" onClick={handleResolveW3id} disabled={w3idResolving || !w3idInput.trim()}>
+            <Button type="button" variant="secondary" onClick={handleResolveW3id} disabled={w3idResolving || !w3idInput.trim()}>
               {w3idResolving ? 'Resolving…' : 'Preview'}
-            </button>
+            </Button>
           </div>
 
           {w3idError && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)' }}>{w3idError}</div>}
@@ -105,9 +105,9 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
               ) : (
                 <div>No existing group identity found — a new one will be created with you as owner.</div>
               )}
-              <button type="button" className="btn-primary" style={{ marginTop: 12 }} onClick={handleLinkW3id} disabled={w3idLinking}>
+              <Button type="button" style={{ marginTop: 12 }} onClick={handleLinkW3id} disabled={w3idLinking}>
                 {w3idLinking ? 'Linking…' : `Confirm link to ${w3idPreview.w3id}`}
-              </button>
+              </Button>
             </div>
           )}
         </div>

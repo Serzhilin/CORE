@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -127,7 +127,7 @@ export default function WorkgroupsTab() {
   return (
     <div style={{ maxWidth: 680, margin: '0 auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
-        <button className="btn-primary" onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</button>
+        <Button onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</Button>
       </div>
 
       {addingWg && (
@@ -144,8 +144,8 @@ export default function WorkgroupsTab() {
                 <input style={{ ...inputStyle, width: 90 }} value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} />
               </div>
             </div>
-            <button type="submit" className="btn-primary" style={{ fontSize: '0.85rem' }}>Create</button>
-            <button type="button" className="btn-secondary" onClick={() => setAddingWg(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
+            <Button type="submit" style={{ fontSize: '0.85rem' }}>Create</Button>
+            <Button type="button" variant="secondary" onClick={() => setAddingWg(false)} style={{ fontSize: '0.85rem' }}>Cancel</Button>
           </form>
         </Card>
       )}
@@ -303,7 +303,7 @@ export default function WorkgroupsTab() {
                           onChange={(e) => setAddingRole((r) => ({ ...r, [wg.id]: { ...(r[wg.id] || {}), color: e.target.value } }))}
                           style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }}
                         />
-                        <button type="submit" className="btn-secondary" style={{ fontSize: '0.8rem' }}>Add role</button>
+                        <Button type="submit" variant="secondary" style={{ fontSize: '0.8rem' }}>Add role</Button>
                       </form>
                     </div>
                   )}
@@ -401,12 +401,12 @@ export default function WorkgroupsTab() {
                                 </option>
                               ))}
                             </select>
-                            <button className="btn-secondary" onClick={() => setAddingMember(null)} style={{ fontSize: '0.8rem' }}>Cancel</button>
+                            <Button variant="secondary" onClick={() => setAddingMember(null)} style={{ fontSize: '0.8rem' }}>Cancel</Button>
                           </div>
                         ) : (
-                          <button className="btn-secondary" onClick={() => setAddingMember(wg.id)} style={{ fontSize: '0.8rem', alignSelf: 'flex-start' }}>
+                          <Button variant="secondary" onClick={() => setAddingMember(wg.id)} style={{ fontSize: '0.8rem', alignSelf: 'flex-start' }}>
                             + Add member
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>

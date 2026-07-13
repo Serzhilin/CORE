@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Button } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -214,9 +214,9 @@ export default function MyProfile() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button type="submit" className="btn-primary" disabled={saving}>
+              <Button type="submit" disabled={saving}>
                 {saving ? 'Saving…' : 'Save profile'}
-              </button>
+              </Button>
               {saveMsg && <span style={{ fontSize: '0.85rem', color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>{saveMsg}</span>}
             </div>
           </form>
