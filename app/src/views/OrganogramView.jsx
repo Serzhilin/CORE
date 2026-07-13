@@ -8,7 +8,6 @@ import html2canvas from 'html2canvas'
 
 const GraphView = lazy(() => import('./graph/GraphView'))
 
-const inputStyle = { padding: '0 10px', height: 34, boxSizing: 'border-box', appearance: 'none', WebkitAppearance: 'none', borderRadius: 0, border: '2px solid var(--color-charcoal)', boxShadow: 'var(--block-shadow-sm)', background: 'white', fontSize: '0.9rem' }
 const checkStyle = { display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem', cursor: 'pointer' }
 
 const INITIAL_FILTER = { workgroupId: '', roleName: '', showUnavailable: true, search: '' }
@@ -49,14 +48,14 @@ export default function OrganogramView() {
 
         <div style={{ width: 1, height: 24, background: 'var(--color-sand-dark)', flexShrink: 0 }} />
 
-        <select value={filter.workgroupId} onChange={(e) => patch({ workgroupId: e.target.value })} style={inputStyle}>
+        <select className="input" value={filter.workgroupId} onChange={(e) => patch({ workgroupId: e.target.value })} style={{ height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All workgroups</option>
           {community.workgroups.map((wg) => (
             <option key={wg.id} value={wg.id}>{wg.name}</option>
           ))}
         </select>
 
-        <select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={inputStyle}>
+        <select className="input" value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All roles</option>
           {allRoleNames.map((name) => (
             <option key={name} value={name}>{name}</option>

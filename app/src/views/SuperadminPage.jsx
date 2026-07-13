@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Button, Input } from '@ecommons/ui'
+import { Card, Button, Input, Badge } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -152,13 +152,9 @@ export default function SuperadminPage() {
               <div style={{ fontWeight: 600 }}>{c.name}</div>
               <div style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>/{c.slug}</div>
             </div>
-            <span style={{
-              fontSize: '0.78rem', padding: '3px 10px', borderRadius: 0,
-              background: c.provisioning_status === 'linked' ? 'var(--color-green, #dcfce7)' : 'var(--color-sand)',
-              color: c.provisioning_status === 'linked' ? '#166534' : 'var(--color-charcoal-light)',
-            }}>
+            <Badge variant={c.provisioning_status === 'linked' ? 'green' : 'gray'}>
               {c.provisioning_status === 'linked' ? `linked · ${c.ename}` : 'local only'}
-            </span>
+            </Badge>
           </div>
 
           {expandedId === c.id && (
