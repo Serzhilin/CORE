@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar, Label, Icon/TrashIcon + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time; user approved extracting all remaining items in sequence. Avatar, Label, Icon done. Next: Dropdown/Menu.
+## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar, Label, Icon/TrashIcon, MenuItem + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time; user approved extracting all remaining items in sequence. Avatar, Label, Icon, MenuItem done. Next: Table.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -179,6 +179,10 @@ starting with Avatar then Label.
   - Only `TrashIcon` extracted as a named icon: its exact path data was duplicated verbatim across `CommunityTab.jsx` (x3, all `size=14`), `AvailabilityTab.jsx` (x1, `size=14`), `MembersTab.jsx` (x1, `size=15`), `WorkgroupsTab.jsx` (x2, `size=14`) — 7 sites total, all swapped to `<TrashIcon />`/`<TrashIcon size={15} />`.
   - **Excluded from scope:** the camera icon (`MyProfile.jsx`), chevron/arrow icons (`MyWorkgroups.jsx` x3), and pencil icon (`MembersTab.jsx`) are each used exactly once — one-off, not duplicated — so left as inline `<svg>`, same bar as `CardGrid.jsx`'s excluded avatar-ring SVG.
   - CORE commit `46cf10a`. Verified `vite build` clean, zero remaining matches for the trash path string.
+- [x] `MenuItem` (dropdown-menu row button, hover state, `danger` color variant) — CORE's only usage was `TopBar.jsx`'s account-menu, but built anyway per the Modal/Badge/Select "future use" precedent
+  - Created `ecommons-ui/src/components/MenuItem.tsx` (ecommons-ui commit `4e3c206`), no dedicated CSS (pure inline-style + local `useState` for hover). Props: `onClick`, `children`, `danger?: boolean` (default `false`) — moved verbatim from `TopBar.jsx`'s local `MenuItem` function.
+  - `TopBar.jsx`'s local `MenuItem` function definition deleted; import switched to `@ecommons/ui`. The dropdown's open-state (`showMenu`) and click-outside-to-close `useEffect` stay in `TopBar.jsx` — CORE-specific behavior wiring, not part of the presentational component, same split as `CollapsiblePanel` keeping `open` external.
+  - CORE commit `b79d0ba`. Verified `vite build` clean.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 
