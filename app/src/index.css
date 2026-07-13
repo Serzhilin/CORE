@@ -22,22 +22,6 @@ label {
   letter-spacing: 0.06em;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 0;
-  border: 1.5px solid currentColor;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-.badge-orange { background: rgba(232,38,43,0.1); color: var(--color-terracotta); }
-.badge-green { background: rgba(45,122,74,0.12); color: var(--color-green); }
-.badge-red { background: rgba(196,45,45,0.12); color: var(--color-red); }
-.badge-gray { background: rgba(44,44,44,0.08); color: var(--color-charcoal-light); }
-.badge-blue { background: rgba(45,98,196,0.12); color: #2D62C4; }
-
 .divider { border: none; border-top: 2px solid var(--color-charcoal); margin: 16px 0; }
 
 .emoji-mono { filter: grayscale(1) contrast(1.15); }

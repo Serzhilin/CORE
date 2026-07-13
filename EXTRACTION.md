@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input components done. Badge next (unused-in-CORE, per user decision).
+## Status: token + base-style batches done. Card, Button, Input, Badge components done. Modal next (unused-in-CORE, per user decision).
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -67,7 +67,8 @@ not just moving CSS.
 - [x] `Input` (from `.input`, incl. `textarea.input`)
   - Created in `ecommons-ui/src/components/Input.tsx` + `Input.css` (ecommons-ui commit `1e008f1`): `Input` (renders `<input>`) and `Textarea` (renders `<textarea>`), both apply the `.input` class, CSS moved byte-identical. Per the 2026-07-13 dead-CSS decision, built as real components even though nothing in CORE currently uses `.input` — **no CORE call-site swap** (there is nothing to swap; every current usage hand-rolls its own inline `inputStyle`, see below). Removed dead `.input`/`textarea.input` CSS from CORE's `app/src/index.css`. Verified `vite build` clean.
   - Several files hand-roll an equivalent inline `inputStyle` object instead of using the class (`OrganogramView`, `MyAvailability`, `MyWorkgroups`, `W3dsLinkCard`, `CommunityTab`, `MembersTab`, `WorkgroupsTab`, `AvailabilityTab`, `MyProfile`) — converging these onto the new `Input`/`Textarea` components is a visible-behavior-adjacent call (some have `padding: '7px 10px'` vs `'10px 14px'`, some borders `1px solid var(--color-sand-dark)` vs the real `.input`'s `2px solid var(--color-charcoal)`) — **will ask before unifying these, since some already visibly diverge from `.input`**
-- [ ] `Badge` (from `.badge` + `-orange`/`-green`/`-red`/`-gray`/`-blue`)
+- [x] `Badge` (from `.badge` + `-orange`/`-green`/`-red`/`-gray`/`-blue`)
+  - Created in `ecommons-ui/src/components/Badge.tsx` + `Badge.css` (ecommons-ui commit `8338971`), `variant?: 'orange' | 'green' | 'red' | 'gray' | 'blue'` prop (default `'gray'`), CSS moved byte-identical. Dead CSS (0 usages in CORE) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.badge`/`.badge-*` from CORE's `app/src/index.css`. Verified `vite build` clean.
 - [ ] `Modal` (from `.modal-overlay` + `.modal` — currently hand-rolled inline wherever a dialog is needed, e.g. `PersonModal.jsx`)
 - [ ] `AvailabilityBadge` → generalize to something like `EmojiBadge` (props: `emoji`, `tooltip`, `inline`) — CORE keeps a thin wrapper passing `availability.type.emoji`/reason/until
 - [ ] `EmojiPicker` — mostly pure; the 5 built-in emoji categories are baked-in data, not CORE domain logic, so it can move whole. Will confirm before moving since it's a bigger component than the others.
