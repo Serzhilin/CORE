@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Button, Input, Badge } from '@ecommons/ui'
+import { Card, Button, Input, Badge, Loading } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -116,9 +116,7 @@ export default function SuperadminPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)', color: 'var(--color-charcoal-light)' }}>
-        Loading…
-      </div>
+      <Loading style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)' }} />
     )
   }
 

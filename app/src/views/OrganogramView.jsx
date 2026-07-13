@@ -1,5 +1,5 @@
 import { useState, useRef, lazy, Suspense } from 'react'
-import { Input, Panel, Select } from '@ecommons/ui'
+import { Input, Panel, Select, Loading } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CardGrid from './CardGrid'
@@ -78,7 +78,7 @@ export default function OrganogramView() {
     [community, view, filter, allRoleNames.join('|')]
   )
 
-  if (loading) return <div style={{ color: 'var(--color-charcoal-light)' }}>Loading…</div>
+  if (loading) return <Loading />
   if (!community) return null
 
   async function exportPng() {

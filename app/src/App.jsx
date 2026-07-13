@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
+import { Loading } from '@ecommons/ui'
 import { UserProvider, useUser } from './context/UserContext'
 import { CommunityProvider } from './context/CommunityContext'
 import { TopBarSlotProvider } from './context/TopBarSlotContext'
@@ -20,9 +21,7 @@ function Layout() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)', color: 'var(--color-charcoal-light)' }}>
-        Loading…
-      </div>
+      <Loading style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)' }} />
     )
   }
 
@@ -39,7 +38,7 @@ function Layout() {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
         <TopBar />
         <main style={{ flex: 1, overflow: 'auto', padding: 32, background: 'var(--color-cream)', minHeight: 0 }}>
-          <Suspense fallback={<div style={{ color: 'var(--color-charcoal-light)' }}>Loading view…</div>}>
+          <Suspense fallback={<Loading>Loading view…</Loading>}>
             <Routes>
               <Route path="/" element={<OrganogramView />} />
               <Route path="/profile" element={<MyProfile />} />
@@ -62,7 +61,7 @@ export default function App() {
         <Route path="/deeplink-login" element={<DeeplinkLogin />} />
         <Route path="/superadmin" element={
           <UserProvider>
-            <Suspense fallback={<div style={{ padding: 32, color: 'var(--color-charcoal-light)' }}>Loading…</div>}>
+            <Suspense fallback={<Loading style={{ padding: 32 }} />}>
               <SuperadminPage />
             </Suspense>
           </UserProvider>

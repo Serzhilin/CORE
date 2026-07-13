@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Loading } from '@ecommons/ui'
 import { getCommunityGraph } from '../../api/client'
 import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
@@ -37,7 +38,7 @@ export default function GraphView({ communityId, filters, selection, onSelection
     }
   }, [exportRef])
 
-  if (loading) return <div style={{ padding: 40, color: 'var(--color-charcoal-light)' }}>Loading graph…</div>
+  if (loading) return <Loading style={{ padding: 40 }}>Loading graph…</Loading>
   if (!graphData) return null
 
   function handleSelect(node) {
