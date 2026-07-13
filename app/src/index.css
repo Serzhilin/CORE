@@ -1,27 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+@import '@ecommons/ui/dist/index.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --color-cream: #FFFFFF;
-  --color-cream-dark: #EFEFEF;
-  --color-terracotta: #E8262B;
-  --color-amber: #FFB627;
-  --color-charcoal: #2C2C2C;
-  --color-charcoal-light: #4A4A4A;
-  --color-sand: #E9E9E9;
-  --color-sand-dark: #9C9C9C;
-  --color-green: #2D7A4A;
-  --color-red: #C42D2D;
-  --font-title: 'Barlow Condensed', sans-serif;
-  --font-sans: 'Instrument Sans', system-ui, sans-serif;
-  --block-shadow-color: #2C2C2C;
-  --block-shadow: 4px 4px 0 var(--block-shadow-color);
-  --block-shadow-sm: 3px 3px 0 var(--block-shadow-color);
-  --shadow-card: var(--block-shadow);
-  --shadow-card-hover: 6px 6px 0 var(--block-shadow-color);
-}
 
 @keyframes pulse-ring {
   0%   { transform: scale(1);   opacity: 0.55; }
