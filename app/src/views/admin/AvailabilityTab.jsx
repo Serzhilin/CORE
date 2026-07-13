@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, EmojiPicker, Input, Select, Label, TrashIcon, SectionLabel } from '@ecommons/ui'
+import { Card, Button, EmojiPicker, Input, Select, Label, TrashIcon, SectionLabel, Page } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
@@ -80,7 +80,7 @@ export default function AvailabilityTab() {
   )
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <Page maxWidth={680} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Currently unavailable */}
       <Card style={{ padding: 28 }}>
@@ -191,6 +191,6 @@ export default function AvailabilityTab() {
         </form>
       </Card>
 
-    </div>
+    </Page>
   )
 }

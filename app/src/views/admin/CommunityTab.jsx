@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Select, Label, TrashIcon, SectionLabel, ErrorText } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, TrashIcon, SectionLabel, ErrorText, Page } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
@@ -130,7 +130,7 @@ export default function CommunityTab() {
   }
 
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+    <Page maxWidth={560}>
       {/* Community settings */}
       <Card style={{ padding: 28, marginBottom: 24 }}>
         <SectionLabel style={{ margin: '0 0 20px' }}>
@@ -322,6 +322,6 @@ export default function CommunityTab() {
       <div style={{ marginBottom: 24 }}>
         <W3dsLinkCard communityId={communityId} community={community} onChange={refresh} />
       </div>
-    </div>
+    </Page>
   )
 }

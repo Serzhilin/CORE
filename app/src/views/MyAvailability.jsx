@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Select, Label, Heading, SectionLabel } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, Heading, SectionLabel, Page } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
@@ -56,7 +56,7 @@ export default function MyAvailability() {
   )
 
   return (
-    <div style={{ maxWidth: 520, margin: '0 auto' }}>
+    <Page maxWidth={520}>
       {current && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
@@ -120,6 +120,6 @@ export default function MyAvailability() {
           </div>
         </form>
       </Card>
-    </div>
+    </Page>
   )
 }

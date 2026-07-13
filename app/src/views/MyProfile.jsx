@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Card, Button, Input, Textarea, Label, Heading } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Label, Heading, Page } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -85,7 +85,7 @@ export default function MyProfile() {
   })
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <Page maxWidth={600}>
       <Card style={{ overflow: 'hidden', marginBottom: 24 }}>
         {/* Banner */}
         <button
@@ -217,6 +217,6 @@ export default function MyProfile() {
           </form>
         </div>
       </Card>
-    </div>
+    </Page>
   )
 }

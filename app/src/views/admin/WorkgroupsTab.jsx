@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Textarea, Badge, Select, Label, TrashIcon, Tabs, SectionLabel } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Badge, Select, Label, TrashIcon, Tabs, SectionLabel, Page } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -123,7 +123,7 @@ export default function WorkgroupsTab() {
   function getTab(wgId) { return activeTab[wgId] || 'members' }
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto' }}>
+    <Page maxWidth={680}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
         <Button onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</Button>
       </div>
@@ -431,6 +431,6 @@ export default function WorkgroupsTab() {
           </Card>
         )
       })}
-    </div>
+    </Page>
   )
 }

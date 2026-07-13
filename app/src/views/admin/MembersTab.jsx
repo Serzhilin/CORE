@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td, ErrorText } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td, ErrorText, Page } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -98,7 +98,7 @@ export default function MembersTab() {
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <Page maxWidth={1100}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
         <Button onClick={() => { resetAddForm(); setAdding(true) }} style={{ fontSize: '0.85rem' }}>Add member</Button>
       </div>
@@ -278,6 +278,6 @@ export default function MembersTab() {
           </tbody>
         </Table>
       </Card>
-    </div>
+    </Page>
   )
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Badge, Select, Heading } from '@ecommons/ui'
+import { Card, Badge, Select, Heading, Page } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -65,7 +65,7 @@ export default function MyWorkgroups() {
   )
 
   return (
-    <div style={{ maxWidth: 620, margin: '0 auto' }}>
+    <Page maxWidth={620}>
       {/* Joined workgroups */}
       {joined.length === 0 ? (
         <Card style={{ padding: 28, color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 32 }}>
@@ -173,6 +173,6 @@ export default function MyWorkgroups() {
           </div>}
         </div>
       )}
-    </div>
+    </Page>
   )
 }
