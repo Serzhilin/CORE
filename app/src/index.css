@@ -47,11 +47,6 @@ label {
 .greeting-flash { animation: greetingFlash 3s ease forwards; }
 .reveal-result { animation: revealResult 0.55s ease forwards; }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--color-sand); }
-::-webkit-scrollbar-thumb { background: var(--color-sand-dark); border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-charcoal-light); }
-
 /* ── Agenda HTML (rendered output — mirrors tiptap prose) ───────────────── */
 .agenda-html { font-size: 0.88rem; color: var(--color-charcoal); line-height: 1.8; }
 .agenda-html p { margin: 0 0 6px; }
