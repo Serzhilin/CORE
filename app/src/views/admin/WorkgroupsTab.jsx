@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input, Textarea } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -135,13 +135,13 @@ export default function WorkgroupsTab() {
           <form onSubmit={handleCreateWorkgroup} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Name</label>
-              <input style={inputStyle} value={addWgForm.name} onChange={(e) => setAddWgForm((f) => ({ ...f, name: e.target.value }))} required />
+              <Input value={addWgForm.name} onChange={(e) => setAddWgForm((f) => ({ ...f, name: e.target.value }))} required />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Color</label>
               <div style={{ display: 'flex', gap: 6 }}>
                 <input type="color" value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }} />
-                <input style={{ ...inputStyle, width: 90 }} value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} />
+                <Input style={{ width: 90 }} value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} />
               </div>
             </div>
             <Button type="submit" style={{ fontSize: '0.85rem' }}>Create</Button>
@@ -183,7 +183,7 @@ export default function WorkgroupsTab() {
                   style={{ width: 18, height: 18, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer', background: 'none', flexShrink: 0 }}
                 />
                 {editingWgName[wg.id] !== undefined ? (
-                  <input
+                  <Input
                     autoFocus
                     value={editingWgName[wg.id]}
                     onChange={(e) => setEditingWgName((s) => ({ ...s, [wg.id]: e.target.value }))}
@@ -192,7 +192,7 @@ export default function WorkgroupsTab() {
                       if (e.key === 'Enter') handleSaveWgName(wg.id, editingWgName[wg.id])
                       if (e.key === 'Escape') handleCancelWgName(wg.id)
                     }}
-                    style={{ ...inputStyle, fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1rem', padding: '4px 8px' }}
+                    style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1rem', padding: '4px 8px' }}
                     onClick={(e) => e.stopPropagation()}
                   />
                 ) : (
@@ -265,7 +265,7 @@ export default function WorkgroupsTab() {
                             style={{ width: 18, height: 18, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer', background: 'none', flexShrink: 0 }}
                           />
                           {editingRoleName[r.id] !== undefined ? (
-                            <input
+                            <Input
                               autoFocus
                               value={editingRoleName[r.id]}
                               onChange={(e) => setEditingRoleName((s) => ({ ...s, [r.id]: e.target.value }))}
@@ -274,7 +274,7 @@ export default function WorkgroupsTab() {
                                 if (e.key === 'Enter') handleSaveRoleName(wg.id, r.id, editingRoleName[r.id])
                                 if (e.key === 'Escape') handleCancelRoleName(r.id)
                               }}
-                              style={{ ...inputStyle, flex: 1, padding: '3px 7px', fontSize: '0.9rem' }}
+                              style={{ flex: 1, padding: '3px 7px', fontSize: '0.9rem' }}
                             />
                           ) : (
                             <span
@@ -291,11 +291,11 @@ export default function WorkgroupsTab() {
                         </div>
                       ))}
                       <form onSubmit={(e) => handleCreateRole(wg.id, e)} style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                        <input
+                        <Input
                           placeholder="Role name"
                           value={(addingRole[wg.id] || {}).name || ''}
                           onChange={(e) => setAddingRole((r) => ({ ...r, [wg.id]: { ...(r[wg.id] || {}), name: e.target.value } }))}
-                          style={{ ...inputStyle, flex: 1 }}
+                          style={{ flex: 1 }}
                         />
                         <input
                           type="color"
@@ -417,14 +417,14 @@ export default function WorkgroupsTab() {
                       <div>
                         <label style={{ display: 'block', marginBottom: 6, fontSize: '0.8rem', fontWeight: 500 }}>Description</label>
                         {editingWgDesc[wg.id] !== undefined ? (
-                          <textarea
+                          <Textarea
                             autoFocus
                             value={editingWgDesc[wg.id]}
                             onChange={(e) => setEditingWgDesc((s) => ({ ...s, [wg.id]: e.target.value }))}
                             onBlur={() => handleSaveWgDesc(wg.id, editingWgDesc[wg.id])}
                             onKeyDown={(e) => { if (e.key === 'Escape') handleCancelWgDesc(wg.id) }}
                             rows={4}
-                            style={{ ...inputStyle, width: '100%', resize: 'vertical', fontSize: '0.88rem' }}
+                            style={{ width: '100%', fontSize: '0.88rem' }}
                             placeholder="Describe this workgroup…"
                           />
                         ) : (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -111,8 +111,8 @@ export default function MembersTab() {
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>eName</label>
-              <input
-                style={{ ...inputStyle, fontFamily: 'monospace', width: 220 }}
+              <Input
+                style={{ fontFamily: 'monospace', width: 220 }}
                 placeholder="@uuid…"
                 value={addForm.ename}
                 disabled={enameChecked}
@@ -143,7 +143,7 @@ export default function MembersTab() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Joined</label>
-              <input type="date" style={inputStyle} value={addForm.joined_at} onChange={(e) => setAddForm((f) => ({ ...f, joined_at: e.target.value }))} />
+              <Input type="date" value={addForm.joined_at} onChange={(e) => setAddForm((f) => ({ ...f, joined_at: e.target.value }))} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Membership type</label>

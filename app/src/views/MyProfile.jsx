@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input, Textarea } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -39,11 +39,6 @@ export default function MyProfile() {
     <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>My profile</span>
   )
 
-  const inputStyle = {
-    width: '100%', padding: '10px 14px', borderRadius: 0,
-    border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white',
-    boxSizing: 'border-box',
-  }
   async function handleSaveProfile(e) {
     e.preventDefault()
     setSaving(true)
@@ -174,13 +169,13 @@ export default function MyProfile() {
             {/* Display name */}
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Display name</label>
-              <input style={inputStyle} value={form.display_name} onChange={(e) => setForm((f) => ({ ...f, display_name: e.target.value }))} />
+              <Input value={form.display_name} onChange={(e) => setForm((f) => ({ ...f, display_name: e.target.value }))} />
             </div>
 
             {/* Bio */}
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Bio</label>
-              <textarea style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }} value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} />
+              <Textarea style={{ minHeight: 80 }} value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} />
             </div>
 
             {myMembership?.joinedAt && (
@@ -194,23 +189,23 @@ export default function MyProfile() {
 
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Email</label>
-              <input type="email" style={inputStyle} value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
+              <Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Phone</label>
-              <input style={inputStyle} value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
+              <Input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Website</label>
-              <input style={inputStyle} value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
+              <Input value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Location</label>
-              <input style={inputStyle} value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} />
+              <Input value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Date of birth</label>
-              <input type="date" style={inputStyle} value={form.birthDate} onChange={(e) => setForm((f) => ({ ...f, birthDate: e.target.value }))} />
+              <Input type="date" value={form.birthDate} onChange={(e) => setForm((f) => ({ ...f, birthDate: e.target.value }))} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

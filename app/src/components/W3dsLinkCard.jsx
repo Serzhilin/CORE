@@ -1,11 +1,6 @@
 import { useState } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input } from '@ecommons/ui'
 import { resolveCommunityW3id, linkCommunityW3id, unlinkCommunityW3id } from '../api/client'
-
-const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 0,
-  border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white', boxSizing: 'border-box',
-}
 
 export default function W3dsLinkCard({ communityId, community, onChange }) {
   const [w3idInput, setW3idInput] = useState('')
@@ -82,8 +77,8 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
             to sync its identity and membership to your eVault.
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <input
-              style={{ ...inputStyle, flex: 1 }}
+            <Input
+              style={{ flex: 1 }}
               placeholder="@ename or w3id"
               value={w3idInput}
               onChange={(e) => { setW3idInput(e.target.value); setW3idPreview(null) }}

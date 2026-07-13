@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
@@ -103,11 +103,11 @@ export default function MyAvailability() {
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Reason (optional)</label>
-            <input style={inputStyle} value={form.reason} onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))} placeholder="Short note…" />
+            <Input value={form.reason} onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))} placeholder="Short note…" />
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Until (optional)</label>
-            <input type="date" style={inputStyle} value={form.until} onChange={(e) => setForm((f) => ({ ...f, until: e.target.value }))} />
+            <Input type="date" value={form.until} onChange={(e) => setForm((f) => ({ ...f, until: e.target.value }))} />
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <Button type="submit" disabled={saving || !form.type_id}>

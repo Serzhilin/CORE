@@ -1,14 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
 import { adminListAllCommunities, adminResolveEname, adminCreateCommunity } from '../api/client'
-
-const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 0,
-  border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white', boxSizing: 'border-box',
-}
 
 function slugify(name) {
   return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -63,8 +58,8 @@ function AddCommunityCard({ onCreated }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', gap: 8 }}>
-          <input
-            style={{ ...inputStyle, flex: 1 }}
+          <Input
+            style={{ flex: 1 }}
             placeholder="@ename or w3id"
             value={enameInput}
             onChange={(e) => { setEnameInput(e.target.value); setPreview(null) }}
@@ -84,8 +79,8 @@ function AddCommunityCard({ onCreated }) {
             </div>
             <label style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
               Slug
-              <input
-                style={{ ...inputStyle, marginTop: 4 }}
+              <Input
+                style={{ marginTop: 4 }}
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
               />

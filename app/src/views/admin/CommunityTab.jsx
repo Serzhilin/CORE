@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, Input } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
@@ -149,17 +149,17 @@ export default function CommunityTab() {
 
           <div>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Name</label>
-            <input style={inputStyle} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
+            <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>KvK number</label>
-              <input style={inputStyle} value={form.kvk_number} onChange={(e) => setForm((f) => ({ ...f, kvk_number: e.target.value }))} />
+              <Input value={form.kvk_number} onChange={(e) => setForm((f) => ({ ...f, kvk_number: e.target.value }))} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Legal form</label>
-              <input style={inputStyle} value={form.legal_form} onChange={(e) => setForm((f) => ({ ...f, legal_form: e.target.value }))} />
+              <Input value={form.legal_form} onChange={(e) => setForm((f) => ({ ...f, legal_form: e.target.value }))} />
             </div>
           </div>
 
@@ -189,7 +189,7 @@ export default function CommunityTab() {
 
           <div>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Slug</label>
-            <input style={inputStyle} value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} pattern="[a-z0-9-]+" />
+            <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} pattern="[a-z0-9-]+" />
             <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>Lowercase letters, numbers, hyphens only</span>
           </div>
 
@@ -260,7 +260,7 @@ export default function CommunityTab() {
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Primary color</label>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <input type="color" value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} style={{ width: 40, height: 36, border: 'none', padding: 0, cursor: 'pointer' }} />
-                <input style={{ ...inputStyle, flex: 1 }} value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} />
+                <Input style={{ flex: 1 }} value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} />
               </div>
             </div>
             <div>

@@ -1,4 +1,5 @@
 import { useState, useRef, lazy, Suspense } from 'react'
+import { Input } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CardGrid from './CardGrid'
@@ -62,11 +63,11 @@ export default function OrganogramView() {
           ))}
         </select>
 
-        <input
+        <Input
           placeholder="Search by name…"
           value={filter.search}
           onChange={(e) => patch({ search: e.target.value })}
-          style={{ ...inputStyle, width: 160 }}
+          style={{ height: 34, padding: '0 10px', boxSizing: 'border-box', boxShadow: 'var(--block-shadow-sm)', width: 160 }}
         />
 
         <label style={checkStyle}>
