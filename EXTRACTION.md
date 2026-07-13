@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar, Label + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time per user approval; Avatar and Label done, remaining items not yet scheduled.
+## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar, Label, Icon/TrashIcon + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time; user approved extracting all remaining items in sequence. Avatar, Label, Icon done. Next: Dropdown/Menu.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -174,6 +174,11 @@ starting with Avatar then Label.
   - **Caught mid-edit:** a blind `</label>` → `</Label>` replace in `CommunityTab.jsx` initially also flipped the closing tags of 3 unrelated `<label className="btn-secondary">` file-upload triggers (filtered out of the original grep because it excluded lines containing "btn-secondary"), breaking the build with mismatched tags. Fixed by reverting those 3 closing tags back to `</label>`; re-verified with an open/close count check (`grep -c "<Label"` vs `grep -c "</Label>"`) across all 6 files before the final build.
   - **Excluded from scope:** `OrganogramView.jsx`'s checkbox `<label style={checkStyle}>` (different shape — a clickable checkbox row, not a form-field caption), `SuperadminPage.jsx`'s inline status `<label>` (different shape — no `display`/`marginBottom`/`fontWeight`), `CommunityTab.jsx`'s 3 `<label className="btn-secondary">` file-input triggers (a styled-button-via-label pattern, not this component).
   - CORE commit `56de5f0`. Verified `vite build` clean.
+- [x] `Icon` shell + `TrashIcon` (feather-style `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">` outer shape) — trash-can path found duplicated verbatim 7x
+  - Created `ecommons-ui/src/components/Icon.tsx` (ecommons-ui commit `e07e5e9`), no dedicated CSS. Exports generic `Icon` (props `size` default `16`, `strokeWidth` default `2`, `style`, `children` — renders the shared outer `<svg>` shell) and concrete `TrashIcon` (props `size` default `14`, `style` — built on `Icon`, hardcodes the 5-path trash shape).
+  - Only `TrashIcon` extracted as a named icon: its exact path data was duplicated verbatim across `CommunityTab.jsx` (x3, all `size=14`), `AvailabilityTab.jsx` (x1, `size=14`), `MembersTab.jsx` (x1, `size=15`), `WorkgroupsTab.jsx` (x2, `size=14`) — 7 sites total, all swapped to `<TrashIcon />`/`<TrashIcon size={15} />`.
+  - **Excluded from scope:** the camera icon (`MyProfile.jsx`), chevron/arrow icons (`MyWorkgroups.jsx` x3), and pencil icon (`MembersTab.jsx`) are each used exactly once — one-off, not duplicated — so left as inline `<svg>`, same bar as `CardGrid.jsx`'s excluded avatar-ring SVG.
+  - CORE commit `46cf10a`. Verified `vite build` clean, zero remaining matches for the trash path string.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 
