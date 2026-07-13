@@ -1,4 +1,4 @@
-import { Card, Badge } from '@ecommons/ui'
+import { Card, Badge, Avatar } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import AvailabilityBadge from './AvailabilityBadge'
@@ -37,12 +37,9 @@ export default function PersonModal({ member, onClose }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            {member.avatarUrl
-              ? <img src={member.avatarUrl} alt="" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-              : <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--color-sand-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 600, color: 'white', flexShrink: 0 }}>
-                  {(member.firstName || member.email || '?')[0].toUpperCase()}
-                </div>
-            }
+            <Avatar src={member.avatarUrl} size={52} fontSize="1.2rem" fontWeight={600}>
+              {(member.firstName || member.email || '?')[0].toUpperCase()}
+            </Avatar>
             <div>
               <h2 style={{ fontFamily: 'var(--font-title)', margin: '0 0 4px' }}>
                 {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}

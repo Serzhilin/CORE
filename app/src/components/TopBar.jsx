@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Panel } from '@ecommons/ui'
+import { Panel, Avatar } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useTopBarSlot } from '../context/TopBarSlotContext'
@@ -90,19 +90,18 @@ export default function TopBar() {
           <button
             onClick={() => setShowMenu(v => !v)}
             title={user?.firstName || user?.ename}
-            style={{
-              width: 51, height: 51, borderRadius: '50%',
-              background: isAdmin ? 'var(--color-terracotta)' : 'var(--color-sand-dark)',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.3rem', color: 'white', fontWeight: 600,
-              fontFamily: 'var(--font-sans)', flexShrink: 0,
-              overflow: 'hidden', padding: 0,
-            }}
+            style={{ border: 'none', cursor: 'pointer', padding: 0, background: 'none', flexShrink: 0 }}
           >
-            {user?.avatarUrl
-              ? <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : initial}
+            <Avatar
+              src={user?.avatarUrl}
+              size={51}
+              background={isAdmin ? 'var(--color-terracotta)' : 'var(--color-sand-dark)'}
+              fontSize="1.3rem"
+              fontWeight={600}
+              style={{ fontFamily: 'var(--font-sans)' }}
+            >
+              {initial}
+            </Avatar>
           </button>
 
           {showMenu && (

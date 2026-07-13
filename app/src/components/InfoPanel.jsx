@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CollapsiblePanel, Badge } from '@ecommons/ui'
+import { CollapsiblePanel, Badge, Avatar } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 
 const PANEL_WIDTH = 300
@@ -129,10 +129,7 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
       </button>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        {member.avatarUrl
-          ? <img src={member.avatarUrl} alt="" style={{ width: 104, height: 104, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-          : <div style={{ width: 104, height: 104, borderRadius: '50%', background: 'var(--color-sand-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.2rem', fontWeight: 700, color: 'white', flexShrink: 0 }}>{initial}</div>
-        }
+        <Avatar src={member.avatarUrl} size={104} fontSize="2.2rem">{initial}</Avatar>
         <div>
           <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.3rem', lineHeight: 1.3 }}>{name}</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center', marginTop: 4 }}>
