@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Input, Select, Label, TrashIcon } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -162,23 +162,23 @@ export default function MembersTab() {
       )}
 
       <Card style={{ overflow: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-          <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
+        <Table>
+          <Thead>
             <tr>
               {['Name', 'Email', 'Phone', 'eName', 'Membership type', 'Joined', ''].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600 }}>{h}</th>
+                <Th key={h}>{h}</Th>
               ))}
             </tr>
-          </thead>
+          </Thead>
           <tbody>
             {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m, idx) => {
               const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
               return (
                 <tr key={m.personId} style={{ background: idx % 2 === 0 ? 'transparent' : 'var(--color-cream)' }}>
-                  <td style={{ padding: '10px 14px', fontWeight: 500 }}>{name}</td>
-                  <td style={{ padding: '10px 14px', color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>{m.email || '—'}</td>
-                  <td style={{ padding: '10px 14px', color: 'var(--color-charcoal-light)', fontSize: '0.85rem' }}>{m.phone || '—'}</td>
-                  <td style={{ padding: '10px 14px' }}>
+                  <Td style={{ fontWeight: 500 }}>{name}</Td>
+                  <Td muted>{m.email || '—'}</Td>
+                  <Td muted>{m.phone || '—'}</Td>
+                  <Td>
                     {m.ename ? (
                       <span
                         onClick={() => handleCopyEname(m.personId, m.ename)}
@@ -193,9 +193,8 @@ export default function MembersTab() {
                     ) : (
                       <span style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>—</span>
                     )}
-                  </td>
-                  <td
-                    style={{ padding: '10px 14px' }}
+                  </Td>
+                  <Td
                     onMouseEnter={() => setHoverCell(`${m.personId}:type`)}
                     onMouseLeave={() => setHoverCell((c) => (c === `${m.personId}:type` ? null : c))}
                   >
@@ -231,9 +230,8 @@ export default function MembersTab() {
                         </button>
                       </span>
                     )}
-                  </td>
-                  <td
-                    style={{ padding: '10px 14px' }}
+                  </Td>
+                  <Td
                     onMouseEnter={() => setHoverCell(`${m.personId}:joined`)}
                     onMouseLeave={() => setHoverCell((c) => (c === `${m.personId}:joined` ? null : c))}
                   >
@@ -264,8 +262,8 @@ export default function MembersTab() {
                         </button>
                       </span>
                     )}
-                  </td>
-                  <td style={{ padding: '10px 14px' }}>
+                  </Td>
+                  <Td>
                     <button
                       onClick={() => handleRemove(m.personId, name)}
                       title="Remove from community"
@@ -273,12 +271,12 @@ export default function MembersTab() {
                     >
                       <TrashIcon size={15} />
                     </button>
-                  </td>
+                  </Td>
                 </tr>
               )
             })}
           </tbody>
-        </table>
+        </Table>
       </Card>
     </div>
   )
