@@ -26,14 +26,6 @@ label {
 
 .emoji-mono { filter: grayscale(1) contrast(1.15); }
 
-.progress-bar { height: 6px; background: var(--color-sand); border-radius: 0; overflow: hidden; }
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-terracotta), var(--color-amber));
-  border-radius: 0;
-  transition: width 0.5s ease;
-}
-
 @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scaleIn { from { transform: scale(0.93); opacity: 0; } to { transform: scale(1); opacity: 1; } }

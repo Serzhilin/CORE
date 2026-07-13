@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Badge, Modal components done. ProgressBar next (unused-in-CORE, per user decision).
+## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar components done. EmojiBadge next (generalized from AvailabilityBadge).
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -73,7 +73,8 @@ not just moving CSS.
   - Created in `ecommons-ui/src/components/Modal.tsx` + `Modal.css` (ecommons-ui commit `a7cc48d`). CSS moved, keyframes renamed `modal-fade-in`/`modal-scale-in` (from `fadeIn`/`scaleIn`) to avoid collision with CORE's own identically-named keyframes still used by `.animate-fade-in`/`.animate-scale-in`. Dead CSS (0 usages in CORE — real modals like `PersonModal.jsx` hand-roll their own inline overlay) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.modal-overlay`/`.modal` from CORE's `app/src/index.css` (kept `@keyframes fadeIn`/`scaleIn` intact — still used). Verified `vite build` clean.
 - [ ] `AvailabilityBadge` → generalize to something like `EmojiBadge` (props: `emoji`, `tooltip`, `inline`) — CORE keeps a thin wrapper passing `availability.type.emoji`/reason/until
 - [ ] `EmojiPicker` — mostly pure; the 5 built-in emoji categories are baked-in data, not CORE domain logic, so it can move whole. Will confirm before moving since it's a bigger component than the others.
-- [ ] `ProgressBar` (from `.progress-bar` / `.progress-bar-fill`)
+- [x] `ProgressBar` (from `.progress-bar` / `.progress-bar-fill`)
+  - Created in `ecommons-ui/src/components/ProgressBar.tsx` + `ProgressBar.css` (ecommons-ui commit `d162e4f`), `value` prop (0-100) sets fill width. CSS moved byte-identical. Dead CSS (0 usages in CORE) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.progress-bar`/`.progress-bar-fill` from CORE's `app/src/index.css`. Verified `vite build` clean.
 - [ ] Layout primitive: collapsible slot/panel toggle pattern (the `‹›` toggle button + width-animated panel seen in `InfoPanel.jsx`) — only the generic shell, not `InfoPanel` itself (which is deeply CORE-data-coupled: community/workgroup/person views, `useCommunity()`)
 - [ ] Layout primitive: the `.topbar-slot-row` responsive-slot CSS pattern (absolute-centered on desktop, static full-width row on mobile) — portable as a generic layout utility even though today it's only used by CORE's `TopBar`
 
