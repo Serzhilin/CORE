@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker components done. Layout primitives next.
+## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel + topbar-slot-row layout primitives done. Remaining: resolve Input divergence with user.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -77,8 +77,10 @@ not just moving CSS.
   - Confirmed with user before moving (2026-07-13). Created in `ecommons-ui/src/components/EmojiPicker.tsx` (ecommons-ui commit `c84598a`), moved verbatim (`value`/`onChange` props, same 5 baked-in categories, same inline styles, relies on `.emoji-mono` already shipped via `EmojiBadge`). Deleted CORE's local `app/src/components/EmojiPicker.jsx`, swapped its 2 usage sites in `AvailabilityTab.jsx` to import from `@ecommons/ui`. Verified `vite build` clean.
 - [x] `ProgressBar` (from `.progress-bar` / `.progress-bar-fill`)
   - Created in `ecommons-ui/src/components/ProgressBar.tsx` + `ProgressBar.css` (ecommons-ui commit `d162e4f`), `value` prop (0-100) sets fill width. CSS moved byte-identical. Dead CSS (0 usages in CORE) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.progress-bar`/`.progress-bar-fill` from CORE's `app/src/index.css`. Verified `vite build` clean.
-- [ ] Layout primitive: collapsible slot/panel toggle pattern (the `‹›` toggle button + width-animated panel seen in `InfoPanel.jsx`) — only the generic shell, not `InfoPanel` itself (which is deeply CORE-data-coupled: community/workgroup/person views, `useCommunity()`)
-- [ ] Layout primitive: the `.topbar-slot-row` responsive-slot CSS pattern (absolute-centered on desktop, static full-width row on mobile) — portable as a generic layout utility even though today it's only used by CORE's `TopBar`
+- [x] Layout primitive: collapsible slot/panel toggle pattern (the `‹›` toggle button + width-animated panel seen in `InfoPanel.jsx`) — only the generic shell, not `InfoPanel` itself (which is deeply CORE-data-coupled: community/workgroup/person views, `useCommunity()`)
+  - Created `CollapsiblePanel` in `ecommons-ui/src/components/CollapsiblePanel.tsx` (ecommons-ui commit `3a53a31`), props `open`, `onToggle`, `accentColor` (default `var(--color-terracotta)`), `width` (default `300`), `children` — moved verbatim from InfoPanel's desktop-only toggle+panel JSX block. CORE's `InfoPanel.jsx` desktop return block replaced with `<CollapsiblePanel open={open} onToggle={...} accentColor={accent} width={PANEL_WIDTH}>{renderContent()}</CollapsiblePanel>`; the mobile slide-over drawer branch (different pattern — full-screen overlay + close ×) was left untouched, out of scope per the original note. Verified `vite build` clean.
+- [x] Layout primitive: the `.topbar-slot-row` responsive-slot CSS pattern (absolute-centered on desktop, static full-width row on mobile) — portable as a generic layout utility even though today it's only used by CORE's `TopBar`
+  - Moved to `ecommons-ui/src/styles/layout.css` (ecommons-ui commit `3a53a31`), imported globally alongside tokens in `src/index.ts`. CSS moved byte-identical. No CORE call-site change needed — `TopBar.jsx` still references `className="topbar-slot-row"`, now resolved via the `@ecommons/ui` `@import`. Removed the class from CORE's `app/src/index.css`. Verified `vite build` clean.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CollapsiblePanel } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 
 const PANEL_WIDTH = 300
@@ -264,34 +265,8 @@ export default function InfoPanel({ selection, onSelect, onFilterToWorkgroup }) 
   }
 
   return (
-    <div style={{ position: 'relative', display: 'flex', flexShrink: 0 }}>
-      <button
-        onClick={() => setOpen(v => !v)}
-        title={open ? 'Close panel' : 'Open panel'}
-        style={{
-          position: 'absolute', top: '50%', left: 0, transform: 'translate(-50%, -50%)',
-          width: 28, height: 28, padding: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: accent, color: '#fff',
-          border: '2px solid var(--color-charcoal)',
-          cursor: 'pointer', userSelect: 'none', zIndex: 10,
-        }}
-      >
-        <span style={{ fontSize: '0.9rem', lineHeight: 1, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-block' }}>›</span>
-      </button>
-
-      <div style={{
-        width: open ? PANEL_WIDTH : 0,
-        overflow: 'hidden',
-        transition: 'width 0.2s ease',
-        background: 'white',
-        border: open ? '2px solid var(--color-charcoal)' : 'none',
-        boxShadow: open ? 'var(--block-shadow)' : 'none',
-      }}>
-        <div style={{ width: PANEL_WIDTH, height: '100%', overflowY: 'auto', padding: '20px 16px', boxSizing: 'border-box' }}>
-          {renderContent()}
-        </div>
-      </div>
-    </div>
+    <CollapsiblePanel open={open} onToggle={() => setOpen(v => !v)} accentColor={accent} width={PANEL_WIDTH}>
+      {renderContent()}
+    </CollapsiblePanel>
   )
 }
