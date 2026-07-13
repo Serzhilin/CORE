@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 more items, 3 resolved (see below); `Select` extraction (item 1) still pending user decision.
+## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below).
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -97,10 +97,25 @@ It found 4 items beyond what's tracked above:
    `MyAvailability`, `CommunityTab`, `MembersTab`, `WorkgroupsTab`,
    `AvailabilityTab`) — each still hand-rolls a local `inputStyle` const for
    `<select>` elements, since the earlier Input/Textarea unification
-   deliberately excluded `<select>` (see note above). **Not yet resolved** —
-   this needs either a `Select` component in `ecommons-ui` or applying
-   `className="input"` directly (the same trick used for item 2 below) at
-   each of the remaining 5 files. Pending user decision.
+   deliberately excluded `<select>` (see note above). **Resolved 2026-07-13
+   (user requested a real `Select` component):** created
+   `ecommons-ui/src/components/Select.tsx` (ecommons-ui commit `e556366`) —
+   same pattern as `Input`/`Textarea`, wraps `<select>` in the `.input`
+   class. Swapped every `<select>` across all 6 files (7 files counting
+   `OrganogramView`'s prior `className="input"` selects, redone as real
+   `<Select>`), deleted the now-fully-unused `inputStyle` consts. CORE
+   commit `7b54ac1`.
+   - **Caught in the same pass:** `.input`'s `width: 100%` stretches a
+     `<select>` to fill its flex/block container — none of the original
+     hand-rolled selects had `width: 100%` (they auto-sized to content), so
+     this would've been a silent layout regression, including in
+     `OrganogramView`'s two selects from item 2's earlier fix (already
+     shipped without a width override). Added explicit `width: 'auto'`
+     overrides wherever a select needs to keep its original auto-sizing;
+     left `width: 100%` (i.e. no override) only where the select was
+     already in a container that made `100%` correct (e.g. `CommunityTab`'s
+     title-font select, matching its sibling `Input` fields in the same
+     form). Verified `vite build` clean.
 2. **`OrganogramView.jsx`'s two `<select>`s had a permanent block-shadow** —
    its local `inputStyle` applied `boxShadow: 'var(--block-shadow-sm)'`
    unconditionally, but the real `.input` CSS only applies that shadow (and
