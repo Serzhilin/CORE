@@ -1,7 +1,14 @@
 # ── Stage 1: Build React frontend ────────────────────────────────────────────
 FROM node:20-alpine AS frontend-build
-WORKDIR /build/app
+WORKDIR /build
 
+# Root package.json pulls in @ecommons/ui (git dependency, built via its own
+# "prepare" script) and hoists it to /build/node_modules so app/'s build can
+# resolve it via Node's directory-walk-up module resolution.
+COPY package*.json ./
+RUN npm ci
+
+WORKDIR /build/app
 COPY app/package*.json ./
 RUN npm ci
 

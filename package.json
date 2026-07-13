@@ -11,6 +11,6 @@
     "concurrently": "^9.1.2"
   },
   "dependencies": {
-    "@ecommons/ui": "file:../ecommons-ui"
+    "@ecommons/ui": "github:Serzhilin/ecommons-ui#main"
   }
 }
