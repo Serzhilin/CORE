@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Panel, Avatar } from '@ecommons/ui'
+import { Panel, Avatar, MenuItem } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useTopBarSlot } from '../context/TopBarSlotContext'
@@ -170,25 +170,5 @@ export default function TopBar() {
       {/* Page title / filters slot — centered on the header on desktop, drops to its own full-width row on mobile */}
       {slot && <div className="topbar-slot-row">{slot}</div>}
     </header>
-  )
-}
-
-function MenuItem({ onClick, children, danger = false }) {
-  const [hover, setHover] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        display: 'block', width: '100%', textAlign: 'left',
-        padding: '10px 16px', border: 'none', cursor: 'pointer',
-        fontSize: '0.88rem', fontFamily: 'var(--font-sans)',
-        background: hover ? 'var(--color-cream)' : 'white',
-        color: danger ? 'var(--color-red)' : 'var(--color-charcoal)',
-      }}
-    >
-      {children}
-    </button>
   )
 }
