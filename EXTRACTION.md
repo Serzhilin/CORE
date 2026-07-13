@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar, Label, Icon/TrashIcon, MenuItem + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time; user approved extracting all remaining items in sequence. Avatar, Label, Icon, MenuItem done. Next: Table.
+## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar, Label, Icon/TrashIcon, MenuItem, Table/Thead/Th/Td + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time; user approved extracting all remaining items in sequence. Avatar, Label, Icon, MenuItem, Table done. Next: Tabs/nav.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -183,6 +183,10 @@ starting with Avatar then Label.
   - Created `ecommons-ui/src/components/MenuItem.tsx` (ecommons-ui commit `4e3c206`), no dedicated CSS (pure inline-style + local `useState` for hover). Props: `onClick`, `children`, `danger?: boolean` (default `false`) — moved verbatim from `TopBar.jsx`'s local `MenuItem` function.
   - `TopBar.jsx`'s local `MenuItem` function definition deleted; import switched to `@ecommons/ui`. The dropdown's open-state (`showMenu`) and click-outside-to-close `useEffect` stay in `TopBar.jsx` — CORE-specific behavior wiring, not part of the presentational component, same split as `CollapsiblePanel` keeping `open` external.
   - CORE commit `b79d0ba`. Verified `vite build` clean.
+- [x] `Table`/`Thead`/`Th`/`Td` (styled table primitives — width/borderCollapse/fontSize, header border, cell padding, `muted` text variant) — only one `<table>` exists in CORE (`MembersTab.jsx`), but the `padding: '10px 14px'` value repeated verbatim across 7 `<th>`/`<td>` cells within that single table — genuine in-file duplication
+  - Created `ecommons-ui/src/components/Table.tsx` (ecommons-ui commit `ea60ea1`), no dedicated CSS (pure inline-style wrappers). `Table` (table width/borderCollapse/fontSize), `Thead` (bottom border), `Th` (textAlign/padding/fontWeight), `Td` (`muted?: boolean` prop — `true` applies the charcoal-light/0.85rem text style used for the email/phone columns).
+  - Swapped `MembersTab.jsx`'s single table: `<table>`→`<Table>`, `<thead>`→`<Thead>`, `<th>`→`<Th>`, all 7 `<td>`→`<Td>` (2 with `muted`). `<tr>` (zebra-stripe background, computed from row index) and the inline hover/click cell editors (membership-type select, joined-date input) left untouched — CORE-specific behavior, not part of the styled shell.
+  - CORE commit `dcac9de`. Verified `vite build` clean, zero remaining native `<table>`/`<th>`/`<td>` tags in the file.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 
