@@ -1,14 +1,9 @@
 import { useState } from 'react'
-import { Card, Button, Input } from '@ecommons/ui'
+import { Card, Button, Input, Select } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
 import W3dsLinkCard from '../../components/W3dsLinkCard'
-
-const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 0,
-  border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white', boxSizing: 'border-box',
-}
 
 export default function CommunityTab() {
   const { communityId, community, refresh } = useCommunity()
@@ -265,11 +260,11 @@ export default function CommunityTab() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Title font</label>
-              <select style={inputStyle} value={form.title_font} onChange={(e) => setForm((f) => ({ ...f, title_font: e.target.value }))}>
+              <Select value={form.title_font} onChange={(e) => setForm((f) => ({ ...f, title_font: e.target.value }))}>
                 <option>Playfair Display</option>
                 <option>Inter</option>
                 <option>Georgia</option>
-              </select>
+              </Select>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -311,14 +306,14 @@ export default function CommunityTab() {
         })}
 
         <div style={{ marginTop: 16 }}>
-          <select
+          <Select
             value=""
             onChange={async (e) => {
               if (!e.target.value) return
               try { await updateMember(communityId, e.target.value, { is_admin: true }); await refresh() }
               catch (err) { alert(err.message) }
             }}
-            style={{ padding: '8px 12px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.88rem', background: 'white', cursor: 'pointer' }}
+            style={{ width: 'auto', padding: '8px 12px', fontSize: '0.88rem', cursor: 'pointer' }}
           >
             <option value="">+ Add admin…</option>
             {(community?.members || []).filter((m) => !m.isAdmin).sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m) => (
@@ -326,7 +321,7 @@ export default function CommunityTab() {
                 {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </Card>
 

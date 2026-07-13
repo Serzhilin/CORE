@@ -1,12 +1,10 @@
 import { useState } from 'react'
-import { Card, Button, EmojiPicker, Input } from '@ecommons/ui'
+import { Card, Button, EmojiPicker, Input, Select } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
   setMemberAvailability,
 } from '../../api/client'
-
-const inputStyle = { padding: '7px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function AvailabilityTab() {
   const { communityId, community, availabilityTypes, refresh } = useCommunity()
@@ -121,23 +119,23 @@ export default function AvailabilityTab() {
           <form onSubmit={handleSetAvailability} style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 380 }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Member</label>
-              <select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} style={{ ...inputStyle, width: '100%' }} required>
+              <Select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} required>
                 <option value="">Select…</option>
                 {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map(m => (
                   <option key={m.personId} value={m.personId}>
                     {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Type</label>
-              <select value={avForm.type_id} onChange={(e) => setAvForm(f => ({ ...f, type_id: e.target.value }))} style={{ ...inputStyle, width: '100%' }} required>
+              <Select value={avForm.type_id} onChange={(e) => setAvForm(f => ({ ...f, type_id: e.target.value }))} required>
                 <option value="">Select…</option>
                 {availabilityTypes.map(t => (
                   <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Reason</label>

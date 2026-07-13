@@ -1,5 +1,5 @@
 import { useState, useRef, lazy, Suspense } from 'react'
-import { Input, Panel } from '@ecommons/ui'
+import { Input, Panel, Select } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CardGrid from './CardGrid'
@@ -48,19 +48,19 @@ export default function OrganogramView() {
 
         <div style={{ width: 1, height: 24, background: 'var(--color-sand-dark)', flexShrink: 0 }} />
 
-        <select className="input" value={filter.workgroupId} onChange={(e) => patch({ workgroupId: e.target.value })} style={{ height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
+        <Select value={filter.workgroupId} onChange={(e) => patch({ workgroupId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All workgroups</option>
           {community.workgroups.map((wg) => (
             <option key={wg.id} value={wg.id}>{wg.name}</option>
           ))}
-        </select>
+        </Select>
 
-        <select className="input" value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
+        <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All roles</option>
           {allRoleNames.map((name) => (
             <option key={name} value={name}>{name}</option>
           ))}
-        </select>
+        </Select>
 
         <Input
           placeholder="Search by name…"

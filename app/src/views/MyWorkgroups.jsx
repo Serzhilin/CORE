@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { Card, Badge } from '@ecommons/ui'
+import { Card, Badge, Select } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { addWorkgroupMember, removeWorkgroupMember, assignRole, unassignRole } from '../api/client'
-
-const inputStyle = { padding: '6px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem', background: 'white' }
 
 export default function MyWorkgroups() {
   const { user } = useUser()
@@ -95,17 +93,17 @@ export default function MyWorkgroups() {
               {/* Roles row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                 {unassigned.length > 0 && (
-                  <select
+                  <Select
                     value=""
                     onChange={(e) => handleAssign(wg, e.target.value)}
                     disabled={busy[wg.id]}
-                    style={{ ...inputStyle, padding: '3px 8px', color: 'var(--color-charcoal-light)' }}
+                    style={{ width: 'auto', padding: '3px 8px', color: 'var(--color-charcoal-light)' }}
                   >
                     <option value="">+ Role</option>
                     {unassigned.map((r) => (
                       <option key={r.id} value={r.id}>{r.name}</option>
                     ))}
-                  </select>
+                  </Select>
                 )}
 
                 {roles.map((r) => (

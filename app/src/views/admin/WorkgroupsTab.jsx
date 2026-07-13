@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Textarea, Badge } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Badge, Select } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -7,8 +7,6 @@ import {
   addWorkgroupMember, removeWorkgroupMember,
   assignRole, unassignRole,
 } from '../../api/client'
-
-const inputStyle = { padding: '7px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function WorkgroupsTab() {
   const { communityId, community, refresh } = useCommunity()
@@ -333,16 +331,16 @@ export default function WorkgroupsTab() {
                               {/* Bottom row: add role dropdown + role chips + remove */}
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                                 {unassignedRoles.length > 0 && (
-                                  <select
+                                  <Select
                                     value=""
                                     onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value) }}
-                                    style={{ ...inputStyle, padding: '2px 6px', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
+                                    style={{ width: 'auto', padding: '2px 6px', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
                                   >
                                     <option value="">+ Role</option>
                                     {unassignedRoles.map((r) => (
                                       <option key={r.id} value={r.id}>{r.name}</option>
                                     ))}
-                                  </select>
+                                  </Select>
                                 )}
 
                                 {roles.map((rid) => {
@@ -380,10 +378,10 @@ export default function WorkgroupsTab() {
                         {/* Add member */}
                         {addingMember === wg.id ? (
                           <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
-                            <select
+                            <Select
                               defaultValue=""
                               onChange={(e) => { if (e.target.value) handleAddMember(wg.id, e.target.value) }}
-                              style={{ ...inputStyle, flex: 1 }}
+                              style={{ flex: 1 }}
                             >
                               <option value="">Select community member…</option>
                               {nonMembers.map((m) => (
@@ -391,7 +389,7 @@ export default function WorkgroupsTab() {
                                   {[m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || m.personId}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                             <Button variant="secondary" onClick={() => setAddingMember(null)} style={{ fontSize: '0.8rem' }}>Cancel</Button>
                           </div>
                         ) : (

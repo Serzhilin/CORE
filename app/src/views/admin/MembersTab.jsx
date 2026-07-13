@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Input } from '@ecommons/ui'
+import { Card, Button, Input, Select } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
-
-const inputStyle = { padding: '7px 10px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.9rem', background: 'white' }
 
 export default function MembersTab() {
   const { communityId, community, refresh } = useCommunity()
@@ -147,12 +145,12 @@ export default function MembersTab() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Membership type</label>
-              <select style={inputStyle} value={addForm.membership_type_id} onChange={(e) => setAddForm((f) => ({ ...f, membership_type_id: e.target.value }))}>
+              <Select value={addForm.membership_type_id} onChange={(e) => setAddForm((f) => ({ ...f, membership_type_id: e.target.value }))}>
                 <option value="">—</option>
                 {membershipTypes.map((t) => (
                   <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
               <Button type="submit" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</Button>
@@ -202,9 +200,9 @@ export default function MembersTab() {
                     onMouseLeave={() => setHoverCell((c) => (c === `${m.personId}:type` ? null : c))}
                   >
                     {editingCell === `${m.personId}:type` ? (
-                      <select
+                      <Select
                         autoFocus
-                        style={{ ...inputStyle, fontSize: '0.8rem', padding: '4px 8px' }}
+                        style={{ width: 'auto', fontSize: '0.8rem', padding: '4px 8px' }}
                         value={m.membershipTypeId || ''}
                         onChange={(e) => { handleUpdate(m.personId, { membership_type_id: e.target.value || null }); setEditingCell(null) }}
                         onBlur={() => setEditingCell(null)}
@@ -213,7 +211,7 @@ export default function MembersTab() {
                         {membershipTypes.map((t) => (
                           <option key={t.id} value={t.id}>{t.name}</option>
                         ))}
-                      </select>
+                      </Select>
                     ) : (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                         {(() => {

@@ -1,14 +1,8 @@
 import { useState } from 'react'
-import { Card, Button, Input } from '@ecommons/ui'
+import { Card, Button, Input, Select } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
-
-const inputStyle = {
-  width: '100%', padding: '10px 14px', borderRadius: 0,
-  border: '1px solid var(--color-sand-dark)', fontSize: '0.95rem', background: 'white',
-  boxSizing: 'border-box',
-}
 
 export default function MyAvailability() {
   const { communityId, community, availabilityTypes, myMembership, refresh } = useCommunity()
@@ -94,12 +88,12 @@ export default function MyAvailability() {
         <form onSubmit={handleSet} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Status</label>
-            <select style={inputStyle} value={form.type_id} onChange={(e) => setForm((f) => ({ ...f, type_id: e.target.value }))}>
+            <Select value={form.type_id} onChange={(e) => setForm((f) => ({ ...f, type_id: e.target.value }))}>
               <option value="">Available (no status)</option>
               {availabilityTypes.map((t) => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Reason (optional)</label>
