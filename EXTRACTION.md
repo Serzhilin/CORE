@@ -48,9 +48,9 @@ the named component list and were not covered by that decision — left as-is
 in CORE for now, flagged here as dead-code cleanup candidates rather than
 extracted.
 
-- [ ] Animations: `pulse-ring`, `slideIn`, `fadeIn`, `scaleIn`, `pulse-soft`, `greetingFlash`, `revealResult` + their `.animate-*`/`.greeting-flash`/`.reveal-result` classes — **confirmed dead (2026-07-13, grepped all CORE .jsx, zero matches), left in CORE, not extracted**
+- [x] Animations: `pulse-ring`, `slideIn`, `fadeIn`, `scaleIn`, `pulse-soft`, `greetingFlash`, `revealResult` + their `.animate-*`/`.greeting-flash`/`.reveal-result` classes — confirmed dead (2026-07-13, grepped all CORE `.jsx`, zero matches), **deleted** from CORE's `app/src/index.css`. Not moved to ecommons-ui (dead code, nothing to preserve). Verified `vite build` clean.
 - [x] Scrollbar styling (`::-webkit-scrollbar*`) — moved byte-identical to `ecommons-ui/src/tokens/index.css` (ecommons-ui commit `b85bb37`), removed from CORE's `app/src/index.css`. Verified `vite build` clean.
-- [ ] Rich text / prose styles: `.agenda-html`, `.tiptap`, `.ProseMirror`, `.upcoming-row-btn` — **confirmed dead (2026-07-13, grepped all CORE .jsx, zero matches), left in CORE, not extracted**
+- [x] Rich text / prose styles: `.agenda-html`, `.tiptap`, `.ProseMirror`, `.upcoming-row-btn` — confirmed dead (2026-07-13, grepped all CORE `.jsx`, zero matches), **deleted** from CORE's `app/src/index.css`. Not moved to ecommons-ui (dead code, nothing to preserve). Verified `vite build` clean.
 
 ## Presentational components → real React components in ecommons-ui
 
