@@ -12,22 +12,6 @@
   transform-origin: center;
 }
 
-.input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 2px solid var(--color-charcoal);
-  border-radius: 0;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  color: var(--color-charcoal);
-  background: white;
-  transition: border-color 0.15s;
-  outline: none;
-}
-.input:focus { border-color: var(--color-terracotta); box-shadow: var(--block-shadow-sm); }
-.input::placeholder { color: #BBB; }
-textarea.input { resize: vertical; min-height: 100px; }
-
 label {
   display: block;
   font-size: 0.75rem;
