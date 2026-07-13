@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). No further extraction items remain.
+## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. No further extraction items remain.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -85,6 +85,8 @@ not just moving CSS.
   - Created `CollapsiblePanel` in `ecommons-ui/src/components/CollapsiblePanel.tsx` (ecommons-ui commit `3a53a31`), props `open`, `onToggle`, `accentColor` (default `var(--color-terracotta)`), `width` (default `300`), `children` — moved verbatim from InfoPanel's desktop-only toggle+panel JSX block. CORE's `InfoPanel.jsx` desktop return block replaced with `<CollapsiblePanel open={open} onToggle={...} accentColor={accent} width={PANEL_WIDTH}>{renderContent()}</CollapsiblePanel>`; the mobile slide-over drawer branch (different pattern — full-screen overlay + close ×) was left untouched, out of scope per the original note. Verified `vite build` clean.
 - [x] Layout primitive: the `.topbar-slot-row` responsive-slot CSS pattern (absolute-centered on desktop, static full-width row on mobile) — portable as a generic layout utility even though today it's only used by CORE's `TopBar`
   - Moved to `ecommons-ui/src/styles/layout.css` (ecommons-ui commit `3a53a31`), imported globally alongside tokens in `src/index.ts`. CSS moved byte-identical. No CORE call-site change needed — `TopBar.jsx` still references `className="topbar-slot-row"`, now resolved via the `@ecommons/ui` `@import`. Removed the class from CORE's `app/src/index.css`. Verified `vite build` clean.
+- [x] `Panel` — generic bordered-box neubrutalist frame (2px charcoal border + block-shadow + radius 0), found hand-rolled inline in 3 spots after auditing token-var usage vs actual component usage (see below)
+  - Created `Panel.tsx` + `Panel.css` in `ecommons-ui/src/components/` (ecommons-ui commit `af9496b`): a div component (`shadow?: 'default' | 'sm'` prop, default maps to `var(--block-shadow)`, `'sm'` to `var(--block-shadow-sm)`) plus the raw `.panel-frame`/`.panel-frame-sm` CSS classes shipped globally, for applying the same frame directly to non-div elements (e.g. `<svg>`). Swapped 3 CORE call sites: `OrganogramView.jsx`'s view-toggle button wrapper (`<Panel shadow="sm">`), `views/graph/ForceGraph.jsx`'s SVG canvas (`className="panel-frame"` directly on the `<svg>`, since Panel renders a div), `components/TopBar.jsx`'s account dropdown menu (`<Panel>`). All 3 already used `var(--color-charcoal)`/`var(--block-shadow*)` tokens correctly — the audit finding was that the *composition* (border+shadow+radius0 repeating 3+ places) was still duplicated inline rather than componentized. Verified `vite build` clean.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 

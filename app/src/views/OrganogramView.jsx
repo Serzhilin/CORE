@@ -1,5 +1,5 @@
 import { useState, useRef, lazy, Suspense } from 'react'
-import { Input } from '@ecommons/ui'
+import { Input, Panel } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CardGrid from './CardGrid'
@@ -30,7 +30,7 @@ export default function OrganogramView() {
   useSetTopBarSlot(
     community ? (
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', height: 34, boxSizing: 'border-box', borderRadius: 0, overflow: 'hidden', border: '2px solid var(--color-charcoal)', boxShadow: 'var(--block-shadow-sm)', flexShrink: 0 }}>
+        <Panel shadow="sm" style={{ display: 'flex', height: 34, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0 }}>
           {['graph', 'cards'].map((v) => (
             <button
               key={v}
@@ -45,7 +45,7 @@ export default function OrganogramView() {
               {v.charAt(0).toUpperCase() + v.slice(1)}
             </button>
           ))}
-        </div>
+        </Panel>
 
         <div style={{ width: 1, height: 24, background: 'var(--color-sand-dark)', flexShrink: 0 }} />
 

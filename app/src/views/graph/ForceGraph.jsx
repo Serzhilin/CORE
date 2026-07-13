@@ -169,7 +169,8 @@ export default function ForceGraph({ simNodes, simLinks, filters, selected, onSe
       width="100%"
       height="100%"
       viewBox={`0 0 ${W} ${H}`}
-      style={{ background: '#fff', borderRadius: 0, border: '2px solid var(--color-charcoal)', boxShadow: 'var(--block-shadow)', display: 'block', cursor: isPanning ? 'grabbing' : 'grab' }}
+      className="panel-frame"
+      style={{ background: '#fff', display: 'block', cursor: isPanning ? 'grabbing' : 'grab' }}
       onMouseDown={handleSvgMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

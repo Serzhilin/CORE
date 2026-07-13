@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Panel } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useTopBarSlot } from '../context/TopBarSlotContext'
@@ -105,11 +106,9 @@ export default function TopBar() {
           </button>
 
           {showMenu && (
-            <div style={{
+            <Panel style={{
               position: 'absolute', top: 42, right: 0, zIndex: 1000,
-              background: 'white', border: '2px solid var(--color-charcoal)',
-              borderRadius: 0, boxShadow: 'var(--block-shadow)',
-              minWidth: 200, overflow: 'hidden',
+              background: 'white', minWidth: 200, overflow: 'hidden',
             }}>
               <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-sand)' }}>
                 <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--color-charcoal)' }}>
@@ -164,7 +163,7 @@ export default function TopBar() {
                   Log out
                 </MenuItem>
               </div>
-            </div>
+            </Panel>
           )}
         </div>
       </div>
