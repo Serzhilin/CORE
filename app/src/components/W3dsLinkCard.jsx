@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input } from '@ecommons/ui'
+import { Card, Button, Input, SectionLabel, ErrorText } from '@ecommons/ui'
 import { resolveCommunityW3id, linkCommunityW3id, unlinkCommunityW3id } from '../api/client'
 
 export default function W3dsLinkCard({ communityId, community, onChange }) {
@@ -57,15 +57,15 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
 
   return (
     <Card style={{ padding: 28 }}>
-      <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+      <SectionLabel style={{ margin: '0 0 20px' }}>
         W3DS identity
-      </h3>
+      </SectionLabel>
 
       {community?.provisioning_status === 'linked' ? (
         <div style={{ fontSize: '0.9rem' }}>
           <div>Linked to <strong>{community.ename}</strong></div>
           <div style={{ color: 'var(--color-charcoal-light)', fontSize: '0.82rem', marginTop: 4 }}>{community.evault_uri}</div>
-          {w3idError && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)', marginTop: 8 }}>{w3idError}</div>}
+          {w3idError && <ErrorText style={{ marginTop: 8 }}>{w3idError}</ErrorText>}
           <Button type="button" variant="secondary" style={{ marginTop: 12, color: 'var(--color-red)' }} onClick={handleUnlink} disabled={w3idUnlinking}>
             {w3idUnlinking ? 'Unlinking…' : 'Unlink'}
           </Button>
@@ -88,7 +88,7 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
             </Button>
           </div>
 
-          {w3idError && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)' }}>{w3idError}</div>}
+          {w3idError && <ErrorText>{w3idError}</ErrorText>}
 
           {w3idPreview && (
             <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 14, fontSize: '0.85rem' }}>

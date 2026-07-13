@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CollapsiblePanel, Badge, Avatar } from '@ecommons/ui'
+import { CollapsiblePanel, Badge, Avatar, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 
 const PANEL_WIDTH = 300
@@ -37,9 +37,9 @@ function CommunityView({ community, onSelect }) {
         </div>
       </div>
       <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 12, flex: 1, overflowY: 'auto' }}>
-        <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)', marginBottom: 8 }}>
+        <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} style={{ marginBottom: 8 }}>
           Workgroups
-        </div>
+        </SectionLabel>
         {[...community.workgroups].sort((a, b) => a.name.localeCompare(b.name)).map(wg => (
           <div
             key={wg.id}
@@ -76,7 +76,7 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
       {wg.description && <div style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)', lineHeight: 1.5 }}>{wg.description}</div>}
 
       <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid var(--color-sand)', paddingTop: 8 }}>
-        <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)', marginBottom: 8 }}>Members</div>
+        <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} style={{ marginBottom: 8 }}>Members</SectionLabel>
         {members.map(({ wm, member }) => {
           const roles = (wm.roles || []).map(rid => wg.roles.find(r => r.id === rid)).filter(Boolean)
           const name = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'
@@ -175,7 +175,7 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
 
       {wgMemberships.length > 0 && (
         <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 10 }}>
-          <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)', marginBottom: 8 }}>Workgroups</div>
+          <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} style={{ marginBottom: 8 }}>Workgroups</SectionLabel>
           {wgMemberships.map(({ wg, roles }) => (
             <div key={wg.id} style={{ borderLeft: `3px solid ${wg.color}`, paddingLeft: 10, marginBottom: 8 }}>
               <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{wg.name}</div>

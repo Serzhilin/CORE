@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Textarea, Badge, Select, Label, TrashIcon, Tabs } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Badge, Select, Label, TrashIcon, Tabs, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -238,7 +238,7 @@ export default function WorkgroupsTab() {
                 <div style={{ padding: 20 }}>
                   {getTab(wg.id) === 'roles' && (
                     <div>
-                      <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Roles</h4>
+                      <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 10px' }}>Roles</SectionLabel>
                       {[...wg.roles].sort((a, b) => a.name.localeCompare(b.name)).map((r) => (
                         <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                           <input
@@ -295,7 +295,7 @@ export default function WorkgroupsTab() {
 
                   {getTab(wg.id) === 'members' && (
                     <div>
-                      <h4 style={{ margin: '0 0 10px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>Members</h4>
+                      <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 10px' }}>Members</SectionLabel>
                       <div>
                         {wgMembers.map(({ member, roles }, idx) => {
                           const displayName = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'

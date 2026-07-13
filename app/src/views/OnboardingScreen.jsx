@@ -1,4 +1,4 @@
-import { Card } from '@ecommons/ui'
+import { Card, Heading } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 
 export default function OnboardingScreen() {
@@ -14,9 +14,9 @@ export default function OnboardingScreen() {
       background: 'var(--color-cream)', padding: 24,
     }}>
       <Card variant="warm" style={{ maxWidth: 480, width: '100%', padding: 40, textAlign: 'center' }}>
-        <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '2rem', marginBottom: 12 }}>
+        <Heading as="h1" style={{ marginBottom: 12 }}>
           Welcome to CORE
-        </h1>
+        </Heading>
         <p style={{ color: 'var(--color-charcoal-light)', lineHeight: 1.7, marginBottom: 24 }}>
           CORE manages your community's members, workgroups, and roles.
           You're logged in, but you haven't been added to any community yet.

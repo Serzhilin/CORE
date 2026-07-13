@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td, ErrorText } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -127,7 +127,7 @@ export default function MembersTab() {
             ) : null}
           </form>
           {checkError && (
-            <p style={{ color: 'var(--color-red)', fontSize: '0.85rem', margin: '10px 0 0' }}>{checkError}</p>
+            <ErrorText as="p" fontSize="0.85rem" style={{ margin: '10px 0 0' }}>{checkError}</ErrorText>
           )}
           {enameChecked && (
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end', marginTop: 14 }}>

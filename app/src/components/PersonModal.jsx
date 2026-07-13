@@ -1,4 +1,4 @@
-import { Card, Badge, Avatar } from '@ecommons/ui'
+import { Card, Badge, Avatar, SectionLabel } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import AvailabilityBadge from './AvailabilityBadge'
@@ -76,7 +76,7 @@ export default function PersonModal({ member, onClose }) {
         {/* Workgroups */}
         {wgMemberships.length > 0 && (
           <div style={{ marginBottom: 16 }}>
-            <h4 style={{ margin: '0 0 8px', fontSize: '0.85rem', color: 'var(--color-charcoal-light)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Workgroups</h4>
+            <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 8px' }}>Workgroups</SectionLabel>
             {wgMemberships.map(({ workgroup, roles }) => (
               <div key={workgroup.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                 <span style={{ width: 10, height: 10, borderRadius: '50%', background: workgroup.color, flexShrink: 0 }} />

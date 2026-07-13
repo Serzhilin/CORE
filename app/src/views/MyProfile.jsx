@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Card, Button, Input, Textarea, Label } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Label, Heading } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -36,7 +36,7 @@ export default function MyProfile() {
   const bannerFileRef = useRef(null)
 
   useSetTopBarSlot(
-    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>My profile</span>
+    <Heading>My profile</Heading>
   )
 
   async function handleSaveProfile(e) {

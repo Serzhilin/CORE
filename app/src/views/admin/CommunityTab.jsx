@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Select, Label, TrashIcon } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, TrashIcon, SectionLabel, ErrorText } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
@@ -133,14 +133,14 @@ export default function CommunityTab() {
     <div style={{ maxWidth: 560, margin: '0 auto' }}>
       {/* Community settings */}
       <Card style={{ padding: 28, marginBottom: 24 }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+        <SectionLabel style={{ margin: '0 0 20px' }}>
           Community settings
-        </h3>
+        </SectionLabel>
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-          <h4 style={{ margin: '0 0 -4px', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+          <SectionLabel as="h4" fontSize="0.78rem" style={{ margin: '0 0 -4px' }}>
             Legal information
-          </h4>
+          </SectionLabel>
 
           <div>
             <Label>Name</Label>
@@ -175,12 +175,12 @@ export default function CommunityTab() {
                 <input type="file" accept="application/pdf,.pdf,.doc,.docx" onChange={handleStatutenUpload} style={{ display: 'none' }} disabled={statutenSaving} />
               </label>
             </div>
-            {statutenError && <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--color-red)' }}>{statutenError}</div>}
+            {statutenError && <ErrorText style={{ marginTop: 6 }}>{statutenError}</ErrorText>}
           </div>
 
-          <h4 style={{ margin: '10px 0 -4px', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+          <SectionLabel as="h4" fontSize="0.78rem" style={{ margin: '10px 0 -4px' }}>
             Branding
-          </h4>
+          </SectionLabel>
 
           <div>
             <Label>Slug</Label>
@@ -214,7 +214,7 @@ export default function CommunityTab() {
                 )}
               </div>
             </div>
-            {logoError && <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--color-red)' }}>{logoError}</div>}
+            {logoError && <ErrorText style={{ marginTop: 6 }}>{logoError}</ErrorText>}
           </div>
 
           {/* Group photo upload */}
@@ -243,7 +243,7 @@ export default function CommunityTab() {
                 )}
               </div>
             </div>
-            {photoError && <div style={{ marginTop: 6, fontSize: '0.8rem', color: 'var(--color-red)' }}>{photoError}</div>}
+            {photoError && <ErrorText style={{ marginTop: 6 }}>{photoError}</ErrorText>}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -272,9 +272,9 @@ export default function CommunityTab() {
 
       {/* Admins */}
       <Card style={{ padding: 28, marginBottom: 24 }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+        <SectionLabel style={{ margin: '0 0 20px' }}>
           Admins
-        </h3>
+        </SectionLabel>
 
         {(community?.members || []).filter((m) => m.isAdmin).sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m) => {
           const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'

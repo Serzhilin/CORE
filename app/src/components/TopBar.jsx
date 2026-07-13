@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Panel, Avatar, MenuItem } from '@ecommons/ui'
+import { Panel, Avatar, MenuItem, SectionLabel } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useTopBarSlot } from '../context/TopBarSlotContext'
@@ -136,9 +136,9 @@ export default function TopBar() {
 
               {memberships.length > 1 && (
                 <>
-                  <div style={{ borderTop: '1px solid var(--color-sand)', padding: '8px 16px 2px', fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-charcoal-light)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  <SectionLabel as="div" fontSize="0.68rem" fontWeight={700} letterSpacing="0.06em" style={{ borderTop: '1px solid var(--color-sand)', padding: '8px 16px 2px' }}>
                     Communities
-                  </div>
+                  </SectionLabel>
                   {memberships.map((m) => (
                     <MenuItem
                       key={m.communityId}

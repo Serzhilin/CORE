@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Select, Label } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, Heading, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
@@ -52,7 +52,7 @@ export default function MyAvailability() {
   }
 
   useSetTopBarSlot(
-    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>My availability</span>
+    <Heading>My availability</Heading>
   )
 
   return (
@@ -82,9 +82,9 @@ export default function MyAvailability() {
       )}
 
       <Card style={{ padding: 28 }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '1rem', color: 'var(--color-charcoal-light)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <SectionLabel style={{ margin: '0 0 20px' }}>
           Set status
-        </h3>
+        </SectionLabel>
         <form onSubmit={handleSet} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <Label>Status</Label>

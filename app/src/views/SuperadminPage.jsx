@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Button, Input, Badge, Loading } from '@ecommons/ui'
+import { Card, Button, Input, Badge, Loading, SectionLabel, ErrorText } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -52,9 +52,9 @@ function AddCommunityCard({ onCreated }) {
 
   return (
     <Card style={{ padding: 28, marginBottom: 24 }}>
-      <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+      <SectionLabel style={{ margin: '0 0 20px' }}>
         Add community from existing eName
-      </h3>
+      </SectionLabel>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -69,7 +69,7 @@ function AddCommunityCard({ onCreated }) {
           </Button>
         </div>
 
-        {error && <div style={{ fontSize: '0.8rem', color: 'var(--color-red)' }}>{error}</div>}
+        {error && <ErrorText>{error}</ErrorText>}
 
         {preview && (
           <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 14, fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: 10 }}>

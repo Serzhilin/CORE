@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import QRCode from 'qrcode'
-import { Card } from '@ecommons/ui'
+import { Card, Heading, ErrorText } from '@ecommons/ui'
 import { getAuthOffer, subscribeToAuthSession } from '../api/client'
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
@@ -79,9 +79,9 @@ export default function LoginScreen({ onSuccess }) {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '2rem', margin: '0 0 6px', color: 'var(--color-charcoal)' }}>
+          <Heading as="h1" style={{ margin: '0 0 6px' }}>
             CORE
-          </h1>
+          </Heading>
           <p style={{ color: 'var(--color-charcoal-light)', margin: 0, fontSize: '0.95rem' }}>
             Community Organisation & Roles Engine
           </p>
@@ -124,9 +124,9 @@ export default function LoginScreen({ onSuccess }) {
 
               {/* Error */}
               {status === 'error' && (
-                <p style={{ color: 'var(--color-red)', fontSize: '0.9rem', margin: 0 }}>
+                <ErrorText as="p" fontSize="0.9rem" style={{ margin: 0 }}>
                   Could not reach auth server. Check API is running.
-                </p>
+                </ErrorText>
               )}
 
               {/* Desktop: QR code + w3ds:// link */}

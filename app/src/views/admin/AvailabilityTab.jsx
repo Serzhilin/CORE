@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, EmojiPicker, Input, Select, Label, TrashIcon } from '@ecommons/ui'
+import { Card, Button, EmojiPicker, Input, Select, Label, TrashIcon, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
@@ -84,9 +84,9 @@ export default function AvailabilityTab() {
 
       {/* Currently unavailable */}
       <Card style={{ padding: 28 }}>
-        <h3 style={{ margin: '0 0 16px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+        <SectionLabel style={{ margin: '0 0 16px' }}>
           Currently unavailable
-        </h3>
+        </SectionLabel>
         {unavailableMembers.length === 0 ? (
           <p style={{ color: 'var(--color-charcoal-light)', fontSize: '0.9rem', margin: 0 }}>Everyone is available.</p>
         ) : (
@@ -111,9 +111,9 @@ export default function AvailabilityTab() {
 
         {/* Set availability form */}
         <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--color-sand)' }}>
-          <h4 style={{ margin: '0 0 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+          <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 12px' }}>
             {avForm.personId ? 'Edit availability' : 'Set availability'}
-          </h4>
+          </SectionLabel>
           <form onSubmit={handleSetAvailability} style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 380 }}>
             <div>
               <Label size="sm">Member</Label>
@@ -157,9 +157,9 @@ export default function AvailabilityTab() {
 
       {/* Availability types */}
       <Card style={{ padding: 28 }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
+        <SectionLabel style={{ margin: '0 0 20px' }}>
           Availability types
-        </h3>
+        </SectionLabel>
         <div style={{ marginBottom: 16 }}>
           {availabilityTypes.map((t) => (
             <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>

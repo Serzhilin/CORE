@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Badge, Select } from '@ecommons/ui'
+import { Card, Badge, Select, Heading } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -61,7 +61,7 @@ export default function MyWorkgroups() {
   }
 
   useSetTopBarSlot(
-    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>My workgroups</span>
+    <Heading>My workgroups</Heading>
   )
 
   return (

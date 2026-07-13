@@ -1,5 +1,5 @@
 import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom'
-import { Tabs } from '@ecommons/ui'
+import { Tabs, Heading } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useUser } from '../context/UserContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -27,7 +27,7 @@ export default function AdminPanel() {
   ) ?? false
 
   useSetTopBarSlot(
-    <span style={{ fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: '2rem', color: 'var(--color-charcoal)' }}>Admin</span>
+    <Heading>Admin</Heading>
   )
 
   if (!isAdmin && !isWorkgroupAdmin) {
