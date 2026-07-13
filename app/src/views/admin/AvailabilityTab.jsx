@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { Card, Button } from '@ecommons/ui'
+import { Card, Button, EmojiPicker } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
-import EmojiPicker from '../../components/EmojiPicker'
 import {
   createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
   setMemberAvailability,
