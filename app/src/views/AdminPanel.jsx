@@ -1,4 +1,5 @@
 import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom'
+import { Tabs } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useUser } from '../context/UserContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -39,22 +40,8 @@ export default function AdminPanel() {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 4, marginBottom: 28, borderBottom: '2px solid var(--color-sand)' }}>
-        {visibleTabs.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => navigate(`/admin/${t.key}`)}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              padding: '10px 20px', fontWeight: activeKey === t.key ? 700 : 400,
-              color: activeKey === t.key ? 'var(--color-terracotta)' : 'var(--color-charcoal-light)',
-              borderBottom: activeKey === t.key ? '2px solid var(--color-terracotta)' : '2px solid transparent',
-              marginBottom: -2, fontSize: '0.95rem', fontFamily: 'var(--font-sans)',
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div style={{ marginBottom: 28 }}>
+        <Tabs tabs={visibleTabs} activeKey={activeKey} onChange={(key) => navigate(`/admin/${key}`)} />
       </div>
 
       <Routes>

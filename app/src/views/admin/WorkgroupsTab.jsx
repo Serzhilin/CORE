@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Textarea, Badge, Select, Label, TrashIcon } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Badge, Select, Label, TrashIcon, Tabs } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -223,28 +223,17 @@ export default function WorkgroupsTab() {
             {isExpanded && (
               <div style={{ borderTop: '1px solid var(--color-sand)' }}>
                 {/* Tab bar */}
-                <div style={{ display: 'flex', borderBottom: '1px solid var(--color-sand)' }}>
-                  {['members', 'roles', 'details'].map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab((s) => ({ ...s, [wg.id]: tab }))}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        borderBottom: getTab(wg.id) === tab ? `2px solid ${wg.color}` : '2px solid transparent',
-                        padding: '10px 20px',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem',
-                        fontWeight: getTab(wg.id) === tab ? 600 : 400,
-                        color: getTab(wg.id) === tab ? wg.color : 'var(--color-charcoal-light)',
-                        textTransform: 'capitalize',
-                        marginBottom: -1,
-                      }}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
+                <Tabs
+                  tabs={[{ key: 'members', label: 'members' }, { key: 'roles', label: 'roles' }, { key: 'details', label: 'details' }]}
+                  activeKey={getTab(wg.id)}
+                  onChange={(tab) => setActiveTab((s) => ({ ...s, [wg.id]: tab }))}
+                  activeColor={wg.color}
+                  borderWidth={1}
+                  fontSize="0.85rem"
+                  activeFontWeight={600}
+                  gap={0}
+                  textTransform="capitalize"
+                />
 
                 <div style={{ padding: 20 }}>
                   {getTab(wg.id) === 'roles' && (
