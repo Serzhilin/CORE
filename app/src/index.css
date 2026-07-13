@@ -24,7 +24,6 @@ label {
 
 .divider { border: none; border-top: 2px solid var(--color-charcoal); margin: 16px 0; }
 
-.emoji-mono { filter: grayscale(1) contrast(1.15); }
 
 @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

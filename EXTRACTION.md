@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar components done. EmojiBadge next (generalized from AvailabilityBadge).
+## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge components done. EmojiPicker next (will confirm with user first, bigger component).
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -71,7 +71,8 @@ not just moving CSS.
   - Created in `ecommons-ui/src/components/Badge.tsx` + `Badge.css` (ecommons-ui commit `8338971`), `variant?: 'orange' | 'green' | 'red' | 'gray' | 'blue'` prop (default `'gray'`), CSS moved byte-identical. Dead CSS (0 usages in CORE) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.badge`/`.badge-*` from CORE's `app/src/index.css`. Verified `vite build` clean.
 - [x] `Modal` (from `.modal-overlay` + `.modal` — currently hand-rolled inline wherever a dialog is needed, e.g. `PersonModal.jsx`)
   - Created in `ecommons-ui/src/components/Modal.tsx` + `Modal.css` (ecommons-ui commit `a7cc48d`). CSS moved, keyframes renamed `modal-fade-in`/`modal-scale-in` (from `fadeIn`/`scaleIn`) to avoid collision with CORE's own identically-named keyframes still used by `.animate-fade-in`/`.animate-scale-in`. Dead CSS (0 usages in CORE — real modals like `PersonModal.jsx` hand-roll their own inline overlay) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.modal-overlay`/`.modal` from CORE's `app/src/index.css` (kept `@keyframes fadeIn`/`scaleIn` intact — still used). Verified `vite build` clean.
-- [ ] `AvailabilityBadge` → generalize to something like `EmojiBadge` (props: `emoji`, `tooltip`, `inline`) — CORE keeps a thin wrapper passing `availability.type.emoji`/reason/until
+- [x] `AvailabilityBadge` → generalized to `EmojiBadge` (props: `emoji`, `tooltip`, `inline`)
+  - Created in `ecommons-ui/src/components/EmojiBadge.tsx` + `EmojiBadge.css` (ecommons-ui commit `a2a2b3d`), byte-identical `.emoji-mono` CSS. CORE's `AvailabilityBadge.jsx` rewritten as a thin wrapper: unwraps `availability.type.emoji`/`reason`/`until` into `tooltip`, delegates rendering to `<EmojiBadge>` — used unchanged at both call sites (`CardGrid.jsx`, `PersonModal.jsx`). Removed `.emoji-mono` from CORE's `app/src/index.css`. Verified `vite build` clean.
 - [ ] `EmojiPicker` — mostly pure; the 5 built-in emoji categories are baked-in data, not CORE domain logic, so it can move whole. Will confirm before moving since it's a bigger component than the others.
 - [x] `ProgressBar` (from `.progress-bar` / `.progress-bar-fill`)
   - Created in `ecommons-ui/src/components/ProgressBar.tsx` + `ProgressBar.css` (ecommons-ui commit `d162e4f`), `value` prop (0-100) sets fill width. CSS moved byte-identical. Dead CSS (0 usages in CORE) — built anyway per the 2026-07-13 decision, no CORE call-site swap. Removed `.progress-bar`/`.progress-bar-fill` from CORE's `app/src/index.css`. Verified `vite build` clean.
