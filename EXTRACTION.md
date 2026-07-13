@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below).
+## Status: token + base-style batches done. Card, Button, Input, Select, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel, Avatar + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 items, all 4 now resolved (see below). Post-audit gap list identified (Avatar, Label, Icon, Dropdown/Menu, Table, Tabs, Checkbox, Toast, Loading, Typography, Layout shell) — extracting one at a time per user approval; Avatar done, Label next.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -150,6 +150,24 @@ It found 4 items beyond what's tracked above:
    variant="gray">` (a clean 1:1 match — no new API needed, this was
    basically an unBadged 2-state badge). CORE commit `d4a94fb`. Verified
    `vite build` clean.
+
+## Post-audit gap list (2026-07-13) — un-extracted JSX-shape patterns
+
+The subagent audit above grepped for duplicated CSS/token *values*, which by
+construction misses duplicated *shapes* (repeated JSX patterns with no
+shared class/const to grep for). User pushed back on the "gaps" framing
+("things DO EXIST in CORE — why not extract them?") — clarified these were
+never extracted because they were never a named/approved target, not
+because they're impossible. Agreed to extract one at a time, same process,
+starting with Avatar then Label.
+
+- [x] `Avatar` (img-or-initials circle, `borderRadius: '50%'`) — found hand-rolled in `InfoPanel.jsx`, `PersonModal.jsx`, `TopBar.jsx`
+  - Created `ecommons-ui/src/components/Avatar.tsx` (ecommons-ui commit `d0362b4`), no dedicated CSS file (pure inline-style component, matching all 3 original sites). Props: `src`, `alt`, `size` (required), `background` (default `var(--color-sand-dark)`), `color` (default `white`), `fontSize`, `fontWeight` (default `700`), `style`, `children` — renders `<img>` when `src` is truthy, else a flex-centered div showing `children` (initials). Caller-supplied `style` spread last so any property can be overridden per site.
+  - Exempt from the `border-radius: 0` neubrutalist rule by design (avatars are circular).
+  - Swapped 3 genuine call sites: `InfoPanel.jsx` (`size={104}`, `fontSize="2.2rem"`), `PersonModal.jsx` (`size={52}`, `fontSize="1.2rem"`, `fontWeight={600}`), `TopBar.jsx` (`size={51}`, `fontSize="1.3rem"`, `fontWeight={600}`, dynamic `background` for admin vs non-admin).
+  - `TopBar.jsx` structural note: its avatar was a self-styled `<button>` (the button *was* the circle). Restructured into a plain reset-styled `<button>` (no border/padding/background) wrapping the new `<Avatar>`, which now owns all circle styling. Judged pixel-identical output (same size/colors/position, only DOM nesting changed) so this did not require a fresh visible-behavior question.
+  - **Excluded from scope:** small colored status/workgroup dots in `TopBar.jsx` and `InfoPanel.jsx` that also use `borderRadius: '50%'` but are indicator dots, not avatars (false-positive grep matches). `CardGrid.jsx`'s avatar-or-fallback block — its no-image fallback is a bespoke SVG ring data-viz (workgroup/role color rings), not a plain initials circle, so it's a genuinely different, CORE-specific component, not the same pattern.
+  - CORE commit `73459ef`. Verified `vite build` clean across all 3 files.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 
