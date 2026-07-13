@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Card } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -55,7 +56,7 @@ function AddCommunityCard({ onCreated }) {
   }
 
   return (
-    <div className="card" style={{ padding: 28, marginBottom: 24 }}>
+    <Card style={{ padding: 28, marginBottom: 24 }}>
       <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
         Add community from existing eName
       </h3>
@@ -95,7 +96,7 @@ function AddCommunityCard({ onCreated }) {
           </div>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -147,7 +148,7 @@ export default function SuperadminPage() {
       <AddCommunityCard onCreated={refresh} />
 
       {communities.map((c) => (
-        <div key={c.id} className="card" style={{ padding: '14px 18px', marginBottom: 10 }}>
+        <Card key={c.id} style={{ padding: '14px 18px', marginBottom: 10 }}>
           <div
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
             onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}
@@ -170,7 +171,7 @@ export default function SuperadminPage() {
               <W3dsLinkCard communityId={c.id} community={c} onChange={refresh} />
             </div>
           )}
-        </div>
+        </Card>
       ))}
 
       {communities.length === 0 && !listError && (

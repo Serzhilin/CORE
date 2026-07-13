@@ -12,19 +12,6 @@
   transform-origin: center;
 }
 
-.card {
-  background: white;
-  border-radius: 0;
-  box-shadow: var(--block-shadow);
-  border: 2px solid var(--color-charcoal);
-}
-.card-warm {
-  background: white;
-  border-radius: 0;
-  box-shadow: var(--block-shadow);
-  border: 2px solid var(--color-charcoal);
-}
-
 .btn-primary {
   background-color: var(--color-terracotta);
   color: white;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Card } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -105,7 +106,7 @@ export default function MembersTab() {
       </div>
 
       {adding && (
-        <div className="card-warm" style={{ padding: 20, marginBottom: 20 }}>
+        <Card variant="warm" style={{ padding: 20, marginBottom: 20 }}>
           <h4 style={{ margin: '0 0 16px' }}>Add member</h4>
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div>
@@ -159,10 +160,10 @@ export default function MembersTab() {
             </div>
           </form>
           )}
-        </div>
+        </Card>
       )}
 
-      <div className="card" style={{ overflow: 'auto' }}>
+      <Card style={{ overflow: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <thead style={{ borderBottom: '2px solid var(--color-sand)' }}>
             <tr>
@@ -282,7 +283,7 @@ export default function MembersTab() {
             })}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   )
 }

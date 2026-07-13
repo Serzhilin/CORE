@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import QRCode from 'qrcode'
+import { Card } from '@ecommons/ui'
 import { getAuthOffer, subscribeToAuthSession } from '../api/client'
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
@@ -87,7 +88,7 @@ export default function LoginScreen({ onSuccess }) {
         </div>
 
         {/* Card */}
-        <div className="card" style={{ padding: 28 }}>
+        <Card style={{ padding: 28 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, width: '100%' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, color: 'var(--color-charcoal-light)', textAlign: 'center', width: '100%' }}>
 
@@ -174,7 +175,7 @@ export default function LoginScreen({ onSuccess }) {
             </div>
 
           </div>
-        </div>
+        </Card>
 
         {/* Footer: Project of eCommons + Metastate */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, paddingTop: 20 }}>

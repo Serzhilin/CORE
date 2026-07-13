@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { Card } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -90,7 +91,7 @@ export default function MyProfile() {
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
-      <div className="card" style={{ overflow: 'hidden', marginBottom: 24 }}>
+      <Card style={{ overflow: 'hidden', marginBottom: 24 }}>
         {/* Banner */}
         <button
           type="button"
@@ -220,7 +221,7 @@ export default function MyProfile() {
             </div>
           </form>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }

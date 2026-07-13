@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Card } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import EmojiPicker from '../../components/EmojiPicker'
 import {
@@ -87,7 +88,7 @@ export default function AvailabilityTab() {
     <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Currently unavailable */}
-      <div className="card" style={{ padding: 28 }}>
+      <Card style={{ padding: 28 }}>
         <h3 style={{ margin: '0 0 16px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
           Currently unavailable
         </h3>
@@ -157,10 +158,10 @@ export default function AvailabilityTab() {
             </div>
           </form>
         </div>
-      </div>
+      </Card>
 
       {/* Availability types */}
-      <div className="card" style={{ padding: 28 }}>
+      <Card style={{ padding: 28 }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
           Availability types
         </h3>
@@ -193,7 +194,7 @@ export default function AvailabilityTab() {
           <input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1, ...inputStyle }} />
           <button type="submit" className="btn-primary" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</button>
         </form>
-      </div>
+      </Card>
 
     </div>
   )

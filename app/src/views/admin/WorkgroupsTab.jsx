@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Card } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -130,7 +131,7 @@ export default function WorkgroupsTab() {
       </div>
 
       {addingWg && (
-        <div className="card-warm" style={{ padding: 20, marginBottom: 16 }}>
+        <Card variant="warm" style={{ padding: 20, marginBottom: 16 }}>
           <form onSubmit={handleCreateWorkgroup} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <div>
               <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Name</label>
@@ -146,7 +147,7 @@ export default function WorkgroupsTab() {
             <button type="submit" className="btn-primary" style={{ fontSize: '0.85rem' }}>Create</button>
             <button type="button" className="btn-secondary" onClick={() => setAddingWg(false)} style={{ fontSize: '0.85rem' }}>Cancel</button>
           </form>
-        </div>
+        </Card>
       )}
 
       {[...(community?.workgroups || [])].sort((a, b) => a.name.localeCompare(b.name)).map((wg) => {
@@ -165,7 +166,7 @@ export default function WorkgroupsTab() {
           .sort((a, b) => ([a.firstName, a.lastName].filter(Boolean).join(' ') || a.email || '').localeCompare([b.firstName, b.lastName].filter(Boolean).join(' ') || b.email || ''))
 
         return (
-          <div key={wg.id} className="card" style={{ marginBottom: 12, borderLeft: `4px solid ${wg.color}` }}>
+          <Card key={wg.id} style={{ marginBottom: 12, borderLeft: `4px solid ${wg.color}` }}>
             {/* Header */}
             <div
               onClick={() => setExpanded(isExpanded ? null : wg.id)}
@@ -453,7 +454,7 @@ export default function WorkgroupsTab() {
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         )
       })}
     </div>

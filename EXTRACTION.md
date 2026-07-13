@@ -4,11 +4,19 @@ Package lives at `../ecommons-ui` (sibling of CORE), consumed via `file:` dep,
 built with tsup. CORE imports the **built** `dist/`, so every step here ends
 with `npm run build` in `ecommons-ui` before switching back to CORE.
 
+**Note (2026-07-13):** `ecommons-ui` had no git repo until now — its own repo
+was only just initialized (`git init`, commit `a97199e`, covering tokens +
+base styles). Earlier notes below citing a single CORE commit hash for both
+sides were wrong: those commits only ever touched CORE's files (`index.css`,
+`package.json`); the ecommons-ui-side content was uncommitted until this
+fix. Going forward each batch gets one commit in `ecommons-ui`'s own repo
+and one in CORE's, referenced separately.
+
 Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token batch 1 done (colors/fonts/shadows). Everything else not started.
+## Status: token + base-style batches done. Card component done. Button next.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -16,8 +24,9 @@ before starting extraction, per instruction.
 - [x] Fonts: `--font-title` (Barlow Condensed), `--font-sans` (Instrument Sans) + the Google Fonts `@import`
 - [x] Shadows: `--block-shadow-color`, `--block-shadow`, `--block-shadow-sm`, `--shadow-card`, `--shadow-card-hover`
   - **Note:** `--block-shadow-color` is mutated at runtime by `CommunityContext.jsx` (`document.documentElement.style.setProperty(...)`) to the community's brand color. This is CORE-specific *behavior*, stays in CORE — only the token *declaration/default* moved to ecommons-ui.
-  - Done in commit `fcecd26`: moved to `ecommons-ui/src/tokens/index.css`, consumed in CORE via `@import '@ecommons/ui/dist/index.css'` in `app/src/index.css`. Verified byte-identical values in CORE's built CSS.
-- [ ] Base element styles: `*` box-sizing, `body`, `#root`, `h1/h2/h3` — **held back from batch 1**, these are base/reset styles rather than tokens proper; treating as a separate batch.
+  - Moved to `ecommons-ui/src/tokens/index.css` (ecommons-ui commit `a97199e`), consumed in CORE via `@import '@ecommons/ui/dist/index.css'` in `app/src/index.css` (CORE commit `fcecd26`). Verified byte-identical values in CORE's built CSS.
+- [x] Base element styles: `*` box-sizing, `body`, `#root`, `h1/h2/h3`
+  - Moved to `ecommons-ui/src/tokens/index.css` (ecommons-ui commit `a97199e`), dropped from CORE's `app/src/index.css` (CORE commit `8e357a2`). Verified byte-identical (`#root{min-height:100vh}`, `h1{font-size:2.6rem}`) in CORE's built CSS.
 
 ## Dead-CSS audit (2026-07-13)
 
@@ -51,7 +60,8 @@ classes (`.card`, `.btn-primary`, `.input`, `.badge-*`) applied directly in
 JSX — no dedicated component files. Extraction means creating the component,
 not just moving CSS.
 
-- [ ] `Card` (from `.card` / `.card-warm`)
+- [x] `Card` (from `.card` / `.card-warm`)
+  - Created in `ecommons-ui/src/components/Card.tsx` + `Card.css` (ecommons-ui commit `883cfca`), `variant?: 'default' | 'warm'` prop maps to `.card`/`.card-warm`. Swapped all 22 usage sites across 13 CORE files (`AvailabilityTab.jsx`, `MyWorkgroups.jsx`, `MyProfile.jsx`, `PersonModal.jsx`, `MyAvailability.jsx`, `OnboardingScreen.jsx`, `CardGrid.jsx`, `SuperadminPage.jsx`, `MembersTab.jsx`, `CommunityTab.jsx`, `WorkgroupsTab.jsx`, `W3dsLinkCard.jsx`, `LoginScreen.jsx`) to `<Card>`/`<Card variant="warm">` from `@ecommons/ui`. Removed `.card`/`.card-warm` from CORE's `app/src/index.css`. Verified `vite build` clean, zero remaining `className="card"` matches.
 - [ ] `Button` (from `.btn-primary` / `.btn-secondary` / `.btn-danger` / `.btn-green` — variant prop)
 - [ ] `Input` (from `.input`, incl. `textarea.input`) — several files hand-roll an equivalent inline `inputStyle` object instead of using the class (`OrganogramView`, `MyAvailability`, `MyWorkgroups`, `W3dsLinkCard`, `CommunityTab`, `MembersTab`, `WorkgroupsTab`, `AvailabilityTab`, `MyProfile`) — extraction is a chance to converge these, but that's a visible-behavior-adjacent call (some have `padding: '7px 10px'` vs `'10px 14px'`, some borders `1px solid var(--color-sand-dark)` vs the real `.input`'s `2px solid var(--color-charcoal)`) — **will ask before unifying these, since some already visibly diverge from `.input`**
 - [ ] `Badge` (from `.badge` + `-orange`/`-green`/`-red`/`-gray`/`-blue`)

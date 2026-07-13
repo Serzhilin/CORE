@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Card } from '@ecommons/ui'
 import { resolveCommunityW3id, linkCommunityW3id, unlinkCommunityW3id } from '../api/client'
 
 const inputStyle = {
@@ -60,7 +61,7 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
   }
 
   return (
-    <div className="card" style={{ padding: 28 }}>
+    <Card style={{ padding: 28 }}>
       <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
         W3DS identity
       </h3>
@@ -111,6 +112,6 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
           )}
         </div>
       )}
-    </div>
+    </Card>
   )
 }

@@ -1,3 +1,4 @@
+import { Card } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import AvailabilityBadge from './AvailabilityBadge'
@@ -29,8 +30,7 @@ export default function PersonModal({ member, onClose }) {
       }}
       onClick={onClose}
     >
-      <div
-        className="card"
+      <Card
         style={{ maxWidth: 480, width: '100%', padding: 32, maxHeight: '80vh', overflow: 'auto' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -94,7 +94,7 @@ export default function PersonModal({ member, onClose }) {
           </div>
         )}
 
-      </div>
+      </Card>
     </div>
   )
 }

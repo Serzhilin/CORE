@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Card } from '@ecommons/ui'
 import AvailabilityBadge from '../components/AvailabilityBadge'
 
 export default function CardGrid({ community, filter, onMemberClick, gridRef, selectedPersonId }) {
@@ -75,7 +76,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
       >
         {/* Unassigned card — always first */}
         {unassignedMembers.length > 0 && (
-          <div className="card" style={{ borderTop: '3px solid var(--color-sand-dark)', overflow: 'hidden' }}>
+          <Card style={{ borderTop: '3px solid var(--color-sand-dark)', overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px 8px', fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)', color: 'var(--color-charcoal-light)' }}>
               Without workgroup
             </div>
@@ -84,13 +85,13 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
                 <MemberRow key={m.personId} m={m} wgColor="#ccc" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
               ))}
             </div>
-          </div>
+          </Card>
         )}
 
         {workgroups.map((wg) => {
           const members = membersForWorkgroup(wg)
           return (
-            <div key={wg.id} className="card" style={{ borderTop: `3px solid ${wg.color}`, overflow: 'hidden' }}>
+            <Card key={wg.id} style={{ borderTop: `3px solid ${wg.color}`, overflow: 'hidden' }}>
               <div style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)' }}>{wg.name}</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>{members.length}</span>
@@ -103,7 +104,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
                   <MemberRow key={m.personId} m={m} wgColor={wg.color} roles={personRoles[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
                 ))}
               </div>
-            </div>
+            </Card>
           )
         })}
       </div>

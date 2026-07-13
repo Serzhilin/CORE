@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Card } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
@@ -86,7 +87,7 @@ export default function MyAvailability() {
         </div>
       )}
 
-      <div className="card" style={{ padding: 28 }}>
+      <Card style={{ padding: 28 }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '1rem', color: 'var(--color-charcoal-light)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Set status
         </h3>
@@ -124,7 +125,7 @@ export default function MyAvailability() {
             )}
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

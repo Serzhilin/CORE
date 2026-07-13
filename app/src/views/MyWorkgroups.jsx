@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Card } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -69,13 +70,13 @@ export default function MyWorkgroups() {
     <div style={{ maxWidth: 620, margin: '0 auto' }}>
       {/* Joined workgroups */}
       {joined.length === 0 ? (
-        <div className="card" style={{ padding: 28, color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 32 }}>
+        <Card style={{ padding: 28, color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 32 }}>
           You are not a member of any workgroup yet.
-        </div>
+        </Card>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 36 }}>
           {joined.map(({ wg, roles, unassigned }) => (
-            <div key={wg.id} className="card" style={{ borderLeft: `4px solid ${wg.color}`, padding: '18px 24px' }}>
+            <Card key={wg.id} style={{ borderLeft: `4px solid ${wg.color}`, padding: '18px 24px' }}>
               {/* Header row */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <span style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.05rem' }}>{wg.name}</span>
@@ -127,7 +128,7 @@ export default function MyWorkgroups() {
                 ))}
 
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

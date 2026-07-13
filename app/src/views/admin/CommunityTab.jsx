@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Card } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
@@ -136,7 +137,7 @@ export default function CommunityTab() {
   return (
     <div style={{ maxWidth: 560, margin: '0 auto' }}>
       {/* Community settings */}
-      <div className="card" style={{ padding: 28, marginBottom: 24 }}>
+      <Card style={{ padding: 28, marginBottom: 24 }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
           Community settings
         </h3>
@@ -276,10 +277,10 @@ export default function CommunityTab() {
             {saveMsg && <span style={{ fontSize: '0.85rem', color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>{saveMsg}</span>}
           </div>
         </form>
-      </div>
+      </Card>
 
       {/* Admins */}
-      <div className="card" style={{ padding: 28, marginBottom: 24 }}>
+      <Card style={{ padding: 28, marginBottom: 24 }}>
         <h3 style={{ margin: '0 0 20px', fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-charcoal-light)' }}>
           Admins
         </h3>
@@ -327,7 +328,7 @@ export default function CommunityTab() {
             ))}
           </select>
         </div>
-      </div>
+      </Card>
 
       <div style={{ marginBottom: 24 }}>
         <W3dsLinkCard communityId={communityId} community={community} onChange={refresh} />

@@ -1,3 +1,4 @@
+import { Card } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 
 export default function OnboardingScreen() {
@@ -12,7 +13,7 @@ export default function OnboardingScreen() {
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'var(--color-cream)', padding: 24,
     }}>
-      <div className="card-warm" style={{ maxWidth: 480, width: '100%', padding: 40, textAlign: 'center' }}>
+      <Card variant="warm" style={{ maxWidth: 480, width: '100%', padding: 40, textAlign: 'center' }}>
         <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '2rem', marginBottom: 12 }}>
           Welcome to CORE
         </h1>
@@ -38,7 +39,7 @@ export default function OnboardingScreen() {
             </button>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   )
 }
