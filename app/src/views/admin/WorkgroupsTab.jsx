@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Textarea, Badge, Select } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Badge, Select, Label } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -132,11 +132,11 @@ export default function WorkgroupsTab() {
         <Card variant="warm" style={{ padding: 20, marginBottom: 16 }}>
           <form onSubmit={handleCreateWorkgroup} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Name</label>
+              <Label size="sm">Name</Label>
               <Input value={addWgForm.name} onChange={(e) => setAddWgForm((f) => ({ ...f, name: e.target.value }))} required />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Color</label>
+              <Label size="sm">Color</Label>
               <div style={{ display: 'flex', gap: 6 }}>
                 <input type="color" value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }} />
                 <Input style={{ width: 90 }} value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} />
@@ -404,7 +404,7 @@ export default function WorkgroupsTab() {
                   {getTab(wg.id) === 'details' && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                       <div>
-                        <label style={{ display: 'block', marginBottom: 6, fontSize: '0.8rem', fontWeight: 500 }}>Description</label>
+                        <Label size="sm" style={{ marginBottom: 6 }}>Description</Label>
                         {editingWgDesc[wg.id] !== undefined ? (
                           <Textarea
                             autoFocus
@@ -426,7 +426,7 @@ export default function WorkgroupsTab() {
                         )}
                       </div>
                       <div>
-                        <label style={{ display: 'block', marginBottom: 6, fontSize: '0.8rem', fontWeight: 500 }}>Color</label>
+                        <Label size="sm" style={{ marginBottom: 6 }}>Color</Label>
                         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                           <input
                             key={wg.color}

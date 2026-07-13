@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Select } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { useUser } from '../../context/UserContext'
 import { updateCommunity, updateMember, uploadCommunityImage, uploadStatutenFile } from '../../api/client'
@@ -143,24 +143,24 @@ export default function CommunityTab() {
           </h4>
 
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Name</label>
+            <Label>Name</Label>
             <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>KvK number</label>
+              <Label>KvK number</Label>
               <Input value={form.kvk_number} onChange={(e) => setForm((f) => ({ ...f, kvk_number: e.target.value }))} />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Legal form</label>
+              <Label>Legal form</Label>
               <Input value={form.legal_form} onChange={(e) => setForm((f) => ({ ...f, legal_form: e.target.value }))} />
             </div>
           </div>
 
           {/* Statuten file upload */}
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 500 }}>Statuten</label>
+            <Label style={{ marginBottom: 8 }}>Statuten</Label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               {statutenUri && !statutenUri.startsWith('w3ds://') && (
                 <a href={statutenUri} target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
@@ -183,14 +183,14 @@ export default function CommunityTab() {
           </h4>
 
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Slug</label>
+            <Label>Slug</Label>
             <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} pattern="[a-z0-9-]+" />
             <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>Lowercase letters, numbers, hyphens only</span>
           </div>
 
           {/* Logo upload */}
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 500 }}>Logo</label>
+            <Label style={{ marginBottom: 8 }}>Logo</Label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <div style={{
                 width: 80, height: 48, border: '1px solid var(--color-sand)', borderRadius: 0,
@@ -221,7 +221,7 @@ export default function CommunityTab() {
 
           {/* Group photo upload */}
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', fontWeight: 500 }}>Group photo</label>
+            <Label style={{ marginBottom: 8 }}>Group photo</Label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <div style={{
                 width: 80, height: 48, border: '1px solid var(--color-sand)', borderRadius: 0,
@@ -252,14 +252,14 @@ export default function CommunityTab() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Primary color</label>
+              <Label>Primary color</Label>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <input type="color" value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} style={{ width: 40, height: 36, border: 'none', padding: 0, cursor: 'pointer' }} />
                 <Input style={{ flex: 1 }} value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} />
               </div>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Title font</label>
+              <Label>Title font</Label>
               <Select value={form.title_font} onChange={(e) => setForm((f) => ({ ...f, title_font: e.target.value }))}>
                 <option>Playfair Display</option>
                 <option>Inter</option>

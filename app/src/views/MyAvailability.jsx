@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Select } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
@@ -87,7 +87,7 @@ export default function MyAvailability() {
         </h3>
         <form onSubmit={handleSet} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Status</label>
+            <Label>Status</Label>
             <Select value={form.type_id} onChange={(e) => setForm((f) => ({ ...f, type_id: e.target.value }))}>
               <option value="">Available (no status)</option>
               {availabilityTypes.map((t) => (
@@ -96,11 +96,11 @@ export default function MyAvailability() {
             </Select>
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Reason (optional)</label>
+            <Label>Reason (optional)</Label>
             <Input value={form.reason} onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))} placeholder="Short note…" />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Until (optional)</label>
+            <Label>Until (optional)</Label>
             <Input type="date" value={form.until} onChange={(e) => setForm((f) => ({ ...f, until: e.target.value }))} />
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

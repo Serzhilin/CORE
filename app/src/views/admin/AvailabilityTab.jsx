@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, EmojiPicker, Input, Select } from '@ecommons/ui'
+import { Card, Button, EmojiPicker, Input, Select, Label } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
@@ -118,7 +118,7 @@ export default function AvailabilityTab() {
           </h4>
           <form onSubmit={handleSetAvailability} style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 380 }}>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Member</label>
+              <Label size="sm">Member</Label>
               <Select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} required>
                 <option value="">Select…</option>
                 {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map(m => (
@@ -129,7 +129,7 @@ export default function AvailabilityTab() {
               </Select>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Type</label>
+              <Label size="sm">Type</Label>
               <Select value={avForm.type_id} onChange={(e) => setAvForm(f => ({ ...f, type_id: e.target.value }))} required>
                 <option value="">Select…</option>
                 {availabilityTypes.map(t => (
@@ -138,11 +138,11 @@ export default function AvailabilityTab() {
               </Select>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Reason</label>
+              <Label size="sm">Reason</Label>
               <Input style={{ width: '100%' }} value={avForm.reason} onChange={(e) => setAvForm(f => ({ ...f, reason: e.target.value }))} placeholder="Optional" />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Until</label>
+              <Label size="sm">Until</Label>
               <Input type="date" style={{ width: '100%' }} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
             </div>
             <div style={{ display: 'flex', gap: 6 }}>

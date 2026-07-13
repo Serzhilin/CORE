@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Card, Button, Input, Textarea } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Label } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -168,19 +168,19 @@ export default function MyProfile() {
           <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {/* Display name */}
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Display name</label>
+              <Label>Display name</Label>
               <Input value={form.display_name} onChange={(e) => setForm((f) => ({ ...f, display_name: e.target.value }))} />
             </div>
 
             {/* Bio */}
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Bio</label>
+              <Label>Bio</Label>
               <Textarea style={{ minHeight: 80 }} value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} />
             </div>
 
             {myMembership?.joinedAt && (
               <div>
-                <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Member since</label>
+                <Label>Member since</Label>
                 <div style={{ padding: '10px 14px', borderRadius: 0, border: '1px solid var(--color-sand)', background: 'var(--color-cream)', fontSize: '0.9rem', color: 'var(--color-charcoal-light)' }}>
                   {new Date(myMembership.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
@@ -188,23 +188,23 @@ export default function MyProfile() {
             )}
 
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Email</label>
+              <Label>Email</Label>
               <Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Phone</label>
+              <Label>Phone</Label>
               <Input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Website</label>
+              <Label>Website</Label>
               <Input value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Location</label>
+              <Label>Location</Label>
               <Input value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem', fontWeight: 500 }}>Date of birth</label>
+              <Label>Date of birth</Label>
               <Input type="date" value={form.birthDate} onChange={(e) => setForm((f) => ({ ...f, birthDate: e.target.value }))} />
             </div>
 

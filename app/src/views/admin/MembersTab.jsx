@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Input, Select } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -108,7 +108,7 @@ export default function MembersTab() {
           <h4 style={{ margin: '0 0 16px' }}>Add member</h4>
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>eName</label>
+              <Label size="sm">eName</Label>
               <Input
                 style={{ fontFamily: 'monospace', width: 220 }}
                 placeholder="@uuid…"
@@ -132,19 +132,19 @@ export default function MembersTab() {
           {enameChecked && (
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end', marginTop: 14 }}>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>First name</label>
+              <Label size="sm">First name</Label>
               <span style={{ display: 'block', padding: '7px 10px', fontSize: '0.9rem' }}>{addForm.first_name}</span>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Last name</label>
+              <Label size="sm">Last name</Label>
               <span style={{ display: 'block', padding: '7px 10px', fontSize: '0.9rem' }}>{addForm.last_name}</span>
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Joined</label>
+              <Label size="sm">Joined</Label>
               <Input type="date" value={addForm.joined_at} onChange={(e) => setAddForm((f) => ({ ...f, joined_at: e.target.value }))} />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', fontWeight: 500 }}>Membership type</label>
+              <Label size="sm">Membership type</Label>
               <Select value={addForm.membership_type_id} onChange={(e) => setAddForm((f) => ({ ...f, membership_type_id: e.target.value }))}>
                 <option value="">—</option>
                 {membershipTypes.map((t) => (
