@@ -16,7 +16,7 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. No further extraction items remain.
+## Status: token + base-style batches done. Card, Button, Input, Badge, Modal, ProgressBar, EmojiBadge, EmojiPicker, CollapsiblePanel, Panel + topbar-slot-row layout primitives done. Input divergence resolved (unified to `.input` look). Dead animation/prose CSS deleted. Subagent completeness audit (2026-07-13) found 4 more items, 3 resolved (see below); `Select` extraction (item 1) still pending user decision.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
@@ -87,6 +87,54 @@ not just moving CSS.
   - Moved to `ecommons-ui/src/styles/layout.css` (ecommons-ui commit `3a53a31`), imported globally alongside tokens in `src/index.ts`. CSS moved byte-identical. No CORE call-site change needed — `TopBar.jsx` still references `className="topbar-slot-row"`, now resolved via the `@ecommons/ui` `@import`. Removed the class from CORE's `app/src/index.css`. Verified `vite build` clean.
 - [x] `Panel` — generic bordered-box neubrutalist frame (2px charcoal border + block-shadow + radius 0), found hand-rolled inline in 3 spots after auditing token-var usage vs actual component usage (see below)
   - Created `Panel.tsx` + `Panel.css` in `ecommons-ui/src/components/` (ecommons-ui commit `af9496b`): a div component (`shadow?: 'default' | 'sm'` prop, default maps to `var(--block-shadow)`, `'sm'` to `var(--block-shadow-sm)`) plus the raw `.panel-frame`/`.panel-frame-sm` CSS classes shipped globally, for applying the same frame directly to non-div elements (e.g. `<svg>`). Swapped 3 CORE call sites: `OrganogramView.jsx`'s view-toggle button wrapper (`<Panel shadow="sm">`), `views/graph/ForceGraph.jsx`'s SVG canvas (`className="panel-frame"` directly on the `<svg>`, since Panel renders a div), `components/TopBar.jsx`'s account dropdown menu (`<Panel>`). All 3 already used `var(--color-charcoal)`/`var(--block-shadow*)` tokens correctly — the audit finding was that the *composition* (border+shadow+radius0 repeating 3+ places) was still duplicated inline rather than componentized. Verified `vite build` clean.
+
+## Completeness audit (2026-07-13, via subagent) — findings 1-4
+
+Dispatched a subagent to check whether all styling was actually extracted.
+It found 4 items beyond what's tracked above:
+
+1. **`<select>` frame duplication across 6 files** (`OrganogramView`,
+   `MyAvailability`, `CommunityTab`, `MembersTab`, `WorkgroupsTab`,
+   `AvailabilityTab`) — each still hand-rolls a local `inputStyle` const for
+   `<select>` elements, since the earlier Input/Textarea unification
+   deliberately excluded `<select>` (see note above). **Not yet resolved** —
+   this needs either a `Select` component in `ecommons-ui` or applying
+   `className="input"` directly (the same trick used for item 2 below) at
+   each of the remaining 5 files. Pending user decision.
+2. **`OrganogramView.jsx`'s two `<select>`s had a permanent block-shadow** —
+   its local `inputStyle` applied `boxShadow: 'var(--block-shadow-sm)'`
+   unconditionally, but the real `.input` CSS only applies that shadow (and
+   the terracotta border) on `:focus`. **Fixed**: swapped both selects to
+   `className="input"` (bypassing the need for a new `Select` component —
+   `.input`'s CSS applies to any element, not just `<input>`/`<textarea>`),
+   deleted the now-unused local `inputStyle` const. Verified `vite build`
+   clean, committed.
+3. **Badge/chip pattern hand-rolled in 4 files, zero `Badge` usage** —
+   `InfoPanel.jsx` (Admin pill, membershipType pill, per-role color chips),
+   `PersonModal.jsx` (Admin pill, membershipType pill with hardcoded
+   `#FFF3CD`), `MyWorkgroups.jsx` (per-role color chips), `WorkgroupsTab.jsx`
+   (per-role color chips). The existing `Badge` component's fixed 5-variant
+   enum can't represent dynamic per-role colors or off-palette pills.
+   **User decision 2026-07-13: add a `color` override prop to `Badge`**
+   (derives `background`/`borderColor` from a hex value, bypassing the
+   variant classes) plus a `plain` variant (no forced color/border, for
+   pills like Admin/membershipType that need full custom `style` control).
+   Implemented in `ecommons-ui/src/components/Badge.tsx`+`.css` (ecommons-ui
+   commit `790c668`) — border moved off the shared `.badge` base and onto
+   each variant class individually (mechanical, no visual change) plus new
+   `.badge-custom` (border-width only, color inline). Swapped all 4 CORE
+   files onto `<Badge>`, preserving each site's exact alpha/border/padding
+   via `style` overrides where it diverged from Badge's new defaults (e.g.
+   `MyWorkgroups`'s `20`-alpha background vs the default `22`,
+   `WorkgroupsTab`'s full-opacity border vs the default `66`-alpha). CORE
+   commit `326f80e`. Verified `vite build` clean.
+4. **`SuperadminPage.jsx`'s status pill mixed a CSS-var fallback with a
+   hardcoded hex** — `background: var(--color-green, #dcfce7)`,
+   `color: '#166534'`, neither matching the actual `--color-green`/badge
+   token palette. **Fixed**: swapped to `<Badge variant="green">`/`<Badge
+   variant="gray">` (a clean 1:1 match — no new API needed, this was
+   basically an unBadged 2-state badge). CORE commit `d4a94fb`. Verified
+   `vite build` clean.
 
 ## NOT extractable as whole components (CORE-specific logic/data, stay in CORE)
 
