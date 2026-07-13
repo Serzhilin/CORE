@@ -8,15 +8,16 @@ Full CORE frontend codebase read (28 files: index.css, all components, all
 views, all views/admin, all views/graph, all contexts, App.jsx, main.jsx)
 before starting extraction, per instruction.
 
-## Status: not started — planning complete, no code moved yet
+## Status: token batch 1 done (colors/fonts/shadows). Everything else not started.
 
 ## Tokens (src/index.css → ecommons-ui/src/tokens/index.css)
 
-- [ ] Colors: `--color-cream`, `--color-cream-dark`, `--color-terracotta`, `--color-amber`, `--color-charcoal`, `--color-charcoal-light`, `--color-sand`, `--color-sand-dark`, `--color-green`, `--color-red`
-- [ ] Fonts: `--font-title` (Barlow Condensed), `--font-sans` (Instrument Sans) + the Google Fonts `@import`
-- [ ] Shadows: `--block-shadow-color`, `--block-shadow`, `--block-shadow-sm`, `--shadow-card`, `--shadow-card-hover`
-  - **Note:** `--block-shadow-color` is mutated at runtime by `CommunityContext.jsx` (`document.documentElement.style.setProperty(...)`) to the community's brand color. This is CORE-specific *behavior*, stays in CORE — only the token *declaration/default* moves to ecommons-ui.
-- [ ] Base element styles: `*` box-sizing, `body`, `#root`, `h1/h2/h3`
+- [x] Colors: `--color-cream`, `--color-cream-dark`, `--color-terracotta`, `--color-amber`, `--color-charcoal`, `--color-charcoal-light`, `--color-sand`, `--color-sand-dark`, `--color-green`, `--color-red`
+- [x] Fonts: `--font-title` (Barlow Condensed), `--font-sans` (Instrument Sans) + the Google Fonts `@import`
+- [x] Shadows: `--block-shadow-color`, `--block-shadow`, `--block-shadow-sm`, `--shadow-card`, `--shadow-card-hover`
+  - **Note:** `--block-shadow-color` is mutated at runtime by `CommunityContext.jsx` (`document.documentElement.style.setProperty(...)`) to the community's brand color. This is CORE-specific *behavior*, stays in CORE — only the token *declaration/default* moved to ecommons-ui.
+  - Done in commit `fcecd26`: moved to `ecommons-ui/src/tokens/index.css`, consumed in CORE via `@import '@ecommons/ui/dist/index.css'` in `app/src/index.css`. Verified byte-identical values in CORE's built CSS.
+- [ ] Base element styles: `*` box-sizing, `body`, `#root`, `h1/h2/h3` — **held back from batch 1**, these are base/reset styles rather than tokens proper; treating as a separate batch.
 - [ ] Animations: `pulse-ring`, `slideIn`, `fadeIn`, `scaleIn`, `pulse-soft`, `greetingFlash`, `revealResult` + their `.animate-*`/`.greeting-flash`/`.reveal-result` classes
 - [ ] Scrollbar styling (`::-webkit-scrollbar*`)
 - [ ] Rich text / prose styles: `.agenda-html`, `.tiptap`, `.ProseMirror` list/strike rules — generic prose rendering, not CORE-data-coupled
