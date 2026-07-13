@@ -12,25 +12,6 @@
   transform-origin: center;
 }
 
-* { box-sizing: border-box; }
-
-body {
-  background-color: var(--color-cream);
-  color: var(--color-charcoal);
-  font-family: var(--font-sans);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
-#root { min-height: 100vh; }
-
-h1, h2, h3 { font-family: var(--font-title); font-weight: 700; line-height: 1.15; }
-h1 { font-size: 2.6rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
-
 .card {
   background: white;
   border-radius: 0;

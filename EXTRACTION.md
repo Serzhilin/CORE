@@ -18,9 +18,30 @@ before starting extraction, per instruction.
   - **Note:** `--block-shadow-color` is mutated at runtime by `CommunityContext.jsx` (`document.documentElement.style.setProperty(...)`) to the community's brand color. This is CORE-specific *behavior*, stays in CORE — only the token *declaration/default* moved to ecommons-ui.
   - Done in commit `fcecd26`: moved to `ecommons-ui/src/tokens/index.css`, consumed in CORE via `@import '@ecommons/ui/dist/index.css'` in `app/src/index.css`. Verified byte-identical values in CORE's built CSS.
 - [ ] Base element styles: `*` box-sizing, `body`, `#root`, `h1/h2/h3` — **held back from batch 1**, these are base/reset styles rather than tokens proper; treating as a separate batch.
-- [ ] Animations: `pulse-ring`, `slideIn`, `fadeIn`, `scaleIn`, `pulse-soft`, `greetingFlash`, `revealResult` + their `.animate-*`/`.greeting-flash`/`.reveal-result` classes
-- [ ] Scrollbar styling (`::-webkit-scrollbar*`)
-- [ ] Rich text / prose styles: `.agenda-html`, `.tiptap`, `.ProseMirror` list/strike rules — generic prose rendering, not CORE-data-coupled
+
+## Dead-CSS audit (2026-07-13)
+
+Before batch 2, grepped every CSS-class name in `index.css` against actual
+`.jsx` usage (className strings and inline patterns). Result — **live** vs
+**dead** (zero usages anywhere in CORE's frontend):
+
+- **Live:** `.card`/`.card-warm` (16 files), `.btn-primary`/`.btn-secondary` (15 files), `.emoji-mono` (8 files), plus base body/h1-h3/box-sizing (implicit, always active).
+- **Dead (0 matches):** `.input` (all call sites hand-roll their own inline `inputStyle` instead — already flagged above), `.badge`+variants, `.modal-overlay`/`.modal` (real modals like `PersonModal.jsx`/`InfoPanel.jsx` hand-roll their own inline overlay styles, with a slightly different opacity: `rgba(44,44,44,0.4)` vs the dead class's `0.45`), `.progress-bar`/`.progress-bar-fill` (no progress bar rendered anywhere), `.btn-danger`, `.btn-green`, `.divider`, `pulse-ring` keyframe, all `.animate-*`/`.greeting-flash`/`.reveal-result` classes, `.agenda-html`, `.tiptap`, `.ProseMirror`, `.upcoming-row-btn`. Likely leftover boilerplate copy-pasted from a sibling project (ALVer has real meeting-agenda/rich-text features).
+
+**User decision 2026-07-13:** build `Input`/`Badge`/`Modal`/`ProgressBar` as
+real components in `ecommons-ui` from this CSS anyway, even though nothing
+in CORE currently uses the classes — no CORE call-site swap for these (there
+is nothing to swap), they just live in the package for future use.
+
+Animations, scrollbar styling, `.divider`, and the `.agenda-html`/`.tiptap`/
+`.ProseMirror`/`.upcoming-row-btn` prose/meeting blocks are **not** part of
+the named component list and were not covered by that decision — left as-is
+in CORE for now, flagged here as dead-code cleanup candidates rather than
+extracted.
+
+- [ ] Animations: `pulse-ring`, `slideIn`, `fadeIn`, `scaleIn`, `pulse-soft`, `greetingFlash`, `revealResult` + their `.animate-*`/`.greeting-flash`/`.reveal-result` classes — **dead code, left in CORE, not extracted**
+- [ ] Scrollbar styling (`::-webkit-scrollbar*`) — live (global, always active), candidate for a later base-style batch
+- [ ] Rich text / prose styles: `.agenda-html`, `.tiptap`, `.ProseMirror`, `.upcoming-row-btn` — **dead code, left in CORE, not extracted**
 
 ## Presentational components → real React components in ecommons-ui
 
