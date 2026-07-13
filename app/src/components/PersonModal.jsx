@@ -1,4 +1,4 @@
-import { Card } from '@ecommons/ui'
+import { Card, Badge } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import AvailabilityBadge from './AvailabilityBadge'
@@ -48,11 +48,11 @@ export default function PersonModal({ member, onClose }) {
                 {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
               </h2>
               <div style={{ display: 'flex', gap: 4 }}>
-                {member.isAdmin && <span style={{ fontSize: '0.75rem', background: 'var(--color-sand)', borderRadius: 0, padding: '2px 8px' }}>Admin</span>}
+                {member.isAdmin && <Badge variant="plain" style={{ fontSize: '0.75rem', background: 'var(--color-sand)', padding: '2px 8px' }}>Admin</Badge>}
                 {member.membershipType && (
-                  <span style={{ fontSize: '0.75rem', background: '#FFF3CD', borderRadius: 0, padding: '2px 8px' }}>
+                  <Badge variant="plain" style={{ fontSize: '0.75rem', background: '#FFF3CD', padding: '2px 8px' }}>
                     {member.membershipType.emoji ? <span className="emoji-mono">{member.membershipType.emoji} </span> : ''}{member.membershipType.name}
-                  </span>
+                  </Badge>
                 )}
               </div>
             </div>

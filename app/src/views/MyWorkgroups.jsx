@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card } from '@ecommons/ui'
+import { Card, Badge } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
@@ -109,13 +109,10 @@ export default function MyWorkgroups() {
                 )}
 
                 {roles.map((r) => (
-                  <span
+                  <Badge
                     key={r.id}
-                    style={{
-                      fontSize: '0.8rem', padding: '3px 10px', borderRadius: 0,
-                      background: `${r.color}20`, border: `1px solid ${r.color}66`,
-                      color: 'var(--color-charcoal)', display: 'flex', alignItems: 'center', gap: 5,
-                    }}
+                    color={r.color}
+                    style={{ fontSize: '0.8rem', padding: '3px 10px', background: `${r.color}20`, gap: 5 }}
                   >
                     <span style={{ width: 7, height: 7, borderRadius: '50%', background: r.color, flexShrink: 0 }} />
                     {r.name}
@@ -124,7 +121,7 @@ export default function MyWorkgroups() {
                       disabled={busy[wg.id]}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}
                     >×</button>
-                  </span>
+                  </Badge>
                 ))}
 
               </div>

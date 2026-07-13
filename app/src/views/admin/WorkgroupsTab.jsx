@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, Button, Input, Textarea } from '@ecommons/ui'
+import { Card, Button, Input, Textarea, Badge } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import {
   createWorkgroup, updateWorkgroup, deleteWorkgroup,
@@ -349,26 +349,17 @@ export default function WorkgroupsTab() {
                                   const role = wg.roles.find((r) => r.id === rid)
                                   if (!role) return null
                                   return (
-                                    <span
+                                    <Badge
                                       key={rid}
-                                      style={{
-                                        fontSize: '0.75rem',
-                                        background: role.color + '22',
-                                        border: `1px solid ${role.color}`,
-                                        borderRadius: 0,
-                                        padding: '2px 8px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 4,
-                                        color: 'var(--color-charcoal)',
-                                      }}
+                                      color={role.color}
+                                      style={{ fontSize: '0.75rem', padding: '2px 8px', gap: 4, borderColor: role.color }}
                                     >
                                       {role.name}
                                       <button
                                         onClick={() => handleUnassignRole(wg.id, member.personId, rid)}
                                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}
                                       >×</button>
-                                    </span>
+                                    </Badge>
                                   )
                                 })}
 

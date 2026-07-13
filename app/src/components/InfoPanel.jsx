@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CollapsiblePanel } from '@ecommons/ui'
+import { CollapsiblePanel, Badge } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
 
 const PANEL_WIDTH = 300
@@ -136,11 +136,11 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
         <div>
           <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.3rem', lineHeight: 1.3 }}>{name}</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center', marginTop: 4 }}>
-            {member.isAdmin && <span style={{ fontSize: '0.68rem', background: 'var(--color-sand)', borderRadius: 0, padding: '1px 6px' }}>Admin</span>}
+            {member.isAdmin && <Badge variant="plain" style={{ fontSize: '0.68rem', background: 'var(--color-sand)', padding: '1px 6px' }}>Admin</Badge>}
             {member.membershipType && (
-              <span style={{ fontSize: '0.68rem', border: '1px solid var(--color-sand-dark)', borderRadius: 0, padding: '1px 6px' }}>
+              <Badge variant="plain" style={{ fontSize: '0.68rem', border: '1px solid var(--color-sand-dark)', padding: '1px 6px' }}>
                 {member.membershipType.emoji ? <span className="emoji-mono">{member.membershipType.emoji} </span> : ''}{member.membershipType.name}
-              </span>
+              </Badge>
             )}
             {member.joinedAt && (
               <span style={{ fontSize: '0.68rem', color: 'var(--color-charcoal-light)' }}>
@@ -185,7 +185,7 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
               {roles.length > 0 && (
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 4 }}>
                   {roles.map(r => (
-                    <span key={r.id} style={{ fontSize: '0.72rem', background: r.color + '22', border: `1px solid ${r.color}66`, borderRadius: 0, padding: '1px 6px' }}>{r.name}</span>
+                    <Badge key={r.id} color={r.color} style={{ fontSize: '0.72rem', padding: '1px 6px' }}>{r.name}</Badge>
                   ))}
                 </div>
               )}
