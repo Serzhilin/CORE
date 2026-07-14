@@ -29,13 +29,13 @@ export default function OrganogramView() {
   useSetTopBarSlot(
     community ? (
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-        <Panel shadow="sm" style={{ display: 'flex', height: 34, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0 }}>
+        <Panel shadow="sm" style={{ display: 'flex', width: 160, height: 34, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0 }}>
           {['graph', 'cards'].map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
               style={{
-                padding: '0 14px', height: '100%', boxSizing: 'border-box', border: 'none', cursor: 'pointer',
+                flex: 1, padding: '0 14px', height: '100%', boxSizing: 'border-box', border: 'none', cursor: 'pointer',
                 fontSize: '0.9rem', fontWeight: 500, fontFamily: 'var(--font-sans)',
                 background: view === v ? 'var(--color-terracotta)' : 'white',
                 color: view === v ? 'white' : 'var(--color-charcoal-light)',
@@ -46,7 +46,7 @@ export default function OrganogramView() {
           ))}
         </Panel>
 
-        <div style={{ width: 1, height: 24, background: 'var(--color-sand-dark)', flexShrink: 0 }} />
+        <div className="topbar-filter-break" />
 
         <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All roles</option>
@@ -62,6 +62,8 @@ export default function OrganogramView() {
           ))}
         </Select>
 
+        <div className="topbar-filter-break" />
+
         <Input
           placeholder="Search by name…"
           value={filter.search}
@@ -69,9 +71,11 @@ export default function OrganogramView() {
           style={{ height: 34, padding: '0 10px', boxSizing: 'border-box', boxShadow: 'var(--block-shadow-sm)', width: 160 }}
         />
 
+        <div className="topbar-filter-break" />
+
         <label style={checkStyle}>
           <input type="checkbox" checked={filter.showUnavailable} onChange={(e) => patch({ showUnavailable: e.target.checked })} />
-          Show unavailable
+          Show inactive members
         </label>
       </div>
     ) : null,
