@@ -58,7 +58,7 @@ export default function OrganogramView() {
         <Select value={filter.membershipTypeId} onChange={(e) => patch({ membershipTypeId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All membership types</option>
           {membershipTypes.map((mt) => (
-            <option key={mt.id} value={mt.id}>{mt.emoji ? `${mt.emoji} ${mt.name}` : mt.name}</option>
+            <option key={mt.id} value={mt.id}>{mt.name}</option>
           ))}
         </Select>
 
