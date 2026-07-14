@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { getCommunity, listAvailabilityTypes } from '../api/client'
+import { getCommunity, listAvailabilityTypes, listMembershipTypes } from '../api/client'
 import { useUser } from './UserContext'
 
 const CommunityContext = createContext(null)
@@ -9,20 +9,23 @@ export function CommunityProvider({ children }) {
   const [communityId, setCommunityId] = useState(() => localStorage.getItem('core_community_id'))
   const [community, setCommunity] = useState(null)   // full community with members + workgroups
   const [availabilityTypes, setAvailabilityTypes] = useState([])
+  const [membershipTypes, setMembershipTypes] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const loadCommunity = useCallback(async (id) => {
-    if (!id) { setCommunity(null); setAvailabilityTypes([]); return }
+    if (!id) { setCommunity(null); setAvailabilityTypes([]); setMembershipTypes([]); return }
     setLoading(true)
     setError(null)
     try {
-      const [full, types] = await Promise.all([
+      const [full, types, mTypes] = await Promise.all([
         getCommunity(id),
         listAvailabilityTypes(id),
+        listMembershipTypes(id),
       ])
       setCommunity(full)
       setAvailabilityTypes(types)
+      setMembershipTypes(mTypes)
     } catch (e) {
       setError(e.message)
     } finally {
@@ -63,7 +66,7 @@ export function CommunityProvider({ children }) {
 
   return (
     <CommunityContext.Provider value={{
-      communityId, community, availabilityTypes,
+      communityId, community, availabilityTypes, membershipTypes,
       loading, error,
       myMembership,
       switchCommunity, refresh,

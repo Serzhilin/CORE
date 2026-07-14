@@ -202,6 +202,7 @@ export async function getCommunityGraph(communityId: string) {
                 firstName: person?.first_name ?? null,
                 lastName: person?.last_name ?? null,
                 isAdmin: cm.is_admin,
+                membershipTypeId: cm.membership_type_id,
                 availability: at ? { name: at.name, emoji: at.emoji } : null,
                 memberships: myMemberships.map((wm) => {
                     const myRoleIds = wgMemberRoles

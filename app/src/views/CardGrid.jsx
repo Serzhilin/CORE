@@ -36,6 +36,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
     return members
       .filter(Boolean)
       .filter((m) => filter.showUnavailable !== false || !m.availability)
+      .filter((m) => !filter.membershipTypeId || m.membershipTypeId === filter.membershipTypeId)
       .filter((m) => !q ||
         (m.firstName || '').toLowerCase().includes(q) ||
         (m.lastName || '').toLowerCase().includes(q))

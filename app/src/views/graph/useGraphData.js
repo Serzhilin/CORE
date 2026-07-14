@@ -18,6 +18,9 @@ export function useGraphData(graphData, filters) {
         p.memberships.some(m => m.roles.some(r => r.name === filters.roleName))
       )
     }
+    if (filters.membershipTypeId) {
+      visiblePersons = visiblePersons.filter(p => p.membershipTypeId === filters.membershipTypeId)
+    }
 
     const visibleWorkgroups = filters.workgroupId
       ? workgroups.filter(wg => wg.id === filters.workgroupId)

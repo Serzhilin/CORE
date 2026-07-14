@@ -10,10 +10,10 @@ const GraphView = lazy(() => import('./graph/GraphView'))
 
 const checkStyle = { display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem', cursor: 'pointer' }
 
-const INITIAL_FILTER = { workgroupId: '', roleName: '', showUnavailable: true, search: '' }
+const INITIAL_FILTER = { workgroupId: '', roleName: '', membershipTypeId: '', showUnavailable: true, search: '' }
 
 export default function OrganogramView() {
-  const { community, loading } = useCommunity()
+  const { community, loading, membershipTypes } = useCommunity()
   const [view, setView] = useState(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'cards' : 'graph')
   const [panelSelection, setPanelSelection] = useState(null)
   const [filter, setFilter] = useState(INITIAL_FILTER)
@@ -48,17 +48,17 @@ export default function OrganogramView() {
 
         <div style={{ width: 1, height: 24, background: 'var(--color-sand-dark)', flexShrink: 0 }} />
 
-        <Select value={filter.workgroupId} onChange={(e) => patch({ workgroupId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
-          <option value="">All workgroups</option>
-          {community.workgroups.map((wg) => (
-            <option key={wg.id} value={wg.id}>{wg.name}</option>
-          ))}
-        </Select>
-
         <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All roles</option>
           {allRoleNames.map((name) => (
             <option key={name} value={name}>{name}</option>
+          ))}
+        </Select>
+
+        <Select value={filter.membershipTypeId} onChange={(e) => patch({ membershipTypeId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
+          <option value="">All membership types</option>
+          {membershipTypes.map((mt) => (
+            <option key={mt.id} value={mt.id}>{mt.emoji ? `${mt.emoji} ${mt.name}` : mt.name}</option>
           ))}
         </Select>
 
@@ -75,7 +75,7 @@ export default function OrganogramView() {
         </label>
       </div>
     ) : null,
-    [community, view, filter, allRoleNames.join('|')]
+    [community, view, filter, allRoleNames.join('|'), membershipTypes]
   )
 
   if (loading) return <Loading />
