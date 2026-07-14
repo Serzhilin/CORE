@@ -64,13 +64,31 @@ export default function TopBar() {
         height: 76,
       }}>
 
-        {/* Left: community logo + name (click → home) */}
+        {/* Left: CORE mark + community logo/name (click → home) */}
         <div
           onClick={() => navigate('/')}
           style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, cursor: 'pointer' }}
         >
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <span style={{ fontSize: '1.2rem' }}>🧭</span>
+            <span style={{
+              fontFamily: 'var(--font-title)',
+              fontWeight: 700,
+              fontSize: '1.05rem',
+              color: 'var(--color-charcoal)',
+            }}>
+              CORE
+            </span>
+          </span>
+
+          {community && (
+            <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', flexShrink: 0 }}>
+              for
+            </span>
+          )}
+
           {community?.logo_url && <CommunityLogo src={community.logo_url} />}
-          {!community?.logo_url && (
+          {community && !community?.logo_url && (
             <span style={{
               fontFamily: 'var(--font-title)',
               fontWeight: 700,
@@ -80,7 +98,7 @@ export default function TopBar() {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}>
-              {community?.name || 'CORE'}
+              {community.name}
             </span>
           )}
         </div>
