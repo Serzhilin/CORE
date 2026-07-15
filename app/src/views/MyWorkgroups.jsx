@@ -39,8 +39,11 @@ export default function MyWorkgroups() {
 
   async function handleLeave(wg) {
     if (!confirm(`Leave "${wg.name}"?`)) return
+    const alsoRemoveFromChat = wg.chat_envelope_id
+      ? confirm('Also remove yourself from its chat?')
+      : false
     setBusy((s) => ({ ...s, [wg.id]: true }))
-    try { await removeWorkgroupMember(wg.id, user.id); await refresh() }
+    try { await removeWorkgroupMember(wg.id, user.id, alsoRemoveFromChat); await refresh() }
     catch (err) { alert(err.message) }
     setBusy((s) => ({ ...s, [wg.id]: false }))
   }

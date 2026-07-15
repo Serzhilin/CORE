@@ -140,7 +140,8 @@ export const deleteRole = (wid, rid) => req('DELETE', `/workgroups/${wid}/roles/
 // ── Workgroup Members ─────────────────────────────────────────────────────────
 export const addWorkgroupMember = (wid, data) => req('POST', `/workgroups/${wid}/members`, data)
 export const updateWorkgroupMember = (wid, pid, data) => req('PATCH', `/workgroups/${wid}/members/${pid}`, data)
-export const removeWorkgroupMember = (wid, pid) => req('DELETE', `/workgroups/${wid}/members/${pid}`)
+export const removeWorkgroupMember = (wid, pid, alsoRemoveFromChat) =>
+  req('DELETE', `/workgroups/${wid}/members/${pid}${alsoRemoveFromChat ? '?alsoRemoveFromChat=true' : ''}`)
 export const assignRole = (wid, pid, data) => req('POST', `/workgroups/${wid}/members/${pid}/roles`, data)
 export const unassignRole = (wid, pid, rid) => req('DELETE', `/workgroups/${wid}/members/${pid}/roles/${rid}`)
 
