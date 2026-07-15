@@ -9,6 +9,7 @@ import { WorkgroupMembership } from "../database/entities/WorkgroupMembership";
 import { syncOrganizationToEvault } from "./OrganizationService";
 import { syncAvailabilityToEvault } from "./AvailabilityEnvelopeService";
 import { removeWorkgroupMember } from "./WorkgroupService";
+import { addPersonToCommunityChat, removePersonFromCommunityChat } from "./ChatService";
 import { getUserMetaEnvelopeId } from "../lib/evault-client";
 import { logger } from "../lib/logger";
 
@@ -64,6 +65,9 @@ export async function addMember(
     syncOrganizationToEvault(communityId).catch((err) =>
         logger.warn(err, "Organization envelope sync failed for member %s", membership.id)
     );
+    addPersonToCommunityChat(communityId, person.id).catch((err) =>
+        logger.warn(err, "Community chat sync failed for member %s", membership.id)
+    );
 
     return membership;
 }
@@ -92,10 +96,11 @@ export async function removeMember(communityId: string, membershipId: string): P
             where: { person_id: membership.person_id, workgroup_id: In(workgroupIds) },
         });
         for (const wm of wgMemberships) {
-            await removeWorkgroupMember(wm.workgroup_id, membership.person_id);
+            await removeWorkgroupMember(wm.workgroup_id, membership.person_id, true);
         }
     }
 
+    await removePersonFromCommunityChat(communityId, membership.person_id);
     await syncOrganizationToEvault(communityId, { excludeMembershipId: membershipId });
     await memberRepo().delete({ id: membershipId, community_id: communityId });
     syncAvailabilityToEvault(communityId).catch((err) =>
