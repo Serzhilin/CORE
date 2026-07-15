@@ -44,7 +44,7 @@ Payload additions (both one-directional, CORE-writes-only, never read back):
 Lives at `api/src/services/ChatService.ts`, follows the existing `WorkgroupService.ts`/`OrganizationService.ts` shape (private eVault-facing helpers, exported functions called from other services).
 
 **Community chat:**
-- `captureExistingCommunityChatId(communityId)` — used once at link time; reads the envelope already discovered by `resolveW3id`, persists its id to `communities.chat_envelope_id`. No eVault write.
+- `getOrCreateCommunityChatId(communityId, resolution)` — used once at link time. `resolution` is `CommunityService.resolveW3id`'s return value. If `resolution.envelopeId` is set (the common case — De Woonwolk and any already-chat-having community), just persists it to `communities.chat_envelope_id`, no eVault write. If `resolution.envelopeId` is null (the target eName has no Chat/Group envelope at all yet), creates a fresh one (`type: 'group'`, `name`/`participantIds`/`members` seeded from the community being linked) and persists the new id. Ensures every linked community ends up with a `chat_envelope_id`, not just ones that happened to be pre-seeded.
 - `syncCommunityChatToEvault(communityId)` — fetch envelope by `chat_envelope_id` (no-op + `logger.warn` if null), merge in `name`/`description`/`avatar`/`participantIds`/`members`/`updatedAt` from current Community + membership state, `updateMetaEnvelope`. Preserves every other field untouched.
 - `addPersonToCommunityChat(communityId, personId)` / `removePersonFromCommunityChat(communityId, personId)` — fetch envelope, splice one id in/out of `participantIds`/`members`, write back. Used instead of a full rebuild for single-member add/remove (avoids clobbering a concurrent charter edit any more than necessary).
 - `cascadeCommunityRenameToWorkgroupChats(communityId, newCommunityName)` — loads every workgroup in the community that has a `chat_envelope_id`, calls `renameWorkgroupChat(wg.id, `${newCommunityName}: ${wg.name}`)` for each. Per confirmed requirement: a community rename must re-prefix every child workgroup chat name, not just the community chat itself.
@@ -59,7 +59,7 @@ Lives at `api/src/services/ChatService.ts`, follows the existing `WorkgroupServi
 
 | Existing function | New call | Timing |
 |---|---|---|
-| `CommunityService.linkCommunity` | `captureExistingCommunityChatId` | synchronous (cheap, no eVault write) |
+| `CommunityService.linkCommunity` | `getOrCreateCommunityChatId` | synchronous (create-if-missing needs the id before returning) |
 | `CommunityService.updateCommunity` (name/logo/description change) | `syncCommunityChatToEvault`; and if `name` changed, also `cascadeCommunityRenameToWorkgroupChats` | both fire-and-forget |
 | `MemberService.addMember` | `addPersonToCommunityChat` | fire-and-forget |
 | `MemberService.removeMember` | `removePersonFromCommunityChat`; and inside its existing per-workgroup cascade loop, call `removeWorkgroupMember(wm.workgroup_id, membership.person_id, { alsoRemoveFromChat: true })` | both synchronous |
