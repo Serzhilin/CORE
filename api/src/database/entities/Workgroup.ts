@@ -24,6 +24,10 @@ export class Workgroup {
     @Column({ type: "text", nullable: true })
     envelope_id: string | null;
 
+    // MetaEnvelope ID of this workgroup's own Chat/Group envelope. Null until first created.
+    @Column({ type: "text", nullable: true })
+    chat_envelope_id: string | null;
+
     @CreateDateColumn()
     created_at: Date;
 

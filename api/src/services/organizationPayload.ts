@@ -33,6 +33,7 @@ export interface OrganizationPayloadInput {
     membershipTypes: OrganizationPayloadMembershipType[];
     members: OrganizationPayloadMember[];
     admins: string[];
+    chatId: string | null;
 }
 
 interface LegalInfoPayload {
@@ -62,6 +63,7 @@ interface MembershipTypePayload {
 
 export interface OrganizationEnvelopePayload {
     name: string | null;
+    chatId: string | null;
     legalInfo: LegalInfoPayload;
     branding: BrandingPayload;
     membershipTypes: MembershipTypePayload[];
@@ -82,6 +84,7 @@ export function buildOrganizationPayload(input: OrganizationPayloadInput): Organ
 
     return {
         name: input.name,
+        chatId: input.chatId,
         legalInfo,
         branding: {
             logoUrl: input.logoUrl,

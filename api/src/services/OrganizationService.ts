@@ -54,6 +54,7 @@ export async function syncOrganizationToEvault(communityId: string, exclude: Org
 	const payload = buildOrganizationPayload({
 		communityEname: community.ename,
 		name: community.name,
+		chatId: community.chat_envelope_id,
 		legalForm: community.legal_form,
 		officialName: community.official_name,
 		kvkNumber: community.kvk_number,

@@ -18,6 +18,7 @@ export interface WorkgroupPayloadInput {
     updatedAt: Date;
     roles: WorkgroupPayloadRole[];
     members: WorkgroupPayloadMember[];
+    chatId: string | null;
 }
 
 export interface WorkgroupEnvelopePayload {
@@ -29,6 +30,7 @@ export interface WorkgroupEnvelopePayload {
     updatedAt: string;
     roles: WorkgroupPayloadRole[];
     members: WorkgroupPayloadMember[];
+    chatId?: string;
 }
 
 export function buildWorkgroupPayload(input: WorkgroupPayloadInput): WorkgroupEnvelopePayload {
@@ -42,5 +44,6 @@ export function buildWorkgroupPayload(input: WorkgroupPayloadInput): WorkgroupEn
         members: input.members,
     };
     if (input.description) payload.description = input.description;
+    if (input.chatId) payload.chatId = input.chatId;
     return payload;
 }

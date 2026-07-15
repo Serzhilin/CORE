@@ -39,6 +39,11 @@ export class Community {
     @Column({ type: "text", nullable: true })
     availability_envelope_id: string | null;
 
+    // MetaEnvelope ID of this community's Chat/Group envelope, shared with other
+    // W3DS platforms (e.g. ALVer). Null until first linked/created.
+    @Column({ type: "text", nullable: true })
+    chat_envelope_id: string | null;
+
     @Column({ type: "text", nullable: true })
     legal_form: string | null;
 

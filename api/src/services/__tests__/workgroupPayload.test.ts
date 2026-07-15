@@ -9,6 +9,7 @@ const BASE_INPUT = {
     updatedAt: new Date("2026-07-10T09:20:00.000Z"),
     roles: [],
     members: [],
+    chatId: null as string | null,
 };
 
 describe("buildWorkgroupPayload", () => {
@@ -60,5 +61,13 @@ describe("buildWorkgroupPayload", () => {
         const result = buildWorkgroupPayload(BASE_INPUT);
         expect(result.roles).toEqual([]);
         expect(result.members).toEqual([]);
+    });
+
+    it("omits chatId key when null, includes it when present", () => {
+        const nullResult = buildWorkgroupPayload(BASE_INPUT);
+        expect("chatId" in nullResult).toBe(false);
+
+        const setResult = buildWorkgroupPayload({ ...BASE_INPUT, chatId: "chat-env-1" });
+        expect(setResult.chatId).toBe("chat-env-1");
     });
 });

@@ -18,6 +18,7 @@ const BASE_INPUT = {
     membershipTypes: [],
     members: [],
     admins: [],
+    chatId: null as string | null,
 };
 
 describe("buildOrganizationPayload", () => {
@@ -105,5 +106,13 @@ describe("buildOrganizationPayload", () => {
             admins: ["meta-env-1", "meta-env-2"],
         });
         expect(result.admins).toEqual(["meta-env-1", "meta-env-2"]);
+    });
+
+    it("maps chatId verbatim, including null", () => {
+        const nullResult = buildOrganizationPayload(BASE_INPUT);
+        expect(nullResult.chatId).toBeNull();
+
+        const setResult = buildOrganizationPayload({ ...BASE_INPUT, chatId: "chat-env-1" });
+        expect(setResult.chatId).toBe("chat-env-1");
     });
 });
