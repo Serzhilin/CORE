@@ -97,7 +97,8 @@ export const updateWgMemberHandler = async (req: Request, res: Response, next: N
 
 export const removeWgMemberHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await removeWorkgroupMember(req.params.wid, req.params.pid);
+        const alsoRemoveFromChat = req.query.alsoRemoveFromChat === "true";
+        await removeWorkgroupMember(req.params.wid, req.params.pid, alsoRemoveFromChat);
         res.status(204).send();
     } catch (err) {
         next(err);

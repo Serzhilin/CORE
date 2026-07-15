@@ -10,6 +10,7 @@ import { createEnvelope, updateEnvelope, removeEnvelope, getUserMetaEnvelopeId }
 import { ONTOLOGIES } from "../lib/w3ds/ontology";
 import { buildWorkgroupPayload } from "./workgroupPayload";
 import { logger } from "../lib/logger";
+import { createWorkgroupChat, renameWorkgroupChat, archiveWorkgroupChat, addPersonToWorkgroupChat, removePersonFromWorkgroupChat } from "./ChatService";
 
 const wgRepo = () => AppDataSource.getRepository(Workgroup);
 const roleRepo = () => AppDataSource.getRepository(Role);
@@ -73,6 +74,7 @@ async function syncWorkgroupToEvault(workgroupId: string, exclude: SyncExclusion
         updatedAt: wg.updated_at,
         roles: roles.map((r) => ({ id: r.id, name: r.name, color: r.color })),
         members,
+        chatId: wg.chat_envelope_id,
     });
 
     if (wg.envelope_id) {
@@ -101,15 +103,25 @@ export async function listWorkgroups(communityId: string) {
 export async function createWorkgroup(communityId: string, data: { name: string; description?: string; color?: string }): Promise<Workgroup> {
     const maxOrder = (await wgRepo().maximum("sort_order", { community_id: communityId }) as number | null) ?? -1;
     const saved = await wgRepo().save(wgRepo().create({ community_id: communityId, name: data.name, description: data.description ?? null, color: data.color ?? "#C4622D", sort_order: maxOrder + 1 }));
+    // Awaited, not fire-and-forget: the chat id must exist before anyone can join.
+    // Workgroup creation is rare/admin-only, so the extra latency is cheap. If this
+    // throws, saved may already have persisted in Postgres with chat_envelope_id
+    // null — a recoverable, self-describing state, not data corruption.
+    const chatEnvelopeId = await createWorkgroupChat(saved.id);
+    if (chatEnvelopeId) saved.chat_envelope_id = chatEnvelopeId;
     syncWorkgroupToEvault(saved.id).catch((err) => logger.warn(err, "Workgroup envelope sync failed for %s", saved.id));
     return saved;
 }
 
 export async function updateWorkgroup(id: string, communityId: string, data: Partial<Pick<Workgroup, "name" | "description" | "color" | "sort_order">>): Promise<Workgroup> {
     const wg = await wgRepo().findOneOrFail({ where: { id, community_id: communityId } });
+    const nameChanged = data.name !== undefined && data.name !== wg.name;
     Object.assign(wg, data);
     const saved = await wgRepo().save(wg);
     syncWorkgroupToEvault(saved.id).catch((err) => logger.warn(err, "Workgroup envelope sync failed for %s", saved.id));
+    if (nameChanged) {
+        renameWorkgroupChat(saved.id, saved.name).catch((err) => logger.warn(err, "Workgroup chat rename failed for %s", saved.id));
+    }
     return saved;
 }
 
@@ -119,6 +131,7 @@ export async function deleteWorkgroup(id: string, communityId: string): Promise<
         const community = await communityRepo().findOne({ where: { id: communityId } });
         if (community?.ename) await removeEnvelope(community.ename, wg.envelope_id);
     }
+    await archiveWorkgroupChat(id);
     await wgRepo().delete({ id, community_id: communityId });
 }
 
@@ -146,6 +159,7 @@ export async function deleteRole(id: string, workgroupId: string): Promise<void>
 export async function addWorkgroupMember(workgroupId: string, personId: string): Promise<WorkgroupMembership> {
     const saved = await wgmRepo().save(wgmRepo().create({ workgroup_id: workgroupId, person_id: personId }));
     syncWorkgroupToEvault(workgroupId).catch((err) => logger.warn(err, "Workgroup envelope sync failed for %s", workgroupId));
+    addPersonToWorkgroupChat(workgroupId, personId).catch((err) => logger.warn(err, "Workgroup chat add failed for %s", workgroupId));
     return saved;
 }
 
@@ -155,10 +169,13 @@ export async function updateWorkgroupMember(workgroupMembershipId: string, data:
     return wgmRepo().save(wm);
 }
 
-export async function removeWorkgroupMember(workgroupId: string, personId: string): Promise<void> {
+export async function removeWorkgroupMember(workgroupId: string, personId: string, alsoRemoveFromChat = false): Promise<void> {
     const wm = await wgmRepo().findOne({ where: { workgroup_id: workgroupId, person_id: personId } });
     if (!wm) return;
     await syncWorkgroupToEvault(workgroupId, { excludeMembershipId: wm.id });
+    if (alsoRemoveFromChat) {
+        await removePersonFromWorkgroupChat(workgroupId, personId);
+    }
     await wmrRepo().delete({ workgroup_membership_id: wm.id });
     await wgmRepo().delete(wm.id);
 }
