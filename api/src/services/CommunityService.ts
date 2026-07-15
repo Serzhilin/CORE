@@ -14,6 +14,7 @@ import { logger } from "../lib/logger";
 import { createEnvelope, updateEnvelope, findEnvelopesByOntology, getUserMetaEnvelopeId } from "../lib/evault-client";
 import { ONTOLOGIES } from "../lib/w3ds/ontology";
 import { syncOrganizationToEvault } from "./OrganizationService";
+import { getOrCreateCommunityChatId, syncCommunityChatToEvault, cascadeCommunityRenameToWorkgroupChats } from "./ChatService";
 
 const communityRepo = () => AppDataSource.getRepository(Community);
 
@@ -228,6 +229,7 @@ export async function updateCommunity(
 ): Promise<Community> {
     const community = await communityRepo().findOneOrFail({ where: { id } });
 
+    const nameChanged = data.name !== undefined && data.name !== community.name;
     Object.assign(community, data);
     const saved = await communityRepo().save(community);
 
@@ -235,6 +237,14 @@ export async function updateCommunity(
         syncOrganizationToEvault(saved.id).catch((err) =>
             logger.warn(err, "Organization envelope update failed for %s", saved.id)
         );
+        syncCommunityChatToEvault(saved.id).catch((err) =>
+            logger.warn(err, "Community chat sync failed for %s", saved.id)
+        );
+        if (nameChanged) {
+            cascadeCommunityRenameToWorkgroupChats(saved.id, saved.name).catch((err) =>
+                logger.warn(err, "Workgroup chat rename cascade failed for %s", saved.id)
+            );
+        }
     }
 
     return saved;
@@ -319,6 +329,8 @@ export async function linkCommunity(communityId: string, w3id: string, actingPer
     if (resolution.envelope?.logo_url) community.logo_url = resolution.envelope.logo_url;
     if (resolution.envelope?.description) community.description = resolution.envelope.description;
     const saved = await communityRepo().save(community);
+
+    await getOrCreateCommunityChatId(saved.id, resolution.envelopeId);
 
     syncOrganizationToEvault(saved.id).catch((err) =>
         logger.warn(err, "Organization envelope creation failed for linked community %s", saved.id)
