@@ -57,6 +57,7 @@ export async function getOrCreateCommunityChatId(communityId: string, envelopeId
         acl: ["*"],
     });
     await communityRepo().update(community.id, { chat_envelope_id: newEnvelopeId });
+    await syncCommunityChatToEvault(community.id);
 }
 
 /** Fetch-merge-write: rebuilds name/description/avatar/participantIds/members from current
