@@ -7,6 +7,9 @@ node_modules/
 
 # Build output
 dist/
+
+# Local runtime state (platform registration identity, etc.)
+api/data/
 # Vendored pre-compiled packages need their dist tracked
 !api/vendor/**/dist/
 !api/vendor/**/dist/**

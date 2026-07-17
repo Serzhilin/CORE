@@ -4,9 +4,11 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon --exec \"npx ts-node\" src/index.ts",
+    "register-platform": "ts-node scripts/register-platform.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "jest --runInBand",
+    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
