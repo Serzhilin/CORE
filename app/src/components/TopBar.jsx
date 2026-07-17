@@ -70,7 +70,7 @@ export default function TopBar() {
           style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', minWidth: 0, cursor: 'pointer' }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexShrink: 0 }}>
-            <span style={{ fontSize: '1.2rem' }}>🧭</span>
+            <img src="/logo.png" alt="CORE" style={{ height: 28, width: 28, objectFit: 'contain' }} />
             <span style={{
               fontFamily: 'var(--font-title)',
               fontWeight: 700,
