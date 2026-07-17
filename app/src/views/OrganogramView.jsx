@@ -8,7 +8,7 @@ import html2canvas from 'html2canvas'
 
 const GraphView = lazy(() => import('./graph/GraphView'))
 
-const checkStyle = { display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.9rem', cursor: 'pointer' }
+const checkStyle = { display: 'flex', alignItems: 'center', gap: 'var(--space-6)', fontSize: '0.9rem', cursor: 'pointer' }
 
 const INITIAL_FILTER = { workgroupId: '', roleName: '', membershipTypeId: '', showUnavailable: true, search: '' }
 
@@ -28,14 +28,14 @@ export default function OrganogramView() {
 
   useSetTopBarSlot(
     community ? (
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 'var(--space-10)', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
         <Panel shadow="sm" style={{ display: 'flex', width: 160, height: 34, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0 }}>
           {['graph', 'cards'].map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
               style={{
-                flex: 1, padding: '0 14px', height: '100%', boxSizing: 'border-box', border: 'none', cursor: 'pointer',
+                flex: 1, padding: '0 var(--space-14)', height: '100%', boxSizing: 'border-box', border: 'none', cursor: 'pointer',
                 fontSize: '0.9rem', fontWeight: 500, fontFamily: 'var(--font-sans)',
                 background: view === v ? 'var(--color-terracotta)' : 'white',
                 color: view === v ? 'white' : 'var(--color-charcoal-light)',
@@ -48,14 +48,14 @@ export default function OrganogramView() {
 
         <div className="topbar-filter-break" />
 
-        <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
+        <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 var(--space-10)', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All roles</option>
           {allRoleNames.map((name) => (
             <option key={name} value={name}>{name}</option>
           ))}
         </Select>
 
-        <Select value={filter.membershipTypeId} onChange={(e) => patch({ membershipTypeId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 10px', appearance: 'none', WebkitAppearance: 'none' }}>
+        <Select value={filter.membershipTypeId} onChange={(e) => patch({ membershipTypeId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 var(--space-10)', appearance: 'none', WebkitAppearance: 'none' }}>
           <option value="">All membership types</option>
           {membershipTypes.map((mt) => (
             <option key={mt.id} value={mt.id}>{mt.name}</option>
@@ -68,7 +68,7 @@ export default function OrganogramView() {
           placeholder="Search by name…"
           value={filter.search}
           onChange={(e) => patch({ search: e.target.value })}
-          style={{ height: 34, padding: '0 10px', boxSizing: 'border-box', boxShadow: 'var(--block-shadow-sm)', width: 160 }}
+          style={{ height: 34, padding: '0 var(--space-10)', boxSizing: 'border-box', boxShadow: 'var(--block-shadow-sm)', width: 160 }}
         />
 
         <div className="topbar-filter-break" />
@@ -87,7 +87,7 @@ export default function OrganogramView() {
 
   async function exportPng() {
     if (!cardGridRef.current) return
-    const canvas = await html2canvas(cardGridRef.current, { backgroundColor: '#F5F0E8', useCORS: true })
+    const canvas = await html2canvas(cardGridRef.current, { backgroundColor: '#FFFFFF', useCORS: true })
     const a = document.createElement('a')
     a.download = 'organogram.png'
     a.href = canvas.toDataURL()

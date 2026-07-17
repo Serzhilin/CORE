@@ -71,21 +71,21 @@ export default function MyWorkgroups() {
     <Page maxWidth={620}>
       {/* Joined workgroups */}
       {joined.length === 0 ? (
-        <Card style={{ padding: 28, color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 32 }}>
+        <Card style={{ padding: 'var(--space-28)', color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 'var(--space-32)' }}>
           You are not a member of any workgroup yet.
         </Card>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 36 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)', marginBottom: 36 }}>
           {joined.map(({ wg, roles, unassigned }) => (
-            <Card key={wg.id} style={{ borderLeft: `4px solid ${wg.color}`, padding: '18px 24px' }}>
+            <Card key={wg.id} style={{ borderLeft: `4px solid ${wg.color}`, padding: 'var(--space-20) var(--space-24)' }}>
               {/* Header row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-12)' }}>
                 <span style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.05rem' }}>{wg.name}</span>
                 <button
                   onClick={() => handleLeave(wg)}
                   disabled={busy[wg.id]}
                   title="Leave workgroup"
-                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
@@ -94,13 +94,13 @@ export default function MyWorkgroups() {
               </div>
 
               {/* Roles row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
                 {unassigned.length > 0 && (
                   <Select
                     value=""
                     onChange={(e) => handleAssign(wg, e.target.value)}
                     disabled={busy[wg.id]}
-                    style={{ width: 'auto', padding: '3px 8px', color: 'var(--color-charcoal-light)' }}
+                    style={{ width: 'auto', padding: 'var(--space-3) var(--space-8)', color: 'var(--color-charcoal-light)' }}
                   >
                     <option value="">+ Role</option>
                     {unassigned.map((r) => (
@@ -113,7 +113,7 @@ export default function MyWorkgroups() {
                   <Badge
                     key={r.id}
                     color={r.color}
-                    style={{ fontSize: '0.8rem', padding: '3px 10px', background: `${r.color}20`, gap: 5 }}
+                    style={{ fontSize: '0.8rem', padding: 'var(--space-3) var(--space-10)', background: `${r.color}20`, gap: 'var(--space-5)' }}
                   >
                     <span style={{ width: 7, height: 7, borderRadius: '50%', background: r.color, flexShrink: 0 }} />
                     {r.name}
@@ -136,7 +136,7 @@ export default function MyWorkgroups() {
         <div>
           <button
             onClick={() => setJoinOpen(v => !v)}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', marginBottom: joinOpen ? 12 : 0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', background: 'none', border: 'none', cursor: 'pointer', padding: 'var(--space-4) 0', marginBottom: joinOpen ? 12 : 0 }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
               style={{ transition: 'transform 0.15s', transform: joinOpen ? 'rotate(90deg)' : 'rotate(0deg)', color: 'var(--color-charcoal-light)' }}>
@@ -146,14 +146,14 @@ export default function MyWorkgroups() {
               Join a workgroup
             </span>
           </button>
-          {joinOpen && <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {joinOpen && <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
             {available.map((wg) => (
               <div
                 key={wg.id}
                 style={{
                   background: 'var(--color-cream-dark)', borderRadius: 0,
-                  border: '1px solid var(--color-sand)', padding: '12px 18px',
-                  display: 'flex', alignItems: 'center', gap: 12,
+                  border: '1px solid var(--color-sand)', padding: 'var(--space-12) var(--space-20)',
+                  display: 'flex', alignItems: 'center', gap: 'var(--space-12)',
                 }}
               >
                 <span style={{ width: 10, height: 10, borderRadius: '50%', background: wg.color, flexShrink: 0 }} />
@@ -165,7 +165,7 @@ export default function MyWorkgroups() {
                   onClick={() => handleJoin(wg)}
                   disabled={busy[wg.id]}
                   title="Join workgroup"
-                  style={{ background: 'none', border: 'none', color: 'var(--color-green)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+                  style={{ background: 'none', border: 'none', color: 'var(--color-green)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>

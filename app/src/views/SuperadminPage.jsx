@@ -51,13 +51,13 @@ function AddCommunityCard({ onCreated }) {
   }
 
   return (
-    <Card style={{ padding: 28, marginBottom: 24 }}>
-      <SectionLabel style={{ margin: '0 0 20px' }}>
+    <Card style={{ padding: 'var(--space-28)', marginBottom: 'var(--space-24)' }}>
+      <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
         Add community from existing eName
       </SectionLabel>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ display: 'flex', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
           <Input
             style={{ flex: 1 }}
             placeholder="@ename or w3id"
@@ -72,15 +72,15 @@ function AddCommunityCard({ onCreated }) {
         {error && <ErrorText>{error}</ErrorText>}
 
         {preview && (
-          <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 14, fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 'var(--space-14)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
             <div>
               <strong>{preview.envelope.name}</strong>
-              {preview.envelope.description && <div style={{ marginTop: 4 }}>{preview.envelope.description}</div>}
+              {preview.envelope.description && <div style={{ marginTop: 'var(--space-4)' }}>{preview.envelope.description}</div>}
             </div>
             <label style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
               Slug
               <Input
-                style={{ marginTop: 4 }}
+                style={{ marginTop: 'var(--space-4)' }}
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
               />
@@ -126,22 +126,22 @@ export default function SuperadminPage() {
 
   if (!isPlatformAdmin) {
     return (
-      <div style={{ padding: 32, fontFamily: 'var(--font-sans)', color: 'var(--color-red)' }}>
+      <div style={{ padding: 'var(--space-32)', fontFamily: 'var(--font-sans)', color: 'var(--color-red)' }}>
         Platform admin access required.
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: 32, fontFamily: 'var(--font-sans)' }}>
-      <h1 style={{ fontFamily: 'var(--font-title)', margin: '0 0 24px' }}>Superadmin — Communities</h1>
+    <div style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-32)', fontFamily: 'var(--font-sans)' }}>
+      <h1 style={{ fontFamily: 'var(--font-title)', margin: '0 0 var(--space-24)' }}>Superadmin — Communities</h1>
 
-      {listError && <div style={{ color: 'var(--color-red)', marginBottom: 16 }}>{listError}</div>}
+      {listError && <div style={{ color: 'var(--color-red)', marginBottom: 'var(--space-16)' }}>{listError}</div>}
 
       <AddCommunityCard onCreated={refresh} />
 
       {communities.map((c) => (
-        <Card key={c.id} style={{ padding: '14px 18px', marginBottom: 10 }}>
+        <Card key={c.id} style={{ padding: '14px 18px', marginBottom: 'var(--space-10)' }}>
           <div
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
             onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}
@@ -156,7 +156,7 @@ export default function SuperadminPage() {
           </div>
 
           {expandedId === c.id && (
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 'var(--space-16)' }}>
               <W3dsLinkCard communityId={c.id} community={c} onChange={refresh} />
             </div>
           )}

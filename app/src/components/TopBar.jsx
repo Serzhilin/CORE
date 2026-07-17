@@ -52,7 +52,7 @@ export default function TopBar() {
   return (
     <header style={{
       background: 'white',
-      padding: '0 32px',
+      padding: '0 var(--space-32)',
       position: 'sticky',
       top: 0,
       zIndex: 200,
@@ -67,9 +67,9 @@ export default function TopBar() {
         {/* Left: CORE mark + community logo/name (click → home) */}
         <div
           onClick={() => navigate('/')}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', minWidth: 0, cursor: 'pointer' }}
         >
-          <span style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexShrink: 0 }}>
             <span style={{ fontSize: '1.2rem' }}>🧭</span>
             <span style={{
               fontFamily: 'var(--font-title)',
@@ -127,7 +127,7 @@ export default function TopBar() {
               position: 'absolute', top: 42, right: 0, zIndex: 1000,
               background: 'white', minWidth: 200, overflow: 'hidden',
             }}>
-              <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-sand)' }}>
+              <div style={{ padding: 'var(--space-12) var(--space-16)', borderBottom: '1px solid var(--color-sand)' }}>
                 <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--color-charcoal)' }}>
                   {user?.firstName || user?.ename || 'You'}
                 </div>
@@ -154,7 +154,7 @@ export default function TopBar() {
 
               {memberships.length > 1 && (
                 <>
-                  <SectionLabel as="div" fontSize="0.68rem" fontWeight={700} letterSpacing="0.06em" style={{ borderTop: '1px solid var(--color-sand)', padding: '8px 16px 2px' }}>
+                  <SectionLabel as="div" fontSize="0.68rem" fontWeight={700} letterSpacing="0.06em" style={{ borderTop: '1px solid var(--color-sand)', padding: 'var(--space-8) var(--space-16) var(--space-2)' }}>
                     Communities
                   </SectionLabel>
                   {memberships.map((m) => (
@@ -162,7 +162,7 @@ export default function TopBar() {
                       key={m.communityId}
                       onClick={() => { setShowMenu(false); switchCommunity(m.communityId); navigate('/') }}
                     >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
                         <span style={{ flex: 1, fontWeight: m.communityId === communityId ? 600 : 400 }}>
                           {m.community?.name || m.communityId}
                         </span>

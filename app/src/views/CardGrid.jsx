@@ -70,20 +70,20 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: 16,
-          padding: 16,
+          gap: 'var(--space-16)',
+          padding: 'var(--space-16)',
           background: 'var(--color-cream)',
         }}
       >
         {/* Unassigned card — always first */}
         {unassignedMembers.length > 0 && (
           <Card style={{ borderTop: '3px solid var(--color-sand-dark)', overflow: 'hidden' }}>
-            <div style={{ padding: '12px 16px 8px', fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)', color: 'var(--color-charcoal-light)' }}>
+            <div style={{ padding: 'var(--space-12) var(--space-16) var(--space-8)', fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)', color: 'var(--color-charcoal-light)' }}>
               Without workgroup
             </div>
-            <div style={{ paddingBottom: 12 }}>
+            <div style={{ paddingBottom: 'var(--space-12)' }}>
               {unassignedMembers.map((m) => (
-                <MemberRow key={m.personId} m={m} wgColor="#ccc" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
+                <MemberRow key={m.personId} m={m} wgColor="var(--color-sand-dark)" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
               ))}
             </div>
           </Card>
@@ -93,13 +93,13 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
           const members = membersForWorkgroup(wg)
           return (
             <Card key={wg.id} style={{ borderTop: `3px solid ${wg.color}`, overflow: 'hidden' }}>
-              <div style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+              <div style={{ padding: 'var(--space-12) var(--space-16) var(--space-8)', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)' }}>{wg.name}</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>{members.length}</span>
               </div>
-              <div style={{ paddingBottom: 12 }}>
+              <div style={{ paddingBottom: 'var(--space-12)' }}>
                 {members.length === 0 && (
-                  <div style={{ padding: '4px 16px', fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>No members</div>
+                  <div style={{ padding: 'var(--space-4) var(--space-16)', fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>No members</div>
                 )}
                 {members.map((m) => (
                   <MemberRow key={m.personId} m={m} wgColor={wg.color} roles={personRoles[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
@@ -122,8 +122,8 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
       data-person-id={m.personId}
       onClick={() => onMemberClick(m)}
       style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '5px 16px', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', gap: 'var(--space-8)',
+        padding: 'var(--space-5) var(--space-16)', cursor: 'pointer',
         opacity: unavailable ? 0.45 : 1,
         background: selected ? `${wgColor}18` : 'none',
         borderLeft: selected ? `3px solid ${wgColor}` : '3px solid transparent',
@@ -144,12 +144,12 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
       <span style={{ fontSize: '0.9rem' }}>
         {m.firstName || m.lastName || 'Unknown'}{showLastInitial && m.lastName ? ` ${m.lastName[0]}.` : ''}
         {m.membershipType?.emoji && (
-          <span title={m.membershipType.name} className="emoji-mono" style={{ marginLeft: 5, fontSize: '0.85rem' }}>
+          <span title={m.membershipType.name} className="emoji-mono" style={{ marginLeft: 'var(--space-5)', fontSize: '0.85rem' }}>
             {m.membershipType.emoji}
           </span>
         )}
         {roles.map((role) => (
-          <span key={role.id} style={{ marginLeft: 5, fontSize: '0.72rem', color: role.color, fontStyle: 'italic' }}>
+          <span key={role.id} style={{ marginLeft: 'var(--space-5)', fontSize: '0.72rem', color: role.color, fontStyle: 'italic' }}>
             {role.name}
           </span>
         ))}

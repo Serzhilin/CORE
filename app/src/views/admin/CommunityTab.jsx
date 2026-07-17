@@ -13,7 +13,7 @@ export default function CommunityTab() {
     name: community?.name || '',
     slug: community?.slug || '',
     description: community?.description || '',
-    primary_color: community?.primary_color || '#C4622D',
+    primary_color: community?.primary_color || '#E8262B',
     title_font: community?.title_font || 'Playfair Display',
     kvk_number: community?.kvk_number || '',
     legal_form: community?.legal_form || '',
@@ -132,11 +132,11 @@ export default function CommunityTab() {
   return (
     <Page maxWidth={560}>
       {/* Community settings */}
-      <Card style={{ padding: 28, marginBottom: 24 }}>
-        <SectionLabel style={{ margin: '0 0 20px' }}>
+      <Card style={{ padding: 'var(--space-28)', marginBottom: 'var(--space-24)' }}>
+        <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
           Community settings
         </SectionLabel>
-        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
 
           <SectionLabel as="h4" fontSize="0.78rem" style={{ margin: '0 0 -4px' }}>
             Legal information
@@ -147,7 +147,7 @@ export default function CommunityTab() {
             <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-14)' }}>
             <div>
               <Label>KvK number</Label>
               <Input value={form.kvk_number} onChange={(e) => setForm((f) => ({ ...f, kvk_number: e.target.value }))} />
@@ -160,8 +160,8 @@ export default function CommunityTab() {
 
           {/* Statuten file upload */}
           <div>
-            <Label style={{ marginBottom: 8 }}>Statuten</Label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Label style={{ marginBottom: 'var(--space-8)' }}>Statuten</Label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)' }}>
               {statutenUri && !statutenUri.startsWith('w3ds://') && (
                 <a href={statutenUri} target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
                   View current file
@@ -170,15 +170,15 @@ export default function CommunityTab() {
               {statutenUri && statutenUri.startsWith('w3ds://') && (
                 <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>File on record</span>
               )}
-              <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: '6px 12px', cursor: 'pointer', opacity: statutenSaving ? 0.5 : 1 }}>
+              <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: 'var(--space-6) var(--space-12)', cursor: 'pointer', opacity: statutenSaving ? 0.5 : 1 }}>
                 {statutenSaving ? 'Uploading…' : statutenUri ? 'Replace' : 'Upload'}
                 <input type="file" accept="application/pdf,.pdf,.doc,.docx" onChange={handleStatutenUpload} style={{ display: 'none' }} disabled={statutenSaving} />
               </label>
             </div>
-            {statutenError && <ErrorText style={{ marginTop: 6 }}>{statutenError}</ErrorText>}
+            {statutenError && <ErrorText style={{ marginTop: 'var(--space-6)' }}>{statutenError}</ErrorText>}
           </div>
 
-          <SectionLabel as="h4" fontSize="0.78rem" style={{ margin: '10px 0 -4px' }}>
+          <SectionLabel as="h4" fontSize="0.78rem" style={{ margin: 'var(--space-10) 0 -4px' }}>
             Branding
           </SectionLabel>
 
@@ -190,8 +190,8 @@ export default function CommunityTab() {
 
           {/* Logo upload */}
           <div>
-            <Label style={{ marginBottom: 8 }}>Logo</Label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <Label style={{ marginBottom: 'var(--space-8)' }}>Logo</Label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-16)' }}>
               <div style={{
                 width: 80, height: 48, border: '1px solid var(--color-sand)', borderRadius: 0,
                 background: 'var(--color-cream)', display: 'flex', alignItems: 'center',
@@ -202,25 +202,25 @@ export default function CommunityTab() {
                   : <span style={{ fontSize: '1.5rem' }}>🏛️</span>
                 }
               </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: '6px 12px', cursor: 'pointer', opacity: logoSaving ? 0.5 : 1 }}>
+              <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center' }}>
+                <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: 'var(--space-6) var(--space-12)', cursor: 'pointer', opacity: logoSaving ? 0.5 : 1 }}>
                   {logoSaving ? 'Saving…' : logo ? 'Replace' : 'Upload'}
                   <input type="file" accept="image/svg+xml,image/png,image/jpeg" onChange={handleLogoUpload} style={{ display: 'none' }} disabled={logoSaving} />
                 </label>
                 {logo && (
-                  <Button type="button" variant="secondary" title="Remove logo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removeLogo} disabled={logoSaving}>
+                  <Button type="button" variant="secondary" title="Remove logo" style={{ padding: 'var(--space-6) var(--space-10)', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removeLogo} disabled={logoSaving}>
                     <TrashIcon />
                   </Button>
                 )}
               </div>
             </div>
-            {logoError && <ErrorText style={{ marginTop: 6 }}>{logoError}</ErrorText>}
+            {logoError && <ErrorText style={{ marginTop: 'var(--space-6)' }}>{logoError}</ErrorText>}
           </div>
 
           {/* Group photo upload */}
           <div>
-            <Label style={{ marginBottom: 8 }}>Group photo</Label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <Label style={{ marginBottom: 'var(--space-8)' }}>Group photo</Label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-16)' }}>
               <div style={{
                 width: 80, height: 48, border: '1px solid var(--color-sand)', borderRadius: 0,
                 background: 'var(--color-cream)', display: 'flex', alignItems: 'center',
@@ -231,25 +231,25 @@ export default function CommunityTab() {
                   : <span style={{ fontSize: '1.5rem' }}>📷</span>
                 }
               </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: '6px 12px', cursor: 'pointer', opacity: photoSaving ? 0.5 : 1 }}>
+              <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center' }}>
+                <label className="btn-secondary" style={{ fontSize: '0.82rem', padding: 'var(--space-6) var(--space-12)', cursor: 'pointer', opacity: photoSaving ? 0.5 : 1 }}>
                   {photoSaving ? 'Saving…' : photo ? 'Replace' : 'Upload'}
                   <input type="file" accept="image/png,image/jpeg" onChange={handlePhotoUpload} style={{ display: 'none' }} disabled={photoSaving} />
                 </label>
                 {photo && (
-                  <Button type="button" variant="secondary" title="Remove photo" style={{ padding: '6px 10px', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removePhoto} disabled={photoSaving}>
+                  <Button type="button" variant="secondary" title="Remove photo" style={{ padding: 'var(--space-6) var(--space-10)', color: 'var(--color-red)', display: 'inline-flex', alignItems: 'center' }} onClick={removePhoto} disabled={photoSaving}>
                     <TrashIcon />
                   </Button>
                 )}
               </div>
             </div>
-            {photoError && <ErrorText style={{ marginTop: 6 }}>{photoError}</ErrorText>}
+            {photoError && <ErrorText style={{ marginTop: 'var(--space-6)' }}>{photoError}</ErrorText>}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-14)' }}>
             <div>
               <Label>Primary color</Label>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center' }}>
                 <input type="color" value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} style={{ width: 40, height: 36, border: 'none', padding: 0, cursor: 'pointer' }} />
                 <Input style={{ flex: 1 }} value={form.primary_color} onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))} />
               </div>
@@ -263,7 +263,7 @@ export default function CommunityTab() {
               </Select>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)' }}>
             <Button type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
             {saveMsg && <span style={{ fontSize: '0.85rem', color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>{saveMsg}</span>}
           </div>
@@ -271,8 +271,8 @@ export default function CommunityTab() {
       </Card>
 
       {/* Admins */}
-      <Card style={{ padding: 28, marginBottom: 24 }}>
-        <SectionLabel style={{ margin: '0 0 20px' }}>
+      <Card style={{ padding: 'var(--space-28)', marginBottom: 'var(--space-24)' }}>
+        <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
           Admins
         </SectionLabel>
 
@@ -280,7 +280,7 @@ export default function CommunityTab() {
           const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
           const isSelf = m.personId === user?.id
           return (
-            <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--color-sand)' }}>
+            <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', padding: 'var(--space-8) 0', borderBottom: '1px solid var(--color-sand)' }}>
               <span style={{ flex: 1, fontSize: '0.9rem', fontWeight: 500 }}>{name}</span>
               {isSelf && <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>you</span>}
               <button
@@ -291,7 +291,7 @@ export default function CommunityTab() {
                   try { await updateMember(communityId, m.personId, { is_admin: false }); await refresh() }
                   catch (err) { alert(err.message) }
                 }}
-                style={{ background: 'none', border: 'none', cursor: isSelf ? 'not-allowed' : 'pointer', color: isSelf ? 'var(--color-sand-dark)' : 'var(--color-red)', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+                style={{ background: 'none', border: 'none', cursor: isSelf ? 'not-allowed' : 'pointer', color: isSelf ? 'var(--color-sand-dark)' : 'var(--color-red)', padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
               >
                 <TrashIcon />
               </button>
@@ -299,7 +299,7 @@ export default function CommunityTab() {
           )
         })}
 
-        <div style={{ marginTop: 16 }}>
+        <div style={{ marginTop: 'var(--space-16)' }}>
           <Select
             value=""
             onChange={async (e) => {
@@ -307,7 +307,7 @@ export default function CommunityTab() {
               try { await updateMember(communityId, e.target.value, { is_admin: true }); await refresh() }
               catch (err) { alert(err.message) }
             }}
-            style={{ width: 'auto', padding: '8px 12px', fontSize: '0.88rem', cursor: 'pointer' }}
+            style={{ width: 'auto', padding: 'var(--space-8) var(--space-12)', fontSize: '0.88rem', cursor: 'pointer' }}
           >
             <option value="">+ Add admin…</option>
             {(community?.members || []).filter((m) => !m.isAdmin).sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m) => (
@@ -319,7 +319,7 @@ export default function CommunityTab() {
         </div>
       </Card>
 
-      <div style={{ marginBottom: 24 }}>
+      <div style={{ marginBottom: 'var(--space-24)' }}>
         <W3dsLinkCard communityId={communityId} community={community} onChange={refresh} />
       </div>
     </Page>

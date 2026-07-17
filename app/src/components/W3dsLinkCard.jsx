@@ -56,27 +56,27 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
   }
 
   return (
-    <Card style={{ padding: 28 }}>
-      <SectionLabel style={{ margin: '0 0 20px' }}>
+    <Card style={{ padding: 'var(--space-28)' }}>
+      <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
         W3DS identity
       </SectionLabel>
 
       {community?.provisioning_status === 'linked' ? (
         <div style={{ fontSize: '0.9rem' }}>
           <div>Linked to <strong>{community.ename}</strong></div>
-          <div style={{ color: 'var(--color-charcoal-light)', fontSize: '0.82rem', marginTop: 4 }}>{community.evault_uri}</div>
-          {w3idError && <ErrorText style={{ marginTop: 8 }}>{w3idError}</ErrorText>}
-          <Button type="button" variant="secondary" style={{ marginTop: 12, color: 'var(--color-red)' }} onClick={handleUnlink} disabled={w3idUnlinking}>
+          <div style={{ color: 'var(--color-charcoal-light)', fontSize: '0.82rem', marginTop: 'var(--space-4)' }}>{community.evault_uri}</div>
+          {w3idError && <ErrorText style={{ marginTop: 'var(--space-8)' }}>{w3idError}</ErrorText>}
+          <Button type="button" variant="secondary" style={{ marginTop: 'var(--space-12)', color: 'var(--color-red)' }} onClick={handleUnlink} disabled={w3idUnlinking}>
             {w3idUnlinking ? 'Unlinking…' : 'Unlink'}
           </Button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
           <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
             This community is local-only. Link it to an existing W3DS eName you own or administer
             to sync its identity and membership to your eVault.
           </p>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
             <Input
               style={{ flex: 1 }}
               placeholder="@ename or w3id"
@@ -91,16 +91,16 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
           {w3idError && <ErrorText>{w3idError}</ErrorText>}
 
           {w3idPreview && (
-            <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 14, fontSize: '0.85rem' }}>
+            <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 'var(--space-14)', fontSize: '0.85rem' }}>
               {w3idPreview.envelope ? (
                 <>
                   <div><strong>{w3idPreview.envelope.name || w3idPreview.w3id}</strong></div>
-                  {w3idPreview.envelope.description && <div style={{ marginTop: 4 }}>{w3idPreview.envelope.description}</div>}
+                  {w3idPreview.envelope.description && <div style={{ marginTop: 'var(--space-4)' }}>{w3idPreview.envelope.description}</div>}
                 </>
               ) : (
                 <div>No existing group identity found — a new one will be created with you as owner.</div>
               )}
-              <Button type="button" style={{ marginTop: 12 }} onClick={handleLinkW3id} disabled={w3idLinking}>
+              <Button type="button" style={{ marginTop: 'var(--space-12)' }} onClick={handleLinkW3id} disabled={w3idLinking}>
                 {w3idLinking ? 'Linking…' : `Confirm link to ${w3idPreview.w3id}`}
               </Button>
             </div>

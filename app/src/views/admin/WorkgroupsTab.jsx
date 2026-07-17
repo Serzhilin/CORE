@@ -11,7 +11,7 @@ import {
 export default function WorkgroupsTab() {
   const { communityId, community, refresh } = useCommunity()
   const [expanded, setExpanded] = useState(null)
-  const [addWgForm, setAddWgForm] = useState({ name: '', color: '#C4622D' })
+  const [addWgForm, setAddWgForm] = useState({ name: '', color: '#E8262B' })
   const [addingWg, setAddingWg] = useState(false)
   const [addingRole, setAddingRole] = useState({}) // {wgId: {name, color}}
   const [addingMember, setAddingMember] = useState(null) // wgId
@@ -26,7 +26,7 @@ export default function WorkgroupsTab() {
       await createWorkgroup(communityId, addWgForm)
       await refresh()
       setAddingWg(false)
-      setAddWgForm({ name: '', color: '#C4622D' })
+      setAddWgForm({ name: '', color: '#E8262B' })
     } catch (err) { alert(err.message) }
   }
 
@@ -38,12 +38,12 @@ export default function WorkgroupsTab() {
 
   async function handleCreateRole(wid, e) {
     e.preventDefault()
-    const data = addingRole[wid] || { name: '', color: '#C4622D' }
+    const data = addingRole[wid] || { name: '', color: '#E8262B' }
     if (!data.name) return
     try {
       await createRole(wid, data)
       await refresh()
-      setAddingRole((r) => ({ ...r, [wid]: { name: '', color: '#C4622D' } }))
+      setAddingRole((r) => ({ ...r, [wid]: { name: '', color: '#E8262B' } }))
     } catch (err) { alert(err.message) }
   }
 
@@ -124,20 +124,20 @@ export default function WorkgroupsTab() {
 
   return (
     <Page maxWidth={680}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 'var(--space-20)' }}>
         <Button onClick={() => setAddingWg(true)} style={{ fontSize: '0.85rem' }}>Add workgroup</Button>
       </div>
 
       {addingWg && (
-        <Card variant="warm" style={{ padding: 20, marginBottom: 16 }}>
-          <form onSubmit={handleCreateWorkgroup} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <Card style={{ padding: 'var(--space-20)', marginBottom: 'var(--space-16)' }}>
+          <form onSubmit={handleCreateWorkgroup} style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <div>
               <Label size="sm">Name</Label>
               <Input value={addWgForm.name} onChange={(e) => setAddWgForm((f) => ({ ...f, name: e.target.value }))} required />
             </div>
             <div>
               <Label size="sm">Color</Label>
-              <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{ display: 'flex', gap: 'var(--space-6)' }}>
                 <input type="color" value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }} />
                 <Input style={{ width: 90 }} value={addWgForm.color} onChange={(e) => setAddWgForm((f) => ({ ...f, color: e.target.value }))} />
               </div>
@@ -164,13 +164,13 @@ export default function WorkgroupsTab() {
           .sort((a, b) => ([a.firstName, a.lastName].filter(Boolean).join(' ') || a.email || '').localeCompare([b.firstName, b.lastName].filter(Boolean).join(' ') || b.email || ''))
 
         return (
-          <Card key={wg.id} style={{ marginBottom: 12, borderLeft: `4px solid ${wg.color}` }}>
+          <Card key={wg.id} style={{ marginBottom: 'var(--space-12)', borderLeft: `4px solid ${wg.color}` }}>
             {/* Header */}
             <div
               onClick={() => setExpanded(isExpanded ? null : wg.id)}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', cursor: 'pointer', userSelect: 'none' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-14) var(--space-20)', cursor: 'pointer', userSelect: 'none' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}
                    onClick={(e) => e.stopPropagation()}>
                 <input
                   key={wg.color}
@@ -190,7 +190,7 @@ export default function WorkgroupsTab() {
                       if (e.key === 'Enter') handleSaveWgName(wg.id, editingWgName[wg.id])
                       if (e.key === 'Escape') handleCancelWgName(wg.id)
                     }}
-                    style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1rem', padding: '4px 8px' }}
+                    style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1rem', padding: 'var(--space-4) var(--space-8)' }}
                     onClick={(e) => e.stopPropagation()}
                   />
                 ) : (
@@ -205,14 +205,14 @@ export default function WorkgroupsTab() {
                   </span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
                   {wgMembers.length} members · {wg.roles.length} roles
                 </span>
                 <button
                   onClick={() => handleDeleteWorkgroup(wg.id)}
                   title="Delete workgroup"
-                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
                 >
                   <TrashIcon />
                 </button>
@@ -235,12 +235,12 @@ export default function WorkgroupsTab() {
                   textTransform="capitalize"
                 />
 
-                <div style={{ padding: 20 }}>
+                <div style={{ padding: 'var(--space-20)' }}>
                   {getTab(wg.id) === 'roles' && (
                     <div>
-                      <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 10px' }}>Roles</SectionLabel>
+                      <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 var(--space-10)' }}>Roles</SectionLabel>
                       {[...wg.roles].sort((a, b) => a.name.localeCompare(b.name)).map((r) => (
-                        <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                        <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', marginBottom: 'var(--space-6)' }}>
                           <input
                             key={r.color}
                             type="color"
@@ -259,7 +259,7 @@ export default function WorkgroupsTab() {
                                 if (e.key === 'Enter') handleSaveRoleName(wg.id, r.id, editingRoleName[r.id])
                                 if (e.key === 'Escape') handleCancelRoleName(r.id)
                               }}
-                              style={{ flex: 1, padding: '3px 7px', fontSize: '0.9rem' }}
+                              style={{ flex: 1, padding: 'var(--space-3) var(--space-6)', fontSize: '0.9rem' }}
                             />
                           ) : (
                             <span
@@ -275,7 +275,7 @@ export default function WorkgroupsTab() {
                           >×</button>
                         </div>
                       ))}
-                      <form onSubmit={(e) => handleCreateRole(wg.id, e)} style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                      <form onSubmit={(e) => handleCreateRole(wg.id, e)} style={{ display: 'flex', gap: 'var(--space-6)', marginTop: 'var(--space-8)' }}>
                         <Input
                           placeholder="Role name"
                           value={(addingRole[wg.id] || {}).name || ''}
@@ -284,7 +284,7 @@ export default function WorkgroupsTab() {
                         />
                         <input
                           type="color"
-                          value={(addingRole[wg.id] || {}).color || '#C4622D'}
+                          value={(addingRole[wg.id] || {}).color || '#E8262B'}
                           onChange={(e) => setAddingRole((r) => ({ ...r, [wg.id]: { ...(r[wg.id] || {}), color: e.target.value } }))}
                           style={{ width: 36, height: 34, border: 'none', padding: 0, cursor: 'pointer' }}
                         />
@@ -295,7 +295,7 @@ export default function WorkgroupsTab() {
 
                   {getTab(wg.id) === 'members' && (
                     <div>
-                      <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 10px' }}>Members</SectionLabel>
+                      <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 var(--space-10)' }}>Members</SectionLabel>
                       <div>
                         {wgMembers.map(({ member, roles }, idx) => {
                           const displayName = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'
@@ -305,10 +305,10 @@ export default function WorkgroupsTab() {
                               key={member.personId}
                               style={{
                                 borderTop: idx === 0 ? 'none' : '1px solid var(--color-sand)',
-                                padding: '10px 0',
+                                padding: 'var(--space-10) 0',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: 6,
+                                gap: 'var(--space-6)',
                               }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -316,12 +316,12 @@ export default function WorkgroupsTab() {
                               </div>
 
                               {/* Bottom row: add role dropdown + role chips + remove */}
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
                                 {unassignedRoles.length > 0 && (
                                   <Select
                                     value=""
                                     onChange={(e) => { if (e.target.value) handleAssignRole(wg.id, member.personId, e.target.value) }}
-                                    style={{ width: 'auto', padding: '2px 6px', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
+                                    style={{ width: 'auto', padding: 'var(--space-2) var(--space-6)', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}
                                   >
                                     <option value="">+ Role</option>
                                     {unassignedRoles.map((r) => (
@@ -337,7 +337,7 @@ export default function WorkgroupsTab() {
                                     <Badge
                                       key={rid}
                                       color={role.color}
-                                      style={{ fontSize: '0.75rem', padding: '2px 8px', gap: 4, borderColor: role.color }}
+                                      style={{ fontSize: '0.75rem', padding: 'var(--space-2) var(--space-8)', gap: 'var(--space-4)', borderColor: role.color }}
                                     >
                                       {role.name}
                                       <button
@@ -351,7 +351,7 @@ export default function WorkgroupsTab() {
                                 <button
                                   onClick={() => handleRemoveMember(wg.id, member.personId)}
                                   title="Remove from workgroup"
-                                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', marginLeft: 'auto', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', marginLeft: 'auto', padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
                                 >
                                   <TrashIcon />
                                 </button>
@@ -362,7 +362,7 @@ export default function WorkgroupsTab() {
 
                         {/* Add member */}
                         {addingMember === wg.id ? (
-                          <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+                          <div style={{ display: 'flex', gap: 'var(--space-6)', marginTop: 'var(--space-4)' }}>
                             <Select
                               defaultValue=""
                               onChange={(e) => { if (e.target.value) handleAddMember(wg.id, e.target.value) }}
@@ -387,9 +387,9 @@ export default function WorkgroupsTab() {
                   )}
 
                   {getTab(wg.id) === 'details' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-16)' }}>
                       <div>
-                        <Label size="sm" style={{ marginBottom: 6 }}>Description</Label>
+                        <Label size="sm" style={{ marginBottom: 'var(--space-6)' }}>Description</Label>
                         {editingWgDesc[wg.id] !== undefined ? (
                           <Textarea
                             autoFocus
@@ -404,15 +404,15 @@ export default function WorkgroupsTab() {
                         ) : (
                           <div
                             onClick={() => setEditingWgDesc((s) => ({ ...s, [wg.id]: wg.description || '' }))}
-                            style={{ fontSize: '0.88rem', color: wg.description ? 'var(--color-charcoal)' : 'var(--color-charcoal-light)', cursor: 'pointer', fontStyle: wg.description ? 'normal' : 'italic', lineHeight: 1.6, padding: '6px 0' }}
+                            style={{ fontSize: '0.88rem', color: wg.description ? 'var(--color-charcoal)' : 'var(--color-charcoal-light)', cursor: 'pointer', fontStyle: wg.description ? 'normal' : 'italic', lineHeight: 1.6, padding: 'var(--space-6) 0' }}
                           >
                             {wg.description || 'Click to add a description…'}
                           </div>
                         )}
                       </div>
                       <div>
-                        <Label size="sm" style={{ marginBottom: 6 }}>Color</Label>
-                        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                        <Label size="sm" style={{ marginBottom: 'var(--space-6)' }}>Color</Label>
+                        <div style={{ display: 'flex', gap: 'var(--space-10)', alignItems: 'center' }}>
                           <input
                             key={wg.color}
                             type="color"

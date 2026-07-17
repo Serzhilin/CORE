@@ -59,8 +59,8 @@ export default function MyAvailability() {
     <Page maxWidth={520}>
       {current && (
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          background: 'var(--color-sand)', borderRadius: 0, padding: '12px 18px', marginBottom: 20,
+          display: 'flex', alignItems: 'center', gap: 'var(--space-10)',
+          background: 'var(--color-sand)', borderRadius: 0, padding: '12px 18px', marginBottom: 'var(--space-20)',
           fontSize: '0.95rem',
         }}>
           <span className="emoji-mono" style={{ fontSize: '1.3rem' }}>{current.type.emoji}</span>
@@ -74,18 +74,18 @@ export default function MyAvailability() {
 
       {!current && (
         <div style={{
-          background: 'var(--color-cream-dark)', borderRadius: 0, padding: '12px 18px', marginBottom: 20,
+          background: 'var(--color-cream-dark)', borderRadius: 0, padding: '12px 18px', marginBottom: 'var(--space-20)',
           fontSize: '0.9rem', color: 'var(--color-charcoal-light)',
         }}>
           You are currently marked as available in {community?.name}.
         </div>
       )}
 
-      <Card style={{ padding: 28 }}>
-        <SectionLabel style={{ margin: '0 0 20px' }}>
+      <Card style={{ padding: 'var(--space-28)' }}>
+        <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
           Set status
         </SectionLabel>
-        <form onSubmit={handleSet} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <form onSubmit={handleSet} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
           <div>
             <Label>Status</Label>
             <Select value={form.type_id} onChange={(e) => setForm((f) => ({ ...f, type_id: e.target.value }))}>
@@ -103,7 +103,7 @@ export default function MyAvailability() {
             <Label>Until (optional)</Label>
             <Input type="date" value={form.until} onChange={(e) => setForm((f) => ({ ...f, until: e.target.value }))} />
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center' }}>
             <Button type="submit" disabled={saving || !form.type_id}>
               {saving ? 'Saving…' : 'Set status'}
             </Button>

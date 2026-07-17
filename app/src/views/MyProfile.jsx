@@ -77,7 +77,7 @@ export default function MyProfile() {
   const camBadge = (active) => ({
     position: 'absolute', bottom: 6, right: 6,
     width: 28, height: 28, borderRadius: '50%',
-    background: 'rgba(0,0,0,0.55)', color: '#fff',
+    background: 'rgba(44,44,44,0.55)', color: 'white',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     pointerEvents: 'none',
     opacity: active ? 1 : 0,
@@ -86,7 +86,7 @@ export default function MyProfile() {
 
   return (
     <Page maxWidth={600}>
-      <Card style={{ overflow: 'hidden', marginBottom: 24 }}>
+      <Card style={{ overflow: 'hidden', marginBottom: 'var(--space-24)' }}>
         {/* Banner */}
         <button
           type="button"
@@ -111,9 +111,9 @@ export default function MyProfile() {
         <input ref={bannerFileRef} type="file" accept="image/*" style={{ display: 'none' }}
           onChange={handleImageUpload('banner_url', setBannerSaving, 1200)} />
 
-        <div style={{ padding: 28 }}>
+        <div style={{ padding: 'var(--space-28)' }}>
           {/* Avatar + display name */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: -56, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-20)', marginTop: -56, marginBottom: 'var(--space-20)' }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 type="button"
@@ -144,7 +144,7 @@ export default function MyProfile() {
               <input ref={avatarFileRef} type="file" accept="image/*" style={{ display: 'none' }}
                 onChange={handleImageUpload('avatar_url', setAvatarSaving, 512)} />
             </div>
-            <div style={{ flex: 1, paddingTop: 32 }}>
+            <div style={{ flex: 1, paddingTop: 'var(--space-32)' }}>
               <div style={{ fontSize: '1.35rem', fontWeight: 700 }}>
                 {user?.firstName || ''} {user?.lastName || ''}
               </div>
@@ -153,9 +153,9 @@ export default function MyProfile() {
                   onClick={copyEname}
                   title="Click to copy"
                   style={{
-                    marginTop: 4, fontFamily: 'monospace', fontSize: '0.85rem',
+                    marginTop: 'var(--space-4)', fontFamily: 'monospace', fontSize: '0.85rem',
                     color: 'var(--color-charcoal-light)', cursor: 'pointer',
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    display: 'inline-flex', alignItems: 'center', gap: 'var(--space-8)',
                   }}
                 >
                   eName: {user.ename}
@@ -165,7 +165,7 @@ export default function MyProfile() {
             </div>
           </div>
 
-          <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
             {/* Display name */}
             <div>
               <Label>Display name</Label>
@@ -181,7 +181,7 @@ export default function MyProfile() {
             {myMembership?.joinedAt && (
               <div>
                 <Label>Member since</Label>
-                <div style={{ padding: '10px 14px', borderRadius: 0, border: '1px solid var(--color-sand)', background: 'var(--color-cream)', fontSize: '0.9rem', color: 'var(--color-charcoal-light)' }}>
+                <div style={{ padding: 'var(--space-10) var(--space-14)', borderRadius: 0, border: '1px solid var(--color-sand)', background: 'var(--color-cream)', fontSize: '0.9rem', color: 'var(--color-charcoal-light)' }}>
                   {new Date(myMembership.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function MyProfile() {
               <Input type="date" value={form.birthDate} onChange={(e) => setForm((f) => ({ ...f, birthDate: e.target.value }))} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)' }}>
               <Button type="submit" disabled={saving}>
                 {saving ? 'Saving…' : 'Save profile'}
               </Button>

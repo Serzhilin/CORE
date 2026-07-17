@@ -7,7 +7,7 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
 
 function OfferLink({ offer, copied, onCopy }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, maxWidth: 260 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', maxWidth: 260 }}>
       <span style={{ fontSize: '0.7rem', color: 'var(--color-charcoal-light)', wordBreak: 'break-all', lineHeight: 1.4 }}>
         {offer}
       </span>
@@ -16,7 +16,7 @@ function OfferLink({ offer, copied, onCopy }) {
         title="Copy link"
         style={{
           flexShrink: 0, background: 'none', border: '1px solid var(--color-sand)',
-          borderRadius: 0, padding: '3px 6px', cursor: 'pointer',
+          borderRadius: 0, padding: 'var(--space-3) var(--space-6)', cursor: 'pointer',
           fontSize: '0.7rem', color: copied ? 'var(--color-terracotta)' : 'var(--color-charcoal-light)',
           lineHeight: 1,
         }}
@@ -58,7 +58,7 @@ export default function LoginScreen({ onSuccess }) {
         setStatus('waiting')
 
         if (!isMobile) {
-          const dataUrl = await QRCode.toDataURL(offerUrl, { width: 220, margin: 2 })
+          const dataUrl = await QRCode.toDataURL(offerUrl, { width: 220, margin: 'var(--space-2)' })
           setQrDataUrl(dataUrl)
           unsub = subscribeToAuthSession(sessionId, ({ token, user, memberships, isPlatformAdmin }) =>
             finish(token, user, memberships, isPlatformAdmin)
@@ -73,13 +73,13 @@ export default function LoginScreen({ onSuccess }) {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'var(--color-cream)', padding: '32px 20px',
+      background: 'var(--color-cream)', padding: 'var(--space-32) var(--space-20)',
     }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <Heading as="h1" style={{ margin: '0 0 6px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'var(--space-28)' }}>
+          <Heading as="h1" style={{ margin: '0 0 var(--space-6)' }}>
             CORE
           </Heading>
           <p style={{ color: 'var(--color-charcoal-light)', margin: 0, fontSize: '0.95rem' }}>
@@ -88,9 +88,9 @@ export default function LoginScreen({ onSuccess }) {
         </div>
 
         {/* Card */}
-        <Card style={{ padding: 28 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, width: '100%' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, color: 'var(--color-charcoal-light)', textAlign: 'center', width: '100%' }}>
+        <Card style={{ padding: 'var(--space-28)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-20)', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-16)', color: 'var(--color-charcoal-light)', textAlign: 'center', width: '100%' }}>
 
               {/* Instruction */}
               {status !== 'error' && (
@@ -131,8 +131,8 @@ export default function LoginScreen({ onSuccess }) {
 
               {/* Desktop: QR code + w3ds:// link */}
               {status === 'waiting' && !isMobile && qrDataUrl && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <div style={{ padding: 12, background: 'white', borderRadius: 0, border: '1px solid var(--color-sand)', display: 'inline-block' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-8)' }}>
+                  <div style={{ padding: 'var(--space-12)', background: 'white', borderRadius: 0, border: '1px solid var(--color-sand)', display: 'inline-block' }}>
                     <img src={qrDataUrl} alt="QR code" width={200} height={200} style={{ display: 'block' }} />
                   </div>
                   {offer && <OfferLink offer={offer} copied={copied} onCopy={copyOffer} />}
@@ -141,12 +141,12 @@ export default function LoginScreen({ onSuccess }) {
 
               {/* Mobile: open wallet button + w3ds:// link */}
               {status === 'waiting' && isMobile && offer && (
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-8)' }}>
                   <a
                     href={offer}
                     style={{
-                      display: 'inline-flex', justifyContent: 'center', padding: '12px 28px',
-                      background: '#2563EB', color: 'white', borderRadius: 0, fontWeight: 600,
+                      display: 'inline-flex', justifyContent: 'center', padding: 'var(--space-12) var(--space-28)',
+                      background: 'var(--color-terracotta)', color: 'white', borderRadius: 0, fontWeight: 600,
                       fontSize: '1rem', textDecoration: 'none', width: '100%', boxSizing: 'border-box',
                     }}
                   >
@@ -159,7 +159,7 @@ export default function LoginScreen({ onSuccess }) {
               {/* Expiry note */}
               {status === 'waiting' && (
                 <div style={{ fontSize: '0.85rem' }}>
-                  <p style={{ margin: '0 0 2px', fontWeight: 700, color: 'var(--color-charcoal)' }}>
+                  <p style={{ margin: '0 0 var(--space-2)', fontWeight: 700, color: 'var(--color-charcoal)' }}>
                     Valid for 5 minutes
                   </p>
                   <p style={{ margin: 0 }}>If expired, refresh the page for a new code.</p>
@@ -167,7 +167,7 @@ export default function LoginScreen({ onSuccess }) {
               )}
 
               {/* W3DS info box */}
-              <div style={{ background: 'rgba(0,0,0,0.04)', borderRadius: 0, padding: '12px 16px', fontSize: '0.82rem', lineHeight: 1.6, textAlign: 'left', color: 'var(--color-charcoal-light)' }}>
+              <div style={{ background: 'rgba(0,0,0,0.04)', borderRadius: 0, padding: 'var(--space-12) var(--space-16)', fontSize: '0.82rem', lineHeight: 1.6, textAlign: 'left', color: 'var(--color-charcoal-light)' }}>
                 This app uses W3DS — a decentralised identity standard — to authenticate without passwords.
                 Your identity is stored in your wallet, never on our servers.
               </div>
@@ -178,7 +178,7 @@ export default function LoginScreen({ onSuccess }) {
         </Card>
 
         {/* Footer: Project of eCommons + Metastate */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, paddingTop: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-12)', paddingTop: 'var(--space-20)' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--color-charcoal-light)', whiteSpace: 'nowrap' }}>Project of</span>
           <a href="https://ecommons.space" target="_blank" rel="noopener noreferrer">
             <img src="/eCommons.svg" alt="eCommons" style={{ height: 28, opacity: 0.75 }} />

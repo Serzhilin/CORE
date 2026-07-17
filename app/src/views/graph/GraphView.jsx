@@ -38,7 +38,7 @@ export default function GraphView({ communityId, filters, selection, onSelection
     }
   }, [exportRef])
 
-  if (loading) return <Loading style={{ padding: 40 }}>Loading graph…</Loading>
+  if (loading) return <Loading style={{ padding: 'var(--space-32)' }}>Loading graph…</Loading>
   if (!graphData) return null
 
   function handleSelect(node) {

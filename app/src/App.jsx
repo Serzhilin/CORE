@@ -37,7 +37,7 @@ function Layout() {
     <TopBarSlotProvider>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
         <TopBar />
-        <main style={{ flex: 1, overflow: 'auto', padding: 32, background: 'var(--color-cream)', minHeight: 0 }}>
+        <main style={{ flex: 1, overflow: 'auto', padding: 'var(--space-32)', background: 'var(--color-cream)', minHeight: 0 }}>
           <Suspense fallback={<Loading>Loading view…</Loading>}>
             <Routes>
               <Route path="/" element={<OrganogramView />} />
@@ -61,7 +61,7 @@ export default function App() {
         <Route path="/deeplink-login" element={<DeeplinkLogin />} />
         <Route path="/superadmin" element={
           <UserProvider>
-            <Suspense fallback={<Loading style={{ padding: 32 }} />}>
+            <Suspense fallback={<Loading style={{ padding: 'var(--space-32)' }} />}>
               <SuperadminPage />
             </Suspense>
           </UserProvider>

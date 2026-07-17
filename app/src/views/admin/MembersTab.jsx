@@ -99,14 +99,14 @@ export default function MembersTab() {
 
   return (
     <Page maxWidth={1100}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 'var(--space-20)' }}>
         <Button onClick={() => { resetAddForm(); setAdding(true) }} style={{ fontSize: '0.85rem' }}>Add member</Button>
       </div>
 
       {adding && (
-        <Card variant="warm" style={{ padding: 20, marginBottom: 20 }}>
-          <h4 style={{ margin: '0 0 16px' }}>Add member</h4>
-          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <Card style={{ padding: 'var(--space-20)', marginBottom: 'var(--space-20)' }}>
+          <h4 style={{ margin: '0 0 var(--space-16)' }}>Add member</h4>
+          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 'var(--space-8)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div>
               <Label size="sm">eName</Label>
               <Input
@@ -118,7 +118,7 @@ export default function MembersTab() {
               />
             </div>
             {!enameChecked ? (
-              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'flex-end' }}>
                 <Button type="button" variant="secondary" disabled={checking || !addForm.ename.trim()} onClick={handleCheckEname} style={{ fontSize: '0.85rem' }}>
                   {checking ? 'Checking…' : 'Check eName'}
                 </Button>
@@ -127,17 +127,17 @@ export default function MembersTab() {
             ) : null}
           </form>
           {checkError && (
-            <ErrorText as="p" fontSize="0.85rem" style={{ margin: '10px 0 0' }}>{checkError}</ErrorText>
+            <ErrorText as="p" fontSize="0.85rem" style={{ margin: 'var(--space-10) 0 0' }}>{checkError}</ErrorText>
           )}
           {enameChecked && (
-          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end', marginTop: 14 }}>
+          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 'var(--space-8)', flexWrap: 'wrap', alignItems: 'flex-end', marginTop: 'var(--space-14)' }}>
             <div>
               <Label size="sm">First name</Label>
-              <span style={{ display: 'block', padding: '7px 10px', fontSize: '0.9rem' }}>{addForm.first_name}</span>
+              <span style={{ display: 'block', padding: 'var(--space-8) var(--space-10)', fontSize: '0.9rem' }}>{addForm.first_name}</span>
             </div>
             <div>
               <Label size="sm">Last name</Label>
-              <span style={{ display: 'block', padding: '7px 10px', fontSize: '0.9rem' }}>{addForm.last_name}</span>
+              <span style={{ display: 'block', padding: 'var(--space-8) var(--space-10)', fontSize: '0.9rem' }}>{addForm.last_name}</span>
             </div>
             <div>
               <Label size="sm">Joined</Label>
@@ -152,7 +152,7 @@ export default function MembersTab() {
                 ))}
               </Select>
             </div>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'flex-end' }}>
               <Button type="submit" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</Button>
               <Button type="button" variant="secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</Button>
             </div>
@@ -187,7 +187,7 @@ export default function MembersTab() {
                       >
                         {'@' + m.ename.replace(/^@/, '').slice(0, 6) + '...'}
                         {copiedId === m.personId && (
-                          <span style={{ marginLeft: 6, color: 'var(--color-green, #2e7d32)', fontSize: '0.75rem' }}>Copied!</span>
+                          <span style={{ marginLeft: 'var(--space-6)', color: 'var(--color-green)', fontSize: '0.75rem' }}>Copied!</span>
                         )}
                       </span>
                     ) : (
@@ -201,7 +201,7 @@ export default function MembersTab() {
                     {editingCell === `${m.personId}:type` ? (
                       <Select
                         autoFocus
-                        style={{ width: 'auto', fontSize: '0.8rem', padding: '4px 8px' }}
+                        style={{ width: 'auto', fontSize: '0.8rem', padding: 'var(--space-4) var(--space-8)' }}
                         value={m.membershipTypeId || ''}
                         onChange={(e) => { handleUpdate(m.personId, { membership_type_id: e.target.value || null }); setEditingCell(null) }}
                         onBlur={() => setEditingCell(null)}
@@ -212,7 +212,7 @@ export default function MembersTab() {
                         ))}
                       </Select>
                     ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)' }}>
                         {(() => {
                           const t = membershipTypes.find((t) => t.id === m.membershipTypeId)
                           return t ? <span title={t.name} className="emoji-mono" style={{ fontSize: '1rem' }}>{t.emoji || t.name}</span> : <span style={{ color: 'var(--color-charcoal-light)' }}>—</span>
@@ -222,7 +222,7 @@ export default function MembersTab() {
                           title="Edit membership type"
                           style={{
                             background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer',
-                            padding: 2, display: 'inline-flex', flexShrink: 0,
+                            padding: 'var(--space-2)', display: 'inline-flex', flexShrink: 0,
                             visibility: hoverCell === `${m.personId}:type` ? 'visible' : 'hidden',
                           }}
                         >
@@ -242,10 +242,10 @@ export default function MembersTab() {
                         value={m.joinedAt ? m.joinedAt.slice(0, 10) : ''}
                         onChange={(e) => { handleUpdate(m.personId, { joined_at: e.target.value || null }); setEditingCell(null) }}
                         onBlur={() => setEditingCell(null)}
-                        style={{ padding: '4px 8px', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem' }}
+                        style={{ padding: 'var(--space-4) var(--space-8)', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem' }}
                       />
                     ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)' }}>
                         <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
                           {m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                         </span>
@@ -254,7 +254,7 @@ export default function MembersTab() {
                           title="Edit joined date"
                           style={{
                             background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer',
-                            padding: 2, display: 'inline-flex', flexShrink: 0,
+                            padding: 'var(--space-2)', display: 'inline-flex', flexShrink: 0,
                             visibility: hoverCell === `${m.personId}:joined` ? 'visible' : 'hidden',
                           }}
                         >
@@ -267,7 +267,7 @@ export default function MembersTab() {
                     <button
                       onClick={() => handleRemove(m.personId, name)}
                       title="Remove from community"
-                      style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: '2px 4px', display: 'inline-flex', alignItems: 'center' }}
+                      style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
                     >
                       <TrashIcon size={15} />
                     </button>

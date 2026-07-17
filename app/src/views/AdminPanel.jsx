@@ -31,7 +31,7 @@ export default function AdminPanel() {
   )
 
   if (!isAdmin && !isWorkgroupAdmin) {
-    return <div style={{ color: 'var(--color-charcoal-light)', padding: 32 }}>Access denied.</div>
+    return <div style={{ color: 'var(--color-charcoal-light)', padding: 'var(--space-32)' }}>Access denied.</div>
   }
 
   const visibleTabs = isAdmin ? TABS : TABS.filter((t) => t.key === 'workgroups')
@@ -40,7 +40,7 @@ export default function AdminPanel() {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 'var(--space-28)' }}>
         <Tabs tabs={visibleTabs} activeKey={activeKey} onChange={(key) => navigate(`/admin/${key}`)} />
       </div>
 
