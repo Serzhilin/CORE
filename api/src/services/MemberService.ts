@@ -7,6 +7,7 @@ import { AvailabilityLog } from "../database/entities/AvailabilityLog";
 import { Workgroup } from "../database/entities/Workgroup";
 import { WorkgroupMembership } from "../database/entities/WorkgroupMembership";
 import { syncOrganizationToEvault } from "./OrganizationService";
+import { createMembershipEnvelope } from "./MembershipEnvelopeService";
 import { syncAvailabilityToEvault } from "./AvailabilityEnvelopeService";
 import { removeWorkgroupMember } from "./WorkgroupService";
 import { addPersonToCommunityChat, removePersonFromCommunityChat } from "./ChatService";
@@ -67,6 +68,9 @@ export async function addMember(
     );
     addPersonToCommunityChat(communityId, person.id).catch((err) =>
         logger.warn(err, "Community chat sync failed for member %s", membership.id)
+    );
+    createMembershipEnvelope(membership.id).catch((err) =>
+        logger.warn(err, "Membership envelope creation failed for member %s", membership.id)
     );
 
     return membership;
