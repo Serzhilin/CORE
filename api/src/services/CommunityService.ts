@@ -14,6 +14,7 @@ import { logger } from "../lib/logger";
 import { createEnvelope, updateEnvelope, findEnvelopesByOntology, getUserMetaEnvelopeId } from "../lib/evault-client";
 import { ONTOLOGIES } from "../lib/w3ds/ontology";
 import { syncOrganizationToEvault } from "./OrganizationService";
+import { createMembershipEnvelope } from "./MembershipEnvelopeService";
 import { getOrCreateCommunityChatId, syncCommunityChatToEvault, cascadeCommunityRenameToWorkgroupChats } from "./ChatService";
 
 const communityRepo = () => AppDataSource.getRepository(Community);
@@ -335,6 +336,15 @@ export async function linkCommunity(communityId: string, w3id: string, actingPer
     syncOrganizationToEvault(saved.id).catch((err) =>
         logger.warn(err, "Organization envelope creation failed for linked community %s", saved.id)
     );
+
+    const existingMemberships = await AppDataSource.getRepository(CommunityMembership).find({
+        where: { community_id: saved.id },
+    });
+    for (const m of existingMemberships) {
+        createMembershipEnvelope(m.id).catch((err) =>
+            logger.warn(err, "Membership envelope creation failed for member %s", m.id)
+        );
+    }
 
     return saved;
 }
