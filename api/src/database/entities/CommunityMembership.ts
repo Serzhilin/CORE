@@ -38,6 +38,12 @@ export class CommunityMembership {
     @Column({ type: "varchar", nullable: true })
     meta_envelope_id: string | null;
 
+    // Real eVault envelope id of this membership's Membership envelope, written to the
+    // MEMBER's own vault (not the community's) — distinct from meta_envelope_id above.
+    // Null until the community is linked AND the member has an ename (see MembershipEnvelopeService).
+    @Column({ type: "text", nullable: true })
+    membership_envelope_id: string | null;
+
     @CreateDateColumn()
     created_at: Date;
 
