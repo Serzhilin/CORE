@@ -1,7 +1,6 @@
 import axios from "axios";
 import { logger } from "../lib/logger";
-import { ONTOLOGIES } from "../lib/w3ds/ontology";
-import { upsertFromWebhook } from "./PersonService";
+import { dispatchPacket, getRegisteredOntologies } from "../lib/w3ds/packetDispatch";
 
 const AAAS_URL = process.env.AAAS_BASE_URL || "https://aaas.w3ds.metastate.foundation";
 
@@ -21,11 +20,11 @@ interface PacketsPage {
 // In-memory cursor — resets on restart, which is fine (we'll re-process recent packets).
 let lastPolledAt: string = new Date(Date.now() - 5 * 60 * 1000).toISOString();
 
-async function fetchPacketsPage(cursor?: string): Promise<PacketsPage> {
+async function fetchPacketsPage(ontology: string, cursor?: string): Promise<PacketsPage> {
     const apiKey = process.env.AAAS_API_KEY;
     if (!apiKey) return { packets: [] };
 
-    const params = new URLSearchParams({ ontology: ONTOLOGIES.User, from: lastPolledAt, limit: "100" });
+    const params = new URLSearchParams({ ontology, from: lastPolledAt, limit: "100" });
     if (cursor) params.set("cursor", cursor);
 
     const res = await axios.get<PacketsPage>(`${AAAS_URL}/api/packets?${params}`, {
@@ -35,9 +34,21 @@ async function fetchPacketsPage(cursor?: string): Promise<PacketsPage> {
     return { packets: res.data.packets ?? [], hasMore: res.data.hasMore, nextCursor: res.data.nextCursor };
 }
 
-async function handlePacket(packet: AaaSPacket): Promise<void> {
-    if (packet.ontology !== ONTOLOGIES.User) return;
-    await upsertFromWebhook(packet.w3id, packet.id, packet.data ?? {});
+async function pollOntology(ontology: string): Promise<number> {
+    let cursor: string | undefined;
+    let total = 0;
+    for (let page = 0; page < 50; page++) {
+        const { packets, hasMore, nextCursor } = await fetchPacketsPage(ontology, cursor);
+        total += packets.length;
+        for (const packet of packets) {
+            await dispatchPacket(packet.ontology, packet.w3id, packet.id, packet.data ?? {}).catch((err) =>
+                logger.warn(err, "AaaS: failed to handle packet %s", packet.id)
+            );
+        }
+        if (!hasMore || !nextCursor) break;
+        cursor = nextCursor;
+    }
+    return total;
 }
 
 export async function pollOnce(): Promise<void> {
@@ -45,16 +56,9 @@ export async function pollOnce(): Promise<void> {
 
     const pollStartedAt = new Date().toISOString();
     try {
-        let cursor: string | undefined;
         let total = 0;
-        for (let page = 0; page < 50; page++) {
-            const { packets, hasMore, nextCursor } = await fetchPacketsPage(cursor);
-            total += packets.length;
-            for (const packet of packets) {
-                await handlePacket(packet).catch((err) => logger.warn(err, "AaaS: failed to handle packet %s", packet.id));
-            }
-            if (!hasMore || !nextCursor) break;
-            cursor = nextCursor;
+        for (const ontology of getRegisteredOntologies()) {
+            total += await pollOntology(ontology);
         }
         if (total > 0) logger.info({ count: total }, "AaaS: processed packets");
         lastPolledAt = pollStartedAt;
