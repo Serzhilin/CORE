@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { logger } from "../lib/logger";
-import { ONTOLOGIES } from "../lib/w3ds/ontology";
-import { upsertFromWebhook } from "../services/PersonService";
+import { dispatchPacket } from "../lib/w3ds/packetDispatch";
 
 interface WebhookPacket {
     id: string;
@@ -20,9 +19,7 @@ export async function handleWebhook(req: Request, res: Response) {
     if (!packet?.id || !packet?.w3id || !packet?.schemaId) return;
 
     try {
-        if (packet.schemaId === ONTOLOGIES.User) {
-            await upsertFromWebhook(packet.w3id, packet.id, packet.data ?? {});
-        }
+        await dispatchPacket(packet.schemaId, packet.w3id, packet.id, packet.data ?? {});
     } catch (err) {
         logger.warn(err, "Webhook processing failed for %s / %s", packet.w3id, packet.schemaId);
     }
