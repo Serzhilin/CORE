@@ -3,6 +3,7 @@ import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { AvailabilityLog } from "../database/entities/AvailabilityLog";
 import { AvailabilityType } from "../database/entities/AvailabilityType";
 import { syncAvailabilityToEvault } from "./AvailabilityEnvelopeService";
+import { createAvailabilityLogEnvelope } from "./AvailabilityLogEnvelopeService";
 import { logger } from "../lib/logger";
 
 export interface AvailabilityState {
@@ -134,6 +135,11 @@ export async function applyAvailability(
         syncAvailabilityToEvault(saved.community_id).catch((err) =>
             logger.warn(err, "Availability envelope sync failed for membership %s", membershipId)
         );
+        if (log) {
+            createAvailabilityLogEnvelope(membershipId, log).catch((err) =>
+                logger.warn(err, "AvailabilityLog envelope creation failed for membership %s", membershipId)
+            );
+        }
         return saved;
     } catch (err) {
         await qr.rollbackTransaction();
