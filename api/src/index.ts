@@ -16,6 +16,7 @@ import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMember
 import { handleWebhook } from "./controllers/WebhookController";
 import { startPolling } from "./services/AaaSService";
 import { registerOntologyHandlers } from "./lib/w3ds/registerOntologyHandlers";
+import { registerReconcilers } from "./lib/w3ds/registerReconcilers";
 import { startReconciliation } from "./services/ReconciliationService";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
@@ -131,6 +132,7 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 AppDataSource.initialize()
     .then(() => {
         registerOntologyHandlers();
+        registerReconcilers();
         app.listen(port, () => logger.info(`CORE API running on :${port}`));
         startPolling();
         startReconciliation();

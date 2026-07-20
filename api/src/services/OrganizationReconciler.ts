@@ -4,6 +4,8 @@ import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { OrganizationMembershipType } from "../database/entities/OrganizationMembershipType";
 import { Person } from "../database/entities/Person";
 import { logger } from "../lib/logger";
+import { findEnvelopesByOntology } from "../lib/evault-client";
+import { ONTOLOGIES } from "../lib/w3ds/ontology";
 import { OrganizationEnvelopePayload, OrganizationPayloadMember } from "./organizationPayload";
 
 const communityRepo = () => AppDataSource.getRepository(Community);
@@ -191,4 +193,19 @@ export async function reconcileOrganizationPacket(
         return;
     }
     await reconcileOrganizationFromEvault(community.id, payload);
+}
+
+export async function organizationReconciliationSweep(): Promise<void> {
+    const communities = await communityRepo().find({ where: { provisioning_status: "linked" } });
+    for (const community of communities) {
+        if (!community.ename) continue;
+        try {
+            const envelopes = await findEnvelopesByOntology(community.ename, ONTOLOGIES.Organization, 1);
+            const payload = envelopes[0]?.parsed as unknown as OrganizationEnvelopePayload | null;
+            if (!payload) continue;
+            await reconcileOrganizationFromEvault(community.id, payload);
+        } catch (err) {
+            logger.warn(err, "OrganizationReconciler: sweep failed for community %s", community.id);
+        }
+    }
 }
