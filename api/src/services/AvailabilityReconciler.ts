@@ -17,7 +17,7 @@ async function reconcileStatuses(
     envelopeStatuses: AvailabilityEnvelopePayload["statuses"]
 ): Promise<void> {
     const repo = availabilityTypeRepo();
-    const localTypes = await repo.find({ where: { community_id: communityId } });
+    const localTypes = await repo.find({ where: { community_id: communityId, is_archived: false } });
     const localById = new Map(localTypes.map((t) => [t.id, t]));
     const envelopeIds = new Set(envelopeStatuses.map((s) => s.id));
 
