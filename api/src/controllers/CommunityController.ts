@@ -4,6 +4,7 @@ import { Community } from "../database/entities/Community";
 import { uploadFile } from "../lib/evault-client";
 import { logger } from "../lib/logger";
 import { triggerOrganizationReconcile } from "../services/OrganizationReconcileTrigger";
+import { triggerAvailabilityReconcile } from "../services/AvailabilityReconcileTrigger";
 
 export async function listCommunities(req: Request, res: Response) {
     const communities = await getMyCommunities(req.user!.userId);
@@ -28,6 +29,9 @@ export async function getCommunityHandler(req: Request, res: Response) {
     if (!community) { res.status(404).json({ error: "Community not found" }); return; }
     triggerOrganizationReconcile(req.params.id).catch((err) =>
         logger.warn(err, "OrganizationReconciler: request-triggered reconcile failed for community %s", req.params.id)
+    );
+    triggerAvailabilityReconcile(req.params.id).catch((err) =>
+        logger.warn(err, "AvailabilityReconciler: request-triggered reconcile failed for community %s", req.params.id)
     );
     res.json(community);
 }
