@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../database/data-source";
 import { Community } from "../database/entities/Community";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
@@ -159,8 +160,21 @@ async function reconcileRoster(
         }
     }
 
-    for (const local of localMemberships) {
-        if (matchedPersonIds.has(local.person_id)) continue;
+    const unmatchedLocal = localMemberships.filter((local) => !matchedPersonIds.has(local.person_id));
+    const unmatchedPersonIds = unmatchedLocal.map((local) => local.person_id);
+    const unmatchedPersons = unmatchedPersonIds.length
+        ? await personRepo().find({ where: { id: In(unmatchedPersonIds) } })
+        : [];
+    const unmatchedPersonById = new Map(unmatchedPersons.map((p) => [p.id, p]));
+
+    for (const local of unmatchedLocal) {
+        // This membership's person must have been envelope-eligible (ename + resolved
+        // meta_envelope_id) for its absence from the envelope to mean real removal —
+        // syncOrganizationToEvault silently skips ineligible people, so an ineligible
+        // person's absence is not evidence of anything. See OrganizationService.ts:38,44.
+        const person = unmatchedPersonById.get(local.person_id);
+        if (!person || !person.ename || !person.meta_envelope_id) continue;
+
         try {
             await cmRepo.delete(local.id);
             logger.warn(
