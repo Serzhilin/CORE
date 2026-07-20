@@ -6,6 +6,8 @@ import { AvailabilityType } from "../database/entities/AvailabilityType";
 import { Person } from "../database/entities/Person";
 import { logger } from "../lib/logger";
 import { AvailabilityEnvelopePayload } from "./availabilityPayload";
+import { findEnvelopesByOntology } from "../lib/evault-client";
+import { ONTOLOGIES } from "../lib/w3ds/ontology";
 
 const communityRepo = () => AppDataSource.getRepository(Community);
 const membershipRepo = () => AppDataSource.getRepository(CommunityMembership);
@@ -156,4 +158,19 @@ export async function reconcileAvailabilityPacket(
         return;
     }
     await reconcileAvailabilityFromEvault(community.id, payload);
+}
+
+export async function availabilityReconciliationSweep(): Promise<void> {
+    const communities = await communityRepo().find({ where: { provisioning_status: "linked" } });
+    for (const community of communities) {
+        if (!community.ename) continue;
+        try {
+            const envelopes = await findEnvelopesByOntology(community.ename, ONTOLOGIES.Availability, 1);
+            const payload = envelopes[0]?.parsed as unknown as AvailabilityEnvelopePayload | null;
+            if (!payload) continue;
+            await reconcileAvailabilityFromEvault(community.id, payload);
+        } catch (err) {
+            logger.warn(err, "AvailabilityReconciler: sweep failed for community %s", community.id);
+        }
+    }
 }

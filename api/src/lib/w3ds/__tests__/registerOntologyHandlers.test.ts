@@ -9,8 +9,13 @@ jest.mock("../../../services/OrganizationReconciler", () => ({
     reconcileOrganizationPacket: jest.fn().mockResolvedValue(undefined),
 }));
 
+jest.mock("../../../services/AvailabilityReconciler", () => ({
+    reconcileAvailabilityPacket: jest.fn().mockResolvedValue(undefined),
+}));
+
 import { upsertFromWebhook } from "../../../services/PersonService";
 import { reconcileOrganizationPacket } from "../../../services/OrganizationReconciler";
+import { reconcileAvailabilityPacket } from "../../../services/AvailabilityReconciler";
 import { registerOntologyHandlers } from "../registerOntologyHandlers";
 
 describe("registerOntologyHandlers", () => {
@@ -45,5 +50,19 @@ describe("registerOntologyHandlers", () => {
         await dispatchPacket(ONTOLOGIES.Organization, "@community-ename", "meta-2", { name: "Test Community" });
 
         expect(reconcileOrganizationPacket).toHaveBeenCalledWith("@community-ename", { name: "Test Community" });
+    });
+
+    it("registers a handler for ONTOLOGIES.Availability", () => {
+        registerOntologyHandlers();
+
+        expect(getRegisteredOntologies()).toContain(ONTOLOGIES.Availability);
+    });
+
+    it("routes Availability packets to reconcileAvailabilityPacket with ename and data", async () => {
+        registerOntologyHandlers();
+
+        await dispatchPacket(ONTOLOGIES.Availability, "@community-ename", "meta-3", { statuses: [], entries: [] });
+
+        expect(reconcileAvailabilityPacket).toHaveBeenCalledWith("@community-ename", { statuses: [], entries: [] });
     });
 });
