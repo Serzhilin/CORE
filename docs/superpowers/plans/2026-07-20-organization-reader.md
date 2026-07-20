@@ -28,7 +28,7 @@
 
 **Interfaces:**
 - Consumes: `OrganizationEnvelopePayload`, `OrganizationPayloadMember` from `./organizationPayload` (already exist — `OrganizationEnvelopePayload` has `name: string | null`, `chatId: string | null`, `legalInfo: { legalForm?, officialName?, kvkNumber?, rsin?, iban?, registeredAddress?, foundingDate?, statutenFileUri? }`, `branding: { logoUrl: string|null, photoUrl: string|null, primaryColor: string, titleFont: string }`, `membershipTypes: { id, name, description?, emoji: string|null }[]`, `members: OrganizationPayloadMember[]` (`{ participantId, eName, dateJoined: string|null, membershipTypeId: string|null }`), `admins: string[]`).
-- Produces: `reconcileOrganizationFromEvault(communityId: string, payload: OrganizationEnvelopePayload): Promise<void>` and `reconcileOrganizationPacket(communityEname: string, payload: OrganizationEnvelopePayload): Promise<void>` and `organizationReconciliationSweep(): Promise<void>` — all three consumed by Task 3. `reconcileOrganizationFromEvault` is also consumed directly by Task 2's trigger.
+- Produces: `reconcileOrganizationFromEvault(communityId: string, payload: OrganizationEnvelopePayload): Promise<void>` and `reconcileOrganizationPacket(communityEname: string, payload: OrganizationEnvelopePayload): Promise<void>`. `reconcileOrganizationFromEvault` is also consumed directly by Task 2's trigger and by Task 3's `organizationReconciliationSweep` — Task 3 Step 1 appends `organizationReconciliationSweep` to this same file; it is NOT part of Task 1's deliverable.
 
 - [ ] **Step 1: Write `OrganizationReconciler.ts`**
 
