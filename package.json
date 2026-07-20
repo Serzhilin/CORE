@@ -11,6 +11,6 @@
     "concurrently": "^9.1.2"
   },
   "dependencies": {
-    "@ecommons/ui": "github:Serzhilin/ecommons-ui#main"
+    "@ecommons/ui": "git+ssh://git@codeberg.org/eCommons/ecommons-ui.git#main"
   }
 }
