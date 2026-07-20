@@ -41,11 +41,19 @@ CORE's domain is relationally heavier: listing a community's roster, checking "i
 
 **Conclusion: a literal zero-table port of WVTTK's pattern is not viable for CORE.** A thin, explicitly-rebuildable local cache is required for roster/permission queries to stay fast — this is a design constraint, not a compromise of "W3DS-native," as long as the cache is provably reconstructible from eVault data alone and never the source of truth.
 
+## Global constraint: eVault is always the source of truth
+
+This holds for every ontology, without exception. Postgres — including the thin cache tables described below — is never authoritative for anything. A cache row existing, missing, or stale must never block or override an eVault read; on any conflict, eVault wins and the cache is corrected, not the reverse. This matches the standing project rule that DB is disposable cache and eVault is truth, deletes must remove the eVault envelope (not just a local row), and cache failures must be loud, never silent.
+
+**Cache update strategy** (resolves the "cache invalidation strategy" open question below): hybrid, not either/or —
+1. **Event-driven via AaaS**: extend `AaaSService.ts`'s existing poll (currently `User`-only) to cover all 6 ontologies, updating the relevant cache row as events arrive — same pattern CORE already runs in production, just widened.
+2. **Periodic reconciliation sweep**: AaaS/webhook delivery is fire-and-forget with no delivery guarantee (per the Awareness Protocol's prototype-level semantics), so event-driven updates alone can silently drift. A scheduled full (or diffed) re-read of each cached entity from its eVault envelope catches anything a missed event let slip — cadence TBD at planning time, but this sweep is mandatory, not optional, given event delivery has no guarantee.
+
 ## Target architecture (if pursued)
 
 1. **eVault becomes authoritative for all 6 ontologies above**, not just `User`. CORE would need to actually read them back (currently only `User` round-trips).
 2. **Build Reader services** (WVTTK naming convention): `OrganizationReader`, `WorkgroupReader`, `MembershipReader`, `AvailabilityReader` — hydrate domain objects from eVault on demand, replacing today's direct-Postgres reads in `CommunityService`/`MemberService`/etc.
-3. **Local tables become caches, not stores**: same physical tables could remain (`Workgroup`, `CommunityMembership`, etc.) but reclassified as a write-through/rebuild-on-boot index over eVault state, never written to directly by business logic — every write goes to eVault first, cache updates are derived.
+3. **Local tables become caches, not stores**: same physical tables could remain (`Workgroup`, `CommunityMembership`, etc.) but reclassified as a write-through/rebuild-on-boot index over eVault state, never written to directly by business logic — every write goes to eVault first, cache updates are derived via the AaaS + reconciliation strategy above.
 4. **Fix the `AvailabilityLog` gap**: give it a real ontology. Recommended: a new custom ontology `AvailabilityLog`, append-only, in the **person's own vault** (matches how `Membership` envelopes already live in the member's vault, not the community's) — kept separate from the `Availability` envelope for the same reason `Availability` was already split from `Organization`: avoid Awareness Protocol webhook noise on every append.
 5. **Roster fan-out needs batching**: any roster-rendering path must parallelize the N per-member `getEnvelope` calls and lean on the local cache (item 3) to avoid a live N-call fan-out on every page load.
 6. **Slug uniqueness**: `Community.slug` has no natural eVault-side uniqueness enforcement (it's a CORE business rule, not a W3DS identity concept) — the local cache index remains the practical place to enforce this, rebuilt from every community's `Organization` envelope at boot/on write.
@@ -53,7 +61,7 @@ CORE's domain is relationally heavier: listing a community's roster, checking "i
 ## Open design questions (not resolved by this analysis)
 
 - Exact shape of the new `AvailabilityLog` ontology (single growing array vs. one envelope per log entry) — affects Awareness Protocol payload size over a long-lived community.
-- Cache invalidation strategy: on-boot full rebuild vs. incremental webhook-driven updates vs. hybrid — CORE currently has no precedent for this (WVTTK's one cached entity is small enough that rebuild-on-boot is trivial; CORE's roster caches would not be).
+- Reconciliation sweep cadence (how often, full rebuild vs. diff) — cache update *strategy* is settled (AaaS-driven + mandatory periodic sweep, see above), but the interval and rebuild-vs-diff mechanics are a planning-time decision, not resolved here.
 - Migration ordering: reading back the 5 currently-write-only ontologies is a prerequisite for cache-ification of each entity independently — this could be staged per-entity rather than as one cutover.
 
 ## Non-goals of this analysis
