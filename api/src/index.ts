@@ -16,6 +16,7 @@ import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMember
 import { handleWebhook } from "./controllers/WebhookController";
 import { startPolling } from "./services/AaaSService";
 import { registerOntologyHandlers } from "./lib/w3ds/registerOntologyHandlers";
+import { startReconciliation } from "./services/ReconciliationService";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
     listWorkgroupsHandler, createWorkgroupHandler, updateWorkgroupHandler, deleteWorkgroupHandler,
@@ -132,6 +133,7 @@ AppDataSource.initialize()
         registerOntologyHandlers();
         app.listen(port, () => logger.info(`CORE API running on :${port}`));
         startPolling();
+        startReconciliation();
     })
     .catch((err) => {
         logger.error(err, "DB init failed");
