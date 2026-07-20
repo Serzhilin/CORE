@@ -15,6 +15,7 @@ import { listCommunities, createCommunityHandler, getCommunityHandler, updateCom
 import { listMembersHandler, addMemberHandler, updateMemberHandler, deleteMemberHandler, setMyAvailability, setMemberAvailability, getMemberAvailabilityLogHandler, updateMemberPersonHandler, lookupEnameHandler } from "./controllers/MemberController";
 import { handleWebhook } from "./controllers/WebhookController";
 import { startPolling } from "./services/AaaSService";
+import { registerOntologyHandlers } from "./lib/w3ds/registerOntologyHandlers";
 import { listHandler as listAtHandler, createHandler as createAtHandler, updateHandler as updateAtHandler, archiveHandler as archiveAtHandler } from "./controllers/AvailabilityTypeController";
 import {
     listWorkgroupsHandler, createWorkgroupHandler, updateWorkgroupHandler, deleteWorkgroupHandler,
@@ -128,6 +129,7 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 
 AppDataSource.initialize()
     .then(() => {
+        registerOntologyHandlers();
         app.listen(port, () => logger.info(`CORE API running on :${port}`));
         startPolling();
     })
