@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Button, Input, Badge, Loading, SectionLabel, ErrorText } from '@ecommons/ui'
+import { Card, Button, Input, Badge, Loading, SectionLabel, ErrorText, Heading } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -134,7 +134,7 @@ export default function SuperadminPage() {
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-32)', fontFamily: 'var(--font-sans)' }}>
-      <h1 style={{ fontFamily: 'var(--font-title)', margin: '0 0 var(--space-24)' }}>Superadmin — Communities</h1>
+      <Heading as="h1" style={{ margin: '0 0 var(--space-24)' }}>Superadmin — Communities</Heading>
 
       {listError && <div style={{ color: 'var(--color-red)', marginBottom: 'var(--space-16)' }}>{listError}</div>}
 

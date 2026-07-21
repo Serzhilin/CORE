@@ -12,3 +12,11 @@ Loading/skeleton state — "Loading…" text hand-written per view.
 Label — <label style={{...}}> repeated with the same fontSize/fontWeight/marginBottom every form field, never pulled into a component.
 Typography scale — no Heading/Text components; font sizes stay magic literals (0.85rem, 0.72rem...) per file.
 Page/layout shell — no Container/Sidebar/Stack — each view builds its own root flex div from scratch.
+
+Frontend styling foundation (2026-07-21, see docs/superpowers/specs/2026-07-21-frontend-styling-foundation-design.md):
+- Deferred: migrate 23 hand-rolled icon-button call sites to `Button variant="ghost"` (visual-fit
+  verification needed per-site, not a pure mechanical swap)
+- Deferred: migrate ~29 near-duplicate flex row/column inline-style blocks to the new `.row`/`.stack`
+  utility classes
+- Deferred: adopt the new `Muted` component at the 19 existing "muted small text" inline-style call
+  sites

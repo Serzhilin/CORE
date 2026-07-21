@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td, ErrorText, Page } from '@ecommons/ui'
+import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td, ErrorText, Page, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
 
@@ -105,7 +105,7 @@ export default function MembersTab() {
 
       {adding && (
         <Card style={{ padding: 'var(--space-20)', marginBottom: 'var(--space-20)' }}>
-          <h4 style={{ margin: '0 0 var(--space-16)' }}>Add member</h4>
+          <SectionLabel as="h4" style={{ margin: '0 0 var(--space-16)' }}>Add member</SectionLabel>
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 'var(--space-8)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div>
               <Label size="sm">eName</Label>

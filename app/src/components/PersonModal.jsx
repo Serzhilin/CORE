@@ -1,4 +1,4 @@
-import { Card, Badge, Avatar, SectionLabel } from '@ecommons/ui'
+import { Card, Badge, Avatar, SectionLabel, Heading } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import AvailabilityBadge from './AvailabilityBadge'
@@ -41,9 +41,9 @@ export default function PersonModal({ member, onClose }) {
               {(member.firstName || member.email || '?')[0].toUpperCase()}
             </Avatar>
             <div>
-              <h2 style={{ fontFamily: 'var(--font-title)', margin: '0 0 var(--space-4)' }}>
+              <Heading as="h2" fontSize="1.3rem" style={{ margin: '0 0 var(--space-4)' }}>
                 {[member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'}
-              </h2>
+              </Heading>
               <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
                 {member.isAdmin && <Badge variant="plain" style={{ fontSize: '0.75rem', background: 'var(--color-sand)', padding: 'var(--space-2) var(--space-8)' }}>Admin</Badge>}
                 {member.membershipType && (
