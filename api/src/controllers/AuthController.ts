@@ -18,7 +18,14 @@ const sessions = new EventEmitter();
 sessions.setMaxListeners(500);
 const sessionResults = new Map<string, object>();
 const sessionReturnTo = new Map<string, string>();
-setInterval(() => { sessionResults.clear(); sessionReturnTo.clear(); }, 30 * 60 * 1000);
+// Sessions we actually issued via getOffer, keyed by issuance time — enforces the
+// w3ds://auth contract's "store session for 5 minutes, one-time-use" requirement.
+// Without this, any signature the user produced for an unrelated payload/session
+// elsewhere could be replayed here as a login, since verifySignature alone only
+// proves the eName controls the key, not that this specific session was ours to offer.
+const sessionIssuedAt = new Map<string, number>();
+const SESSION_TTL_MS = 5 * 60 * 1000;
+setInterval(() => { sessionResults.clear(); sessionReturnTo.clear(); sessionIssuedAt.clear(); }, 30 * 60 * 1000);
 
 function serializePerson(p: Person) {
     return {
@@ -56,6 +63,7 @@ export async function getOffer(req: Request, res: Response) {
     const sessionId = uuidv4();
     const returnTo = typeof req.query.returnTo === "string" && req.query.returnTo.startsWith("/") ? req.query.returnTo : "/";
     sessionReturnTo.set(sessionId, returnTo);
+    sessionIssuedAt.set(sessionId, Date.now());
     const redirectUrl = new URL("/api/auth/login", baseUrl).toString();
     const offer = `w3ds://auth?redirect=${redirectUrl}&session=${sessionId}&platform=CORE`;
     res.json({ offer, sessionId });
@@ -68,6 +76,13 @@ export async function epassportLogin(req: Request, res: Response) {
 
     const cached = sessionResults.get(session);
     if (cached) { sessionResults.delete(session); res.json(cached); return; }
+
+    const issuedAt = sessionIssuedAt.get(session);
+    if (!issuedAt || Date.now() - issuedAt > SESSION_TTL_MS) {
+        res.status(401).json({ error: "Session expired or unknown" });
+        return;
+    }
+    sessionIssuedAt.delete(session);
 
     if (process.env.USE_LOCAL_W3DS !== "true") {
         const registryUrl = process.env.PUBLIC_REGISTRY_URL;

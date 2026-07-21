@@ -35,10 +35,10 @@ describe("AaaSService.pollOnce", () => {
     it("polls every registered ontology and dispatches each packet", async () => {
         mockedAxios.get.mockImplementation((url: string) => {
             if (url.includes("ontology=ontology-a")) {
-                return Promise.resolve({ data: { packets: [{ id: "meta-a1", w3id: "@w3id-a", ontology: "ontology-a", data: { x: 1 } }] } });
+                return Promise.resolve({ data: { packets: [{ id: "meta-a1", w3id: "@w3id-a", schemaId: "ontology-a", data: { x: 1 } }] } });
             }
             if (url.includes("ontology=ontology-b")) {
-                return Promise.resolve({ data: { packets: [{ id: "meta-b1", w3id: "@w3id-b", ontology: "ontology-b", data: { y: 2 } }] } });
+                return Promise.resolve({ data: { packets: [{ id: "meta-b1", w3id: "@w3id-b", schemaId: "ontology-b", data: { y: 2 } }] } });
             }
             return Promise.resolve({ data: { packets: [] } });
         });
@@ -50,7 +50,7 @@ describe("AaaSService.pollOnce", () => {
     });
 
     it("continues polling remaining ontologies when dispatch fails for one packet", async () => {
-        mockedAxios.get.mockResolvedValue({ data: { packets: [{ id: "meta-1", w3id: "@w3id-1", ontology: "ontology-a", data: {} }] } });
+        mockedAxios.get.mockResolvedValue({ data: { packets: [{ id: "meta-1", w3id: "@w3id-1", schemaId: "ontology-a", data: {} }] } });
         (dispatchPacket as jest.Mock).mockRejectedValueOnce(new Error("boom"));
 
         await expect(pollOnce()).resolves.toBeUndefined();

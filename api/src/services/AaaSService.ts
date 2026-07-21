@@ -7,7 +7,7 @@ const AAAS_URL = process.env.AAAS_BASE_URL || "https://aaas.w3ds.metastate.found
 interface AaaSPacket {
     id: string;
     w3id: string;
-    ontology: string;
+    schemaId: string;
     data: Record<string, unknown> | null;
 }
 
@@ -41,7 +41,7 @@ async function pollOntology(ontology: string): Promise<number> {
         const { packets, hasMore, nextCursor } = await fetchPacketsPage(ontology, cursor);
         total += packets.length;
         for (const packet of packets) {
-            await dispatchPacket(packet.ontology, packet.w3id, packet.id, packet.data ?? {}).catch((err) =>
+            await dispatchPacket(packet.schemaId, packet.w3id, packet.id, packet.data ?? {}).catch((err) =>
                 logger.warn(err, "AaaS: failed to handle packet %s", packet.id)
             );
         }
