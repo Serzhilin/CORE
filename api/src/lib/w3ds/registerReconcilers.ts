@@ -2,6 +2,7 @@
 import { registerReconciler } from "../../services/ReconciliationService";
 import { organizationReconciliationSweep } from "../../services/OrganizationReconciler";
 import { availabilityReconciliationSweep } from "../../services/AvailabilityReconciler";
+import { workgroupReconciliationSweep } from "../../services/WorkgroupReconciler";
 
 // Called once at startup, alongside registerOntologyHandlers() and before
 // startReconciliation() — every entity that cuts its cache over to
@@ -9,4 +10,5 @@ import { availabilityReconciliationSweep } from "../../services/AvailabilityReco
 export function registerReconcilers(): void {
     registerReconciler("organization", 60 * 60_000, organizationReconciliationSweep);
     registerReconciler("availability", 60 * 60_000, availabilityReconciliationSweep);
+    registerReconciler("workgroup", 60 * 60_000, workgroupReconciliationSweep);
 }

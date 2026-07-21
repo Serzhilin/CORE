@@ -3,6 +3,7 @@ import { ONTOLOGIES } from "./ontology";
 import { upsertFromWebhook } from "../../services/PersonService";
 import { reconcileOrganizationPacket } from "../../services/OrganizationReconciler";
 import { reconcileAvailabilityPacket } from "../../services/AvailabilityReconciler";
+import { reconcileWorkgroupPacket } from "../../services/WorkgroupReconciler";
 
 // Called once at startup. Every ontology CORE needs to read back from eVault
 // (via webhook or AaaS poll) gets one line here — see packetDispatch.ts.
@@ -17,5 +18,9 @@ export function registerOntologyHandlers(): void {
 
     registerPacketHandler(ONTOLOGIES.Availability, async (w3id, _metaEnvelopeId, data) => {
         await reconcileAvailabilityPacket(w3id, data as unknown as import("../../services/availabilityPayload").AvailabilityEnvelopePayload);
+    });
+
+    registerPacketHandler(ONTOLOGIES.Workgroup, async (w3id, metaEnvelopeId, data) => {
+        await reconcileWorkgroupPacket(w3id, metaEnvelopeId, data as unknown as import("../../services/workgroupPayload").WorkgroupEnvelopePayload);
     });
 }
