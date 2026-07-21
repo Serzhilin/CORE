@@ -60,8 +60,11 @@ export async function getOrCreateCommunityChatId(communityId: string, envelopeId
     await syncCommunityChatToEvault(community.id);
 }
 
-/** Fetch-merge-write: rebuilds name/description/avatar/participantIds/members from current
- *  Community + membership state, preserving every other field. Fire-and-forget caller. */
+/** Fetch-merge-write: refreshes name/description/avatar and ensures every current community
+ *  member is a chat participant, preserving every other field — including participants that
+ *  aren't community members (partners, guests, or additions from another platform). Never
+ *  removes a participant; membership removal is handled separately by
+ *  removePersonFromCommunityChat. Fire-and-forget caller. */
 export async function syncCommunityChatToEvault(communityId: string): Promise<void> {
     const community = await communityRepo().findOne({ where: { id: communityId } });
     if (!community?.chat_envelope_id || !community.ename) {
@@ -76,21 +79,23 @@ export async function syncCommunityChatToEvault(communityId: string): Promise<vo
     }
 
     const memberships = await membershipRepo().find({ where: { community_id: communityId } });
-    const participantIds: string[] = [];
-    const members: string[] = [];
+    const existingParticipantIds = Array.isArray(current.participantIds) ? (current.participantIds as string[]) : [];
+    const existingMembers = Array.isArray(current.members) ? (current.members as string[]) : [];
+    const participantIds = new Set(existingParticipantIds);
+    const members = new Set(existingMembers);
     for (const m of memberships) {
         const p = await resolveParticipant(m.person_id);
         if (!p) continue;
-        participantIds.push(p.metaId);
-        members.push(p.ename);
+        participantIds.add(p.metaId);
+        members.add(p.ename);
     }
 
     const merged = mergeCommunityChatFields(current, {
         name: community.name,
         description: community.description,
         avatar: community.logo_url,
-        participantIds,
-        members,
+        participantIds: Array.from(participantIds),
+        members: Array.from(members),
     });
 
     await updateEnvelope({
