@@ -53,6 +53,12 @@ New `api/src/services/MembershipReconciler.ts`, single entry point `reconcileMem
 - No admin review/approval queue for bootstrapped stub communities — discovery is fully automatic, matching "she can use any platform" with no manual linking step. A bootstrapped community is a real, if minimal, local `Community` row from the moment it's discovered.
 - `WorkgroupReader` stays out of scope, its own future plan.
 
+## Known limitation: depends on the joining platform keeping both envelopes in sync
+
+A membership only becomes *visible* in CORE (a real `CommunityMembership` row) once the foreign community's own **Organization** envelope roster (`members[]`) includes the person — that's the only thing `reconcileRoster` ever acts on. A Membership envelope with no matching Organization roster entry yet still bootstraps a Community stub (so CORE now knows the community exists) but creates no visible membership for the person — she joined elsewhere, opens CORE, and doesn't see it, with no error surfaced anywhere.
+
+This holds up as long as every platform that lets someone join a community keeps both envelopes in sync on that action — the same contract CORE's own join flow already follows internally (member's Membership envelope + community's Organization roster, written together). Confirmed and accepted 2026-07-21: this is treated as an ecosystem-level convention platforms are expected to honor, not a gap CORE defends against. No fallback (e.g. a placeholder membership row created from the Membership envelope alone) is built, since that would require a second writer of `CommunityMembership` racing `OrganizationReconciler.reconcileRoster` — a real design cost, deliberately not taken on here.
+
 ## Testing
 
 Same convention as the prior two Readers: no test in this repo touches a real `AppDataSource`/database. `slugify()` is pure and gets direct unit tests (diacritics, empty/symbols-only input, normal names). `MembershipReconcileTrigger.ts` gets the same 4-test suite shape as `AvailabilityReconcileTrigger.test.ts`, keyed by `personId`. The rest of `MembershipReconciler.ts` is verified via a manual smoke-test sequence (specified in the implementation plan):
