@@ -1,0 +1,128 @@
+/* Member table zebra-stripe (replaces idx-driven inline background) */
+.memberTable tbody tr:nth-child(even) {
+  background: var(--color-cream);
+}
+
+/* Header bar (Add member button, right-aligned) */
+.headerBar {
+  justify-content: flex-end;
+  margin-bottom: var(--space-20);
+}
+
+/* Shared small-button font-size used across the add-member inline forms */
+.btnSm {
+  font-size: 0.85rem;
+}
+
+/* Add-member card + form layout */
+.addCard {
+  padding: var(--space-20);
+  margin-bottom: var(--space-20);
+}
+
+.addMemberLabel {
+  margin: 0 0 var(--space-16);
+}
+
+.addMemberForm {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.addMemberFormSpaced {
+  margin-top: var(--space-14);
+}
+
+.enameInput {
+  font-family: monospace;
+  width: 220px;
+}
+
+.formButtonGroup {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-end;
+}
+
+.staticFieldValue {
+  display: block;
+  padding: var(--space-8) var(--space-10);
+  font-size: 0.9rem;
+}
+
+/* Member table card + cells */
+.tableCard {
+  overflow: auto;
+}
+
+.nameCell {
+  font-weight: 500;
+}
+
+.enameCopy {
+  font-size: 0.8rem;
+  font-family: monospace;
+  cursor: pointer;
+  color: var(--color-charcoal-light);
+}
+
+.copiedBadge {
+  margin-left: var(--space-6);
+  color: var(--color-green);
+  font-size: 0.75rem;
+}
+
+.enameEmpty {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+.inlineSelect {
+  width: auto;
+  font-size: 0.8rem;
+  padding: var(--space-4) var(--space-8);
+}
+
+/* Inline display row used for membership-type and joined-date cells */
+.inlineCellRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.emojiLarge {
+  font-size: 1rem;
+}
+
+.typeEmpty {
+  color: var(--color-charcoal-light);
+}
+
+/* Hover-reveal pencil-edit button wrapper (visibility toggle stays inline, it's runtime-computed) */
+.editableCell {
+  flex-shrink: 0;
+}
+
+.dateInput {
+  padding: var(--space-4) var(--space-8);
+  border-radius: 0;
+  border: 1px solid var(--color-sand-dark);
+  font-size: 0.85rem;
+}
+
+.joinedDateText {
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--color-red);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+}

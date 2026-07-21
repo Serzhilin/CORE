@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Card, Button, Input, Select, Label, TrashIcon, Table, Thead, Th, Td, ErrorText, Page, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../../context/CommunityContext'
 import { addMember, updateMember, removeMember, listMembershipTypes, lookupMemberEname } from '../../api/client'
+import styles from './MembersTab.module.css'
 
 export default function MembersTab() {
   const { communityId, community, refresh } = useCommunity()
@@ -99,18 +100,18 @@ export default function MembersTab() {
 
   return (
     <Page maxWidth={1100}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 'var(--space-20)' }}>
-        <Button onClick={() => { resetAddForm(); setAdding(true) }} style={{ fontSize: '0.85rem' }}>Add member</Button>
+      <div className={`row ${styles.headerBar}`}>
+        <Button onClick={() => { resetAddForm(); setAdding(true) }} className={styles.btnSm}>Add member</Button>
       </div>
 
       {adding && (
-        <Card style={{ padding: 'var(--space-20)', marginBottom: 'var(--space-20)' }}>
-          <SectionLabel as="h4" style={{ margin: '0 0 var(--space-16)' }}>Add member</SectionLabel>
-          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 'var(--space-8)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <Card className={styles.addCard}>
+          <SectionLabel as="h4" className={styles.addMemberLabel}>Add member</SectionLabel>
+          <form onSubmit={handleAdd} className={styles.addMemberForm}>
             <div>
               <Label size="sm">eName</Label>
               <Input
-                style={{ fontFamily: 'monospace', width: 220 }}
+                className={styles.enameInput}
                 placeholder="@uuid…"
                 value={addForm.ename}
                 disabled={enameChecked}
@@ -118,11 +119,11 @@ export default function MembersTab() {
               />
             </div>
             {!enameChecked ? (
-              <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'flex-end' }}>
-                <Button type="button" variant="secondary" disabled={checking || !addForm.ename.trim()} onClick={handleCheckEname} style={{ fontSize: '0.85rem' }}>
+              <div className={styles.formButtonGroup}>
+                <Button type="button" variant="secondary" disabled={checking || !addForm.ename.trim()} onClick={handleCheckEname} className={styles.btnSm}>
                   {checking ? 'Checking…' : 'Check eName'}
                 </Button>
-                <Button type="button" variant="secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</Button>
+                <Button type="button" variant="secondary" onClick={() => setAdding(false)} className={styles.btnSm}>Cancel</Button>
               </div>
             ) : null}
           </form>
@@ -130,14 +131,14 @@ export default function MembersTab() {
             <ErrorText as="p" fontSize="0.85rem" style={{ margin: 'var(--space-10) 0 0' }}>{checkError}</ErrorText>
           )}
           {enameChecked && (
-          <form onSubmit={handleAdd} style={{ display: 'flex', gap: 'var(--space-8)', flexWrap: 'wrap', alignItems: 'flex-end', marginTop: 'var(--space-14)' }}>
+          <form onSubmit={handleAdd} className={`${styles.addMemberForm} ${styles.addMemberFormSpaced}`}>
             <div>
               <Label size="sm">First name</Label>
-              <span style={{ display: 'block', padding: 'var(--space-8) var(--space-10)', fontSize: '0.9rem' }}>{addForm.first_name}</span>
+              <span className={styles.staticFieldValue}>{addForm.first_name}</span>
             </div>
             <div>
               <Label size="sm">Last name</Label>
-              <span style={{ display: 'block', padding: 'var(--space-8) var(--space-10)', fontSize: '0.9rem' }}>{addForm.last_name}</span>
+              <span className={styles.staticFieldValue}>{addForm.last_name}</span>
             </div>
             <div>
               <Label size="sm">Joined</Label>
@@ -152,17 +153,17 @@ export default function MembersTab() {
                 ))}
               </Select>
             </div>
-            <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'flex-end' }}>
-              <Button type="submit" disabled={addSaving} style={{ fontSize: '0.85rem' }}>Add</Button>
-              <Button type="button" variant="secondary" onClick={() => setAdding(false)} style={{ fontSize: '0.85rem' }}>Cancel</Button>
+            <div className={styles.formButtonGroup}>
+              <Button type="submit" disabled={addSaving} className={styles.btnSm}>Add</Button>
+              <Button type="button" variant="secondary" onClick={() => setAdding(false)} className={styles.btnSm}>Cancel</Button>
             </div>
           </form>
           )}
         </Card>
       )}
 
-      <Card style={{ overflow: 'auto' }}>
-        <Table>
+      <Card className={styles.tableCard}>
+        <Table className={styles.memberTable}>
           <Thead>
             <tr>
               {['Name', 'Email', 'Phone', 'eName', 'Membership type', 'Joined', ''].map((h) => (
@@ -171,11 +172,11 @@ export default function MembersTab() {
             </tr>
           </Thead>
           <tbody>
-            {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m, idx) => {
+            {[...(community?.members || [])].sort((a, b) => (a.firstName || '').localeCompare(b.firstName || '')).map((m) => {
               const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
               return (
-                <tr key={m.personId} style={{ background: idx % 2 === 0 ? 'transparent' : 'var(--color-cream)' }}>
-                  <Td style={{ fontWeight: 500 }}>{name}</Td>
+                <tr key={m.personId}>
+                  <Td className={styles.nameCell}>{name}</Td>
                   <Td muted>{m.email || '—'}</Td>
                   <Td muted>{m.phone || '—'}</Td>
                   <Td>
@@ -183,15 +184,15 @@ export default function MembersTab() {
                       <span
                         onClick={() => handleCopyEname(m.personId, m.ename)}
                         title="Click to copy"
-                        style={{ fontSize: '0.8rem', fontFamily: 'monospace', cursor: 'pointer', color: 'var(--color-charcoal-light)' }}
+                        className={styles.enameCopy}
                       >
                         {'@' + m.ename.replace(/^@/, '').slice(0, 6) + '...'}
                         {copiedId === m.personId && (
-                          <span style={{ marginLeft: 'var(--space-6)', color: 'var(--color-green)', fontSize: '0.75rem' }}>Copied!</span>
+                          <span className={styles.copiedBadge}>Copied!</span>
                         )}
                       </span>
                     ) : (
-                      <span style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>—</span>
+                      <span className={styles.enameEmpty}>—</span>
                     )}
                   </Td>
                   <Td
@@ -201,7 +202,7 @@ export default function MembersTab() {
                     {editingCell === `${m.personId}:type` ? (
                       <Select
                         autoFocus
-                        style={{ width: 'auto', fontSize: '0.8rem', padding: 'var(--space-4) var(--space-8)' }}
+                        className={styles.inlineSelect}
                         value={m.membershipTypeId || ''}
                         onChange={(e) => { handleUpdate(m.personId, { membership_type_id: e.target.value || null }); setEditingCell(null) }}
                         onBlur={() => setEditingCell(null)}
@@ -212,22 +213,21 @@ export default function MembersTab() {
                         ))}
                       </Select>
                     ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)' }}>
+                      <span className={styles.inlineCellRow}>
                         {(() => {
                           const t = membershipTypes.find((t) => t.id === m.membershipTypeId)
-                          return t ? <span title={t.name} className="emoji-mono" style={{ fontSize: '1rem' }}>{t.emoji || t.name}</span> : <span style={{ color: 'var(--color-charcoal-light)' }}>—</span>
+                          return t ? <span title={t.name} className={`emoji-mono ${styles.emojiLarge}`}>{t.emoji || t.name}</span> : <span className={styles.typeEmpty}>—</span>
                         })()}
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={styles.editableCell}
                           onClick={() => setEditingCell(`${m.personId}:type`)}
                           title="Edit membership type"
-                          style={{
-                            background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer',
-                            padding: 'var(--space-2)', display: 'inline-flex', flexShrink: 0,
-                            visibility: hoverCell === `${m.personId}:type` ? 'visible' : 'hidden',
-                          }}
+                          style={{ visibility: hoverCell === `${m.personId}:type` ? 'visible' : 'hidden' }}
                         >
                           {pencilIcon}
-                        </button>
+                        </Button>
                       </span>
                     )}
                   </Td>
@@ -242,24 +242,23 @@ export default function MembersTab() {
                         value={m.joinedAt ? m.joinedAt.slice(0, 10) : ''}
                         onChange={(e) => { handleUpdate(m.personId, { joined_at: e.target.value || null }); setEditingCell(null) }}
                         onBlur={() => setEditingCell(null)}
-                        style={{ padding: 'var(--space-4) var(--space-8)', borderRadius: 0, border: '1px solid var(--color-sand-dark)', fontSize: '0.85rem' }}
+                        className={styles.dateInput}
                       />
                     ) : (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)' }}>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>
+                      <span className={styles.inlineCellRow}>
+                        <span className={styles.joinedDateText}>
                           {m.joinedAt ? new Date(m.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                         </span>
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={styles.editableCell}
                           onClick={() => setEditingCell(`${m.personId}:joined`)}
                           title="Edit joined date"
-                          style={{
-                            background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer',
-                            padding: 'var(--space-2)', display: 'inline-flex', flexShrink: 0,
-                            visibility: hoverCell === `${m.personId}:joined` ? 'visible' : 'hidden',
-                          }}
+                          style={{ visibility: hoverCell === `${m.personId}:joined` ? 'visible' : 'hidden' }}
                         >
                           {pencilIcon}
-                        </button>
+                        </Button>
                       </span>
                     )}
                   </Td>
@@ -267,7 +266,7 @@ export default function MembersTab() {
                     <button
                       onClick={() => handleRemove(m.personId, name)}
                       title="Remove from community"
-                      style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
+                      className={styles.deleteBtn}
                     >
                       <TrashIcon size={15} />
                     </button>
