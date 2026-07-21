@@ -19,7 +19,7 @@ import { getOrCreateCommunityChatId, syncCommunityChatToEvault, cascadeCommunity
 
 const communityRepo = () => AppDataSource.getRepository(Community);
 
-const DEFAULT_AVAILABILITY_TYPES = [
+export const DEFAULT_AVAILABILITY_TYPES = [
     { name: "Vakantie", emoji: "🏖", sort_order: 0 },
     { name: "Burnout", emoji: "🔋", sort_order: 1 },
     { name: "Ziek", emoji: "🤒", sort_order: 2 },
