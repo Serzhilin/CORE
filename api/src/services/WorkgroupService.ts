@@ -25,7 +25,7 @@ interface SyncExclusions {
     excludeRoleAssignment?: { membershipId: string; roleId: string };
 }
 
-async function syncWorkgroupToEvault(workgroupId: string, exclude: SyncExclusions = {}): Promise<void> {
+export async function syncWorkgroupToEvault(workgroupId: string, exclude: SyncExclusions = {}): Promise<void> {
     const wg = await wgRepo().findOne({ where: { id: workgroupId } });
     if (!wg) return;
     const community = await communityRepo().findOne({ where: { id: wg.community_id } });
@@ -166,7 +166,9 @@ export async function addWorkgroupMember(workgroupId: string, personId: string):
 export async function updateWorkgroupMember(workgroupMembershipId: string, data: { is_workgroup_admin: boolean }): Promise<WorkgroupMembership> {
     const wm = await wgmRepo().findOneOrFail({ where: { id: workgroupMembershipId } });
     wm.is_workgroup_admin = data.is_workgroup_admin;
-    return wgmRepo().save(wm);
+    const saved = await wgmRepo().save(wm);
+    syncWorkgroupToEvault(saved.workgroup_id).catch((err) => logger.warn(err, "Workgroup envelope sync failed for %s", saved.workgroup_id));
+    return saved;
 }
 
 export async function removeWorkgroupMember(workgroupId: string, personId: string, alsoRemoveFromChat = false): Promise<void> {
