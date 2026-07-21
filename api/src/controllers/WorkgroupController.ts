@@ -5,10 +5,16 @@ import {
     addWorkgroupMember, updateWorkgroupMember, removeWorkgroupMember,
     assignRole, unassignRole, getWorkgroupMembership,
 } from "../services/WorkgroupService";
+import { logger } from "../lib/logger";
+import { triggerWorkgroupReconcile } from "../services/WorkgroupReconcileTrigger";
 
 export const listWorkgroupsHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.json(await listWorkgroups(req.params.cid));
+        const workgroups = await listWorkgroups(req.params.cid);
+        triggerWorkgroupReconcile(req.params.cid).catch((err) =>
+            logger.warn(err, "WorkgroupReconciler: request-triggered reconcile failed for community %s", req.params.cid)
+        );
+        res.json(workgroups);
     } catch (err) {
         next(err);
     }
