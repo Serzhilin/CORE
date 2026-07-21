@@ -1,0 +1,95 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-16);
+  padding: var(--space-16);
+  background: var(--color-cream);
+}
+
+.card {
+  border-top-width: 3px;
+  border-top-style: solid;
+  overflow: hidden;
+}
+
+.unassignedCard {
+  border-top-color: var(--color-sand-dark);
+}
+
+.unassignedHeader {
+  padding: var(--space-12) var(--space-16) var(--space-8);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: var(--font-title);
+  color: var(--color-charcoal-light);
+}
+
+.workgroupHeaderRow {
+  padding: var(--space-12) var(--space-16) var(--space-8);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.workgroupHeaderName {
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: var(--font-title);
+}
+
+.workgroupHeaderCount {
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+}
+
+.cardBody {
+  padding-bottom: var(--space-12);
+}
+
+.emptyState {
+  padding: var(--space-4) var(--space-16);
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+.memberRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-5) var(--space-16);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.avatarImg {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.roleRingSvg {
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.memberLabel {
+  font-size: 0.9rem;
+}
+
+.emojiTag {
+  margin-left: var(--space-5);
+  font-size: 0.85rem;
+}
+
+.roleTag {
+  margin-left: var(--space-5);
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
+.untilLabel {
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+}

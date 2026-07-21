@@ -1,0 +1,111 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 44, 44, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-24);
+}
+
+.panelWrap {
+  max-width: 480px;
+  width: 100%;
+  padding: var(--space-32);
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-20);
+}
+
+.headerAvatarRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+}
+
+.modalTitle {
+  margin: 0 0 var(--space-4);
+}
+
+.headerBadgeRow {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.adminBadge {
+  font-size: 0.75rem;
+  background: var(--color-sand);
+  padding: var(--space-2) var(--space-8);
+}
+
+.membershipTypeBadge {
+  font-size: 0.75rem;
+  background: #FFF3CD;
+  padding: var(--space-2) var(--space-8);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--color-charcoal-light);
+  line-height: 1;
+}
+
+.contactText {
+  margin: 0 0 var(--space-8);
+  font-size: 0.9rem;
+  color: var(--color-charcoal-light);
+}
+
+.availabilityBox {
+  background: var(--color-sand);
+  border-radius: 0;
+  padding: var(--space-10) var(--space-14);
+  margin-bottom: var(--space-16);
+  font-size: 0.9rem;
+}
+
+.muted {
+  color: var(--color-charcoal-light);
+}
+
+.workgroupsSection {
+  margin-bottom: var(--space-16);
+}
+
+.sectionLabelGap {
+  margin: 0 0 var(--space-8);
+}
+
+.workgroupRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.workgroupDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.workgroupName {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.workgroupRoles {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}

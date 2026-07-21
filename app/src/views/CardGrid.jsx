@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Card } from '@ecommons/ui'
 import AvailabilityBadge from '../components/AvailabilityBadge'
+import styles from './CardGrid.module.css'
 
 export default function CardGrid({ community, filter, onMemberClick, gridRef, selectedPersonId }) {
 
@@ -67,21 +68,15 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
     <div>
       <div
         ref={gridRef}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: 'var(--space-16)',
-          padding: 'var(--space-16)',
-          background: 'var(--color-cream)',
-        }}
+        className={styles.grid}
       >
         {/* Unassigned card — always first */}
         {unassignedMembers.length > 0 && (
-          <Card style={{ borderTop: '3px solid var(--color-sand-dark)', overflow: 'hidden' }}>
-            <div style={{ padding: 'var(--space-12) var(--space-16) var(--space-8)', fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)', color: 'var(--color-charcoal-light)' }}>
+          <Card className={`${styles.card} ${styles.unassignedCard}`}>
+            <div className={styles.unassignedHeader}>
               Without workgroup
             </div>
-            <div style={{ paddingBottom: 'var(--space-12)' }}>
+            <div className={styles.cardBody}>
               {unassignedMembers.map((m) => (
                 <MemberRow key={m.personId} m={m} wgColor="var(--color-sand-dark)" roles={[]} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
               ))}
@@ -92,14 +87,14 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
         {workgroups.map((wg) => {
           const members = membersForWorkgroup(wg)
           return (
-            <Card key={wg.id} style={{ borderTop: `3px solid ${wg.color}`, overflow: 'hidden' }}>
-              <div style={{ padding: 'var(--space-12) var(--space-16) var(--space-8)', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', fontFamily: 'var(--font-title)' }}>{wg.name}</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>{members.length}</span>
+            <Card key={wg.id} className={styles.card} style={{ borderTopColor: wg.color }}>
+              <div className={styles.workgroupHeaderRow}>
+                <span className={styles.workgroupHeaderName}>{wg.name}</span>
+                <span className={styles.workgroupHeaderCount}>{members.length}</span>
               </div>
-              <div style={{ paddingBottom: 'var(--space-12)' }}>
+              <div className={styles.cardBody}>
                 {members.length === 0 && (
-                  <div style={{ padding: 'var(--space-4) var(--space-16)', fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>No members</div>
+                  <div className={styles.emptyState}>No members</div>
                 )}
                 {members.map((m) => (
                   <MemberRow key={m.personId} m={m} wgColor={wg.color} roles={personRoles[m.personId]?.[wg.id] || []} onMemberClick={onMemberClick} selected={m.personId === selectedPersonId} showLastInitial={duplicateFirstNames.has(m.firstName)} />
@@ -121,19 +116,17 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
     <div
       data-person-id={m.personId}
       onClick={() => onMemberClick(m)}
+      className={styles.memberRow}
       style={{
-        display: 'flex', alignItems: 'center', gap: 'var(--space-8)',
-        padding: 'var(--space-5) var(--space-16)', cursor: 'pointer',
         opacity: unavailable ? 0.45 : 1,
         background: selected ? `${wgColor}18` : 'none',
         borderLeft: selected ? `3px solid ${wgColor}` : '3px solid transparent',
-        transition: 'background 0.2s, border-color 0.2s',
       }}
     >
       {m.avatarUrl
-        ? <img src={m.avatarUrl} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+        ? <img src={m.avatarUrl} alt="" className={styles.avatarImg} />
         : (
-          <svg width={svgSize + 4} height={svgSize + 4} viewBox={`${-(svgSize/2+2)} ${-(svgSize/2+2)} ${svgSize+4} ${svgSize+4}`} style={{ flexShrink: 0, overflow: 'visible' }}>
+          <svg width={svgSize + 4} height={svgSize + 4} viewBox={`${-(svgSize/2+2)} ${-(svgSize/2+2)} ${svgSize+4} ${svgSize+4}`} className={styles.roleRingSvg}>
             {roles.map((role, i) => (
               <circle key={role.id} r={r + 3 + i * 5} fill="none" stroke={role.color} strokeWidth={1.5} opacity={0.85} />
             ))}
@@ -141,15 +134,15 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
           </svg>
         )
       }
-      <span style={{ fontSize: '0.9rem' }}>
+      <span className={styles.memberLabel}>
         {m.firstName || m.lastName || 'Unknown'}{showLastInitial && m.lastName ? ` ${m.lastName[0]}.` : ''}
         {m.membershipType?.emoji && (
-          <span title={m.membershipType.name} className="emoji-mono" style={{ marginLeft: 'var(--space-5)', fontSize: '0.85rem' }}>
+          <span title={m.membershipType.name} className={`emoji-mono ${styles.emojiTag}`}>
             {m.membershipType.emoji}
           </span>
         )}
         {roles.map((role) => (
-          <span key={role.id} style={{ marginLeft: 'var(--space-5)', fontSize: '0.72rem', color: role.color, fontStyle: 'italic' }}>
+          <span key={role.id} className={styles.roleTag} style={{ color: role.color }}>
             {role.name}
           </span>
         ))}
@@ -157,7 +150,7 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
           <>
             <AvailabilityBadge availability={m.availability} inline />
             {m.availability.until && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>
+              <span className={styles.untilLabel}>
                 until {new Date(m.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
               </span>
             )}

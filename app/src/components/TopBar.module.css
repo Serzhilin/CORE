@@ -1,0 +1,128 @@
+.header {
+  background: white;
+  padding: 0 var(--space-32);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+
+.brandLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  min-width: 0;
+  cursor: pointer;
+}
+
+.coreMark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-shrink: 0;
+}
+
+.coreLogo {
+  height: 28px;
+  width: 28px;
+  object-fit: contain;
+}
+
+.coreText {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-charcoal);
+}
+
+.forLabel {
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+  flex-shrink: 0;
+}
+
+.logo {
+  height: 48px;
+  max-width: 150px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.communityName {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-charcoal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.avatarButton {
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  flex-shrink: 0;
+}
+
+.avatarFont {
+  font-family: var(--font-sans);
+}
+
+.dropdown {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  min-width: 200px;
+  overflow: hidden;
+}
+
+.dropdownHeader {
+  padding: var(--space-12) var(--space-16);
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.dropdownHeaderName {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-charcoal);
+}
+
+.communitiesLabel {
+  border-top: 1px solid var(--color-sand);
+  padding: var(--space-8) var(--space-16) var(--space-2);
+}
+
+.communityRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.communityRowName {
+  flex: 1;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.logoutWrapper {
+  border-top: 1px solid var(--color-sand);
+}

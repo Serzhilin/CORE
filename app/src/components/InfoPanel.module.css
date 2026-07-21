@@ -1,0 +1,326 @@
+/* Shared */
+.sectionLabelGap {
+  margin-bottom: var(--space-8);
+}
+
+.muted {
+  color: var(--color-charcoal-light);
+}
+
+/* CommunityView */
+.communityRoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  height: 100%;
+}
+
+.communityName {
+  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  margin-bottom: var(--space-4);
+}
+
+.communitySubtitle {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+.listSection {
+  border-top: 1px solid var(--color-sand);
+  padding-top: var(--space-12);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.workgroupRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-4);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.workgroupDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.workgroupRowName {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.workgroupRowCount {
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+}
+
+/* WorkgroupView */
+.workgroupRoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  height: 100%;
+}
+
+.workgroupHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-charcoal-light);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: var(--space-2) var(--space-4);
+  margin-left: -4px;
+}
+
+.workgroupTitle {
+  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  border-left-width: 3px;
+  border-left-style: solid;
+  padding-left: var(--space-8);
+}
+
+.workgroupMemberCount {
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+  margin-top: var(--space-2);
+}
+
+.workgroupDescription {
+  font-size: 0.82rem;
+  color: var(--color-charcoal-light);
+  line-height: 1.5;
+}
+
+.membersList {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-sand);
+  padding-top: var(--space-8);
+}
+
+.memberRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  padding: var(--space-5) var(--space-4);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.memberDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: var(--space-4);
+}
+
+.memberInfo {
+  min-width: 0;
+}
+
+.memberName {
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.memberRoles {
+  font-size: 0.72rem;
+  margin-top: var(--space-2);
+}
+
+.filterButton {
+  background: none;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0;
+  font-size: 0.75rem;
+  padding: var(--space-5) var(--space-10);
+  cursor: pointer;
+  width: 100%;
+}
+
+/* PersonView */
+.personRoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.personBackButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-charcoal-light);
+  font-size: 0.82rem;
+  text-align: left;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatarRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.personName {
+  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+.badgeRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.adminBadge {
+  font-size: 0.68rem;
+  background: var(--color-sand);
+  padding: var(--space-2) var(--space-6);
+}
+
+.membershipTypeBadge {
+  font-size: 0.68rem;
+  border: 1px solid var(--color-sand-dark);
+  padding: var(--space-2) var(--space-6);
+}
+
+.joinedLabel {
+  font-size: 0.68rem;
+  color: var(--color-charcoal-light);
+}
+
+.bioText {
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+  line-height: 1.6;
+}
+
+.availabilityBox {
+  background: var(--color-sand);
+  border-radius: 0;
+  padding: 9px 12px;
+  font-size: 0.85rem;
+  border-top: 1px solid var(--color-sand-dark);
+  margin-top: var(--space-4);
+  padding-top: 9px;
+}
+
+.availabilityEmoji {
+  margin-right: var(--space-5);
+}
+
+.availabilityType {
+  font-weight: 500;
+}
+
+.availabilityUntil {
+  font-size: 0.78rem;
+  color: var(--color-charcoal-light);
+  margin-top: var(--space-3);
+}
+
+.sectionDivider {
+  border-top: 1px solid var(--color-sand);
+  padding-top: var(--space-10);
+}
+
+.stackGap4 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.contactRow {
+  font-size: 0.82rem;
+}
+
+.contactLink {
+  color: var(--color-charcoal);
+}
+
+.membershipItem {
+  border-left-width: 3px;
+  border-left-style: solid;
+  padding-left: var(--space-10);
+  margin-bottom: var(--space-8);
+}
+
+.membershipName {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.membershipRoles {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+.roleBadge {
+  font-size: 0.72rem;
+  padding: var(--space-2) var(--space-6);
+}
+
+/* Mobile drawer */
+.mobileDrawerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+}
+
+.mobileDrawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 85vw;
+  max-width: 340px;
+  background: white;
+  border-left-width: 3px;
+  border-left-style: solid;
+  box-shadow: -4px 0 0 var(--block-shadow-color);
+  z-index: 500;
+  overflow-y: auto;
+  padding: var(--space-20) var(--space-16);
+  box-sizing: border-box;
+}
+
+.mobileDrawerClose {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--color-charcoal-light);
+  line-height: 1;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { CollapsiblePanel, Badge, Avatar, SectionLabel } from '@ecommons/ui'
 import { useCommunity } from '../context/CommunityContext'
+import styles from './InfoPanel.module.css'
 
 const PANEL_WIDTH = 300
 
@@ -27,30 +28,30 @@ function accentColor(selection, community) {
 
 function CommunityView({ community, onSelect }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-16)', height: '100%' }}>
+    <div className={styles.communityRoot}>
       <div>
-        <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.1rem', marginBottom: 'var(--space-4)' }}>
+        <div className={styles.communityName}>
           {community.name}
         </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
+        <div className={styles.communitySubtitle}>
           {community.members.length} members · {community.workgroups.length} workgroups
         </div>
       </div>
-      <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 'var(--space-12)', flex: 1, overflowY: 'auto' }}>
-        <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} style={{ marginBottom: 'var(--space-8)' }}>
+      <div className={styles.listSection}>
+        <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} className={styles.sectionLabelGap}>
           Workgroups
         </SectionLabel>
         {[...community.workgroups].sort((a, b) => a.name.localeCompare(b.name)).map(wg => (
           <div
             key={wg.id}
             onClick={() => onSelect({ type: 'workgroup', id: wg.id })}
-            style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', padding: 'var(--space-6) var(--space-4)', cursor: 'pointer', borderRadius: 0 }}
+            className={styles.workgroupRow}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--color-cream)'}
             onMouseLeave={e => e.currentTarget.style.background = 'none'}
           >
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: wg.color, flexShrink: 0 }} />
-            <span style={{ flex: 1, fontSize: '0.88rem', fontWeight: 500 }}>{wg.name}</span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)' }}>{wg.members.length}</span>
+            <span className={styles.workgroupDot} style={{ background: wg.color }} />
+            <span className={styles.workgroupRowName}>{wg.name}</span>
+            <span className={styles.workgroupRowCount}>{wg.members.length}</span>
           </div>
         ))}
       </div>
@@ -65,18 +66,18 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
     .sort((a, b) => (a.member.firstName || '').localeCompare(b.member.firstName || ''))
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)', height: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-8)' }}>
-        <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-charcoal-light)', fontSize: '1.1rem', lineHeight: 1, padding: 'var(--space-2) var(--space-4)', marginLeft: -4 }}>‹</button>
+    <div className={styles.workgroupRoot}>
+      <div className={styles.workgroupHeader}>
+        <button onClick={onBack} className={styles.backButton}>‹</button>
         <div>
-          <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1rem', borderLeft: `3px solid ${wg.color}`, paddingLeft: 'var(--space-8)' }}>{wg.name}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-charcoal-light)', marginTop: 'var(--space-2)' }}>{wg.members.length} members</div>
+          <div className={styles.workgroupTitle} style={{ borderLeftColor: wg.color }}>{wg.name}</div>
+          <div className={styles.workgroupMemberCount}>{wg.members.length} members</div>
         </div>
       </div>
-      {wg.description && <div style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)', lineHeight: 1.5 }}>{wg.description}</div>}
+      {wg.description && <div className={styles.workgroupDescription}>{wg.description}</div>}
 
-      <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid var(--color-sand)', paddingTop: 'var(--space-8)' }}>
-        <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} style={{ marginBottom: 'var(--space-8)' }}>Members</SectionLabel>
+      <div className={styles.membersList}>
+        <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} className={styles.sectionLabelGap}>Members</SectionLabel>
         {members.map(({ wm, member }) => {
           const roles = (wm.roles || []).map(rid => wg.roles.find(r => r.id === rid)).filter(Boolean)
           const name = [member.firstName, member.lastName].filter(Boolean).join(' ') || member.email || 'Unknown'
@@ -84,15 +85,15 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
             <div
               key={member.personId}
               onClick={() => onSelect({ type: 'person', id: member.personId, fromWorkgroup: wg.id })}
-              style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-6)', padding: 'var(--space-5) var(--space-4)', cursor: 'pointer', borderRadius: 0 }}
+              className={styles.memberRow}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--color-cream)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}
             >
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: wg.color, flexShrink: 0, marginTop: 'var(--space-4)' }} />
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 500 }}>{name}</div>
+              <span className={styles.memberDot} style={{ background: wg.color }} />
+              <div className={styles.memberInfo}>
+                <div className={styles.memberName}>{name}</div>
                 {roles.length > 0 && (
-                  <div style={{ fontSize: '0.72rem', color: wg.color, marginTop: 'var(--space-2)' }}>{roles.map(r => r.name).join(', ')}</div>
+                  <div className={styles.memberRoles} style={{ color: wg.color }}>{roles.map(r => r.name).join(', ')}</div>
                 )}
               </div>
             </div>
@@ -102,7 +103,8 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
 
       <button
         onClick={() => onFilterToWorkgroup(wg.id)}
-        style={{ fontSize: '0.75rem', color: wg.color, background: 'none', border: `1px solid ${wg.color}`, borderRadius: 0, padding: 'var(--space-5) var(--space-10)', cursor: 'pointer', width: '100%' }}
+        className={styles.filterButton}
+        style={{ color: wg.color, borderColor: wg.color }}
       >
         Filter to this workgroup
       </button>
@@ -123,24 +125,24 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
   const initial = (member.firstName || member.email || '?')[0].toUpperCase()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)', height: '100%', overflowY: 'auto' }}>
-      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-charcoal-light)', fontSize: '0.82rem', textAlign: 'left', padding: 0, display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+    <div className={styles.personRoot}>
+      <button onClick={onBack} className={styles.personBackButton}>
         ‹ {fromWorkgroup ? (community.workgroups.find(w => w.id === fromWorkgroup)?.name ?? 'Back') : 'Back'}
       </button>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)' }}>
+      <div className={styles.avatarRow}>
         <Avatar src={member.avatarUrl} size={104} fontSize="2.2rem">{initial}</Avatar>
         <div>
-          <div style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.3rem', lineHeight: 1.3 }}>{name}</div>
-          <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', alignItems: 'center', marginTop: 'var(--space-4)' }}>
-            {member.isAdmin && <Badge variant="plain" style={{ fontSize: '0.68rem', background: 'var(--color-sand)', padding: 'var(--space-2) var(--space-6)' }}>Admin</Badge>}
+          <div className={styles.personName}>{name}</div>
+          <div className={styles.badgeRow}>
+            {member.isAdmin && <Badge variant="plain" className={styles.adminBadge}>Admin</Badge>}
             {member.membershipType && (
-              <Badge variant="plain" style={{ fontSize: '0.68rem', border: '1px solid var(--color-sand-dark)', padding: 'var(--space-2) var(--space-6)' }}>
+              <Badge variant="plain" className={styles.membershipTypeBadge}>
                 {member.membershipType.emoji ? <span className="emoji-mono">{member.membershipType.emoji} </span> : ''}{member.membershipType.name}
               </Badge>
             )}
             {member.joinedAt && (
-              <span style={{ fontSize: '0.68rem', color: 'var(--color-charcoal-light)' }}>
+              <span className={styles.joinedLabel}>
                 Joined on {formatDots(member.joinedAt)}
               </span>
             )}
@@ -149,16 +151,16 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
       </div>
 
       {member.bio && (
-        <div style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', lineHeight: 1.6 }}>{member.bio}</div>
+        <div className={styles.bioText}>{member.bio}</div>
       )}
 
       {member.availability && (
-        <div style={{ background: 'var(--color-sand)', borderRadius: 0, padding: '9px 12px', fontSize: '0.85rem', borderTop: '1px solid var(--color-sand-dark)', marginTop: 'var(--space-4)', paddingTop: '9px' }}>
-          <span className="emoji-mono" style={{ marginRight: 'var(--space-5)' }}>{member.availability.type.emoji}</span>
-          <span style={{ fontWeight: 500 }}>{member.availability.type.name}</span>
-          {member.availability.reason && <span style={{ color: 'var(--color-charcoal-light)' }}> — {member.availability.reason}</span>}
+        <div className={styles.availabilityBox}>
+          <span className={`emoji-mono ${styles.availabilityEmoji}`}>{member.availability.type.emoji}</span>
+          <span className={styles.availabilityType}>{member.availability.type.name}</span>
+          {member.availability.reason && <span className={styles.muted}> — {member.availability.reason}</span>}
           {member.availability.until && (
-            <div style={{ fontSize: '0.78rem', color: 'var(--color-charcoal-light)', marginTop: 'var(--space-3)' }}>
+            <div className={styles.availabilityUntil}>
               Until {new Date(member.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
           )}
@@ -166,23 +168,23 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
       )}
 
       {(member.email || member.phone || member.website) && (
-        <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 'var(--space-10)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          {member.email && <div style={{ fontSize: '0.82rem' }}>{member.email}</div>}
-          {member.phone && <div style={{ fontSize: '0.82rem' }}>{member.phone}</div>}
-          {member.website && <div style={{ fontSize: '0.82rem' }}><a href={member.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-charcoal)' }}>{member.website}</a></div>}
+        <div className={`${styles.sectionDivider} ${styles.stackGap4}`}>
+          {member.email && <div className={styles.contactRow}>{member.email}</div>}
+          {member.phone && <div className={styles.contactRow}>{member.phone}</div>}
+          {member.website && <div className={styles.contactRow}><a href={member.website} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>{member.website}</a></div>}
         </div>
       )}
 
       {wgMemberships.length > 0 && (
-        <div style={{ borderTop: '1px solid var(--color-sand)', paddingTop: 'var(--space-10)' }}>
-          <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} style={{ marginBottom: 'var(--space-8)' }}>Workgroups</SectionLabel>
+        <div className={styles.sectionDivider}>
+          <SectionLabel as="div" fontSize="0.7rem" fontWeight={700} className={styles.sectionLabelGap}>Workgroups</SectionLabel>
           {wgMemberships.map(({ wg, roles }) => (
-            <div key={wg.id} style={{ borderLeft: `3px solid ${wg.color}`, paddingLeft: 'var(--space-10)', marginBottom: 'var(--space-8)' }}>
-              <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{wg.name}</div>
+            <div key={wg.id} className={styles.membershipItem} style={{ borderLeftColor: wg.color }}>
+              <div className={styles.membershipName}>{wg.name}</div>
               {roles.length > 0 && (
-                <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', marginTop: 'var(--space-4)' }}>
+                <div className={styles.membershipRoles}>
                   {roles.map(r => (
-                    <Badge key={r.id} color={r.color} style={{ fontSize: '0.72rem', padding: 'var(--space-2) var(--space-6)' }}>{r.name}</Badge>
+                    <Badge key={r.id} color={r.color} className={styles.roleBadge}>{r.name}</Badge>
                   ))}
                 </div>
               )}
@@ -242,18 +244,11 @@ export default function InfoPanel({ selection, onSelect, onFilterToWorkgroup }) 
     if (!open) return null
     return (
       <>
-        <div onClick={() => { setOpen(false); onSelect(null) }} style={{ position: 'fixed', inset: 0, zIndex: 400 }} />
-        <div style={{
-          position: 'fixed', top: 0, right: 0, bottom: 0,
-          width: '85vw', maxWidth: 340,
-          background: 'white', borderLeft: `3px solid ${accent}`,
-          boxShadow: '-4px 0 0 var(--block-shadow-color)',
-          zIndex: 500, overflowY: 'auto',
-          padding: 'var(--space-20) var(--space-16)', boxSizing: 'border-box',
-        }}>
+        <div onClick={() => { setOpen(false); onSelect(null) }} className={styles.mobileDrawerOverlay} />
+        <div className={styles.mobileDrawer} style={{ borderLeftColor: accent }}>
           <button
             onClick={() => { setOpen(false); onSelect(null) }}
-            style={{ position: 'absolute', top: 12, right: 14, background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer', color: 'var(--color-charcoal-light)', lineHeight: 1 }}
+            className={styles.mobileDrawerClose}
           >×</button>
           {renderContent()}
         </div>

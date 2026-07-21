@@ -4,6 +4,7 @@ import { Panel, Avatar, MenuItem, SectionLabel } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useTopBarSlot } from '../context/TopBarSlotContext'
+import styles from './TopBar.module.css'
 
 function CommunityLogo({ src }) {
   const [failed, setFailed] = useState(false)
@@ -13,7 +14,7 @@ function CommunityLogo({ src }) {
       src={src}
       alt="logo"
       onError={() => setFailed(true)}
-      style={{ height: 48, maxWidth: 150, objectFit: 'contain', flexShrink: 0 }}
+      className={styles.logo}
     />
   )
 }
@@ -50,65 +51,41 @@ export default function TopBar() {
   const initial = (user?.firstName || user?.ename || '?')[0].toUpperCase()
 
   return (
-    <header style={{
-      background: 'white',
-      padding: '0 var(--space-32)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 200,
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: 76,
-      }}>
+    <header className={styles.header}>
+      <div className={styles.headerRow}>
 
         {/* Left: CORE mark + community logo/name (click → home) */}
         <div
           onClick={() => navigate('/')}
-          style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', minWidth: 0, cursor: 'pointer' }}
+          className={styles.brandLink}
         >
-          <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexShrink: 0 }}>
-            <img src="/logo.png" alt="CORE" style={{ height: 28, width: 28, objectFit: 'contain' }} />
-            <span style={{
-              fontFamily: 'var(--font-title)',
-              fontWeight: 700,
-              fontSize: '1.05rem',
-              color: 'var(--color-charcoal)',
-            }}>
+          <span className={styles.coreMark}>
+            <img src="/logo.png" alt="CORE" className={styles.coreLogo} />
+            <span className={styles.coreText}>
               CORE
             </span>
           </span>
 
           {community && (
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)', flexShrink: 0 }}>
+            <span className={styles.forLabel}>
               for
             </span>
           )}
 
           {community?.logo_url && <CommunityLogo src={community.logo_url} />}
           {community && !community?.logo_url && (
-            <span style={{
-              fontFamily: 'var(--font-title)',
-              fontWeight: 700,
-              fontSize: '1.05rem',
-              color: 'var(--color-charcoal)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
+            <span className={styles.communityName}>
               {community.name}
             </span>
           )}
         </div>
 
         {/* Right: avatar + dropdown */}
-        <div ref={menuRef} style={{ position: 'relative' }}>
+        <div ref={menuRef} className={styles.menuWrapper}>
           <button
             onClick={() => setShowMenu(v => !v)}
             title={user?.firstName || user?.ename}
-            style={{ border: 'none', cursor: 'pointer', padding: 0, background: 'none', flexShrink: 0 }}
+            className={styles.avatarButton}
           >
             <Avatar
               src={user?.avatarUrl}
@@ -116,19 +93,16 @@ export default function TopBar() {
               background={isAdmin ? 'var(--color-terracotta)' : 'var(--color-sand-dark)'}
               fontSize="1.3rem"
               fontWeight={600}
-              style={{ fontFamily: 'var(--font-sans)' }}
+              className={styles.avatarFont}
             >
               {initial}
             </Avatar>
           </button>
 
           {showMenu && (
-            <Panel style={{
-              position: 'absolute', top: 42, right: 0, zIndex: 1000,
-              background: 'white', minWidth: 200, overflow: 'hidden',
-            }}>
-              <div style={{ padding: 'var(--space-12) var(--space-16)', borderBottom: '1px solid var(--color-sand)' }}>
-                <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--color-charcoal)' }}>
+            <Panel className={styles.dropdown}>
+              <div className={styles.dropdownHeader}>
+                <div className={styles.dropdownHeaderName}>
                   {user?.firstName || user?.ename || 'You'}
                 </div>
               </div>
@@ -154,7 +128,7 @@ export default function TopBar() {
 
               {memberships.length > 1 && (
                 <>
-                  <SectionLabel as="div" fontSize="0.68rem" fontWeight={700} letterSpacing="0.06em" style={{ borderTop: '1px solid var(--color-sand)', padding: 'var(--space-8) var(--space-16) var(--space-2)' }}>
+                  <SectionLabel as="div" fontSize="0.68rem" fontWeight={700} letterSpacing="0.06em" className={styles.communitiesLabel}>
                     Communities
                   </SectionLabel>
                   {memberships.map((m) => (
@@ -162,12 +136,12 @@ export default function TopBar() {
                       key={m.communityId}
                       onClick={() => { setShowMenu(false); switchCommunity(m.communityId); navigate('/') }}
                     >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
-                        <span style={{ flex: 1, fontWeight: m.communityId === communityId ? 600 : 400 }}>
+                      <span className={styles.communityRow}>
+                        <span className={styles.communityRowName} style={{ fontWeight: m.communityId === communityId ? 600 : 400 }}>
                           {m.community?.name || m.communityId}
                         </span>
                         {m.communityId === communityId && (
-                          <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--color-terracotta)', flexShrink: 0 }} />
+                          <span className={styles.statusDot} style={{ background: 'var(--color-terracotta)' }} />
                         )}
                       </span>
                     </MenuItem>
@@ -175,7 +149,7 @@ export default function TopBar() {
                 </>
               )}
 
-              <div style={{ borderTop: '1px solid var(--color-sand)' }}>
+              <div className={styles.logoutWrapper}>
                 <MenuItem onClick={handleLogout} danger>
                   Log out
                 </MenuItem>
