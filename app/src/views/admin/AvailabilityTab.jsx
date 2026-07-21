@@ -5,6 +5,7 @@ import {
   createAvailabilityType, updateAvailabilityType, archiveAvailabilityType,
   setMemberAvailability,
 } from '../../api/client'
+import styles from './AvailabilityTab.module.css'
 
 export default function AvailabilityTab() {
   const { communityId, community, availabilityTypes, refresh } = useCommunity()
@@ -83,38 +84,38 @@ export default function AvailabilityTab() {
     <Page maxWidth={680} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-24)' }}>
 
       {/* Currently unavailable */}
-      <Card style={{ padding: 'var(--space-28)' }}>
-        <SectionLabel style={{ margin: '0 0 var(--space-16)' }}>
+      <Card className={styles.sectionCard}>
+        <SectionLabel className={styles.sectionLabelMb16}>
           Currently unavailable
         </SectionLabel>
         {unavailableMembers.length === 0 ? (
-          <p style={{ color: 'var(--color-charcoal-light)', fontSize: '0.9rem', margin: 0 }}>Everyone is available.</p>
+          <p className={styles.emptyNote}>Everyone is available.</p>
         ) : (
           unavailableMembers.map((m, i) => {
             const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
             const isLast = i === unavailableMembers.length - 1
             return (
-              <div key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', padding: 'var(--space-8) 0', borderBottom: isLast ? 'none' : '1px solid var(--color-sand)' }}>
-                <span className="emoji-mono" style={{ fontSize: '1.1rem' }}>{m.availability.type.emoji}</span>
-                <div style={{ flex: 1 }}>
-                  <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{name}</span>
-                  <span style={{ marginLeft: 'var(--space-8)', fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>{m.availability.type.name}</span>
-                  {m.availability.reason && <span style={{ marginLeft: 'var(--space-6)', fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>— {m.availability.reason}</span>}
-                  {m.availability.until && <span style={{ marginLeft: 'var(--space-6)', fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}>until {new Date(m.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>}
+              <div key={m.personId} className={`row ${styles.listRow} ${isLast ? styles.listRowLast : ''}`}>
+                <span className={`emoji-mono ${styles.emojiText}`}>{m.availability.type.emoji}</span>
+                <div className={styles.flexGrow}>
+                  <span className={styles.memberName}>{name}</span>
+                  <span className={styles.typeName}>{m.availability.type.name}</span>
+                  {m.availability.reason && <span className={styles.reasonText}>— {m.availability.reason}</span>}
+                  {m.availability.until && <span className={styles.untilText}>until {new Date(m.availability.until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>}
                 </div>
-                <Button onClick={() => handleEditAvailability(m)} variant="secondary" style={{ fontSize: '0.75rem', padding: 'var(--space-3) var(--space-8)' }}>Edit</Button>
-                <button onClick={() => handleClearAvailability(m.personId)} title="Clear availability" style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}>{trashIcon}</button>
+                <Button onClick={() => handleEditAvailability(m)} variant="secondary" className={styles.btnEditSm}>Edit</Button>
+                <button onClick={() => handleClearAvailability(m.personId)} title="Clear availability" className={styles.iconBtnDanger}>{trashIcon}</button>
               </div>
             )
           })
         )}
 
         {/* Set availability form */}
-        <div style={{ marginTop: 'var(--space-20)', paddingTop: 'var(--space-16)', borderTop: '1px solid var(--color-sand)' }}>
-          <SectionLabel as="h4" fontSize="0.85rem" style={{ margin: '0 0 var(--space-12)' }}>
+        <div className={styles.formSection}>
+          <SectionLabel as="h4" fontSize="0.85rem" className={styles.sectionLabelMb12}>
             {avForm.personId ? 'Edit availability' : 'Set availability'}
           </SectionLabel>
-          <form onSubmit={handleSetAvailability} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)', maxWidth: 380 }}>
+          <form onSubmit={handleSetAvailability} className={`stack ${styles.form}`}>
             <div>
               <Label size="sm">Member</Label>
               <Select value={avForm.personId} onChange={(e) => setAvForm(f => ({ ...f, personId: e.target.value }))} required>
@@ -137,18 +138,18 @@ export default function AvailabilityTab() {
             </div>
             <div>
               <Label size="sm">Reason</Label>
-              <Input style={{ width: '100%' }} value={avForm.reason} onChange={(e) => setAvForm(f => ({ ...f, reason: e.target.value }))} placeholder="Optional" />
+              <Input className={styles.fullWidth} value={avForm.reason} onChange={(e) => setAvForm(f => ({ ...f, reason: e.target.value }))} placeholder="Optional" />
             </div>
             <div>
               <Label size="sm">Until</Label>
-              <Input type="date" style={{ width: '100%' }} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
+              <Input type="date" className={styles.fullWidth} value={avForm.until} onChange={(e) => setAvForm(f => ({ ...f, until: e.target.value }))} />
             </div>
-            <div style={{ display: 'flex', gap: 'var(--space-6)' }}>
-              <Button type="submit" disabled={avSaving || !avForm.personId || !avForm.type_id} style={{ fontSize: '0.85rem' }}>
+            <div className={`row ${styles.actionsGap6}`}>
+              <Button type="submit" disabled={avSaving || !avForm.personId || !avForm.type_id} className={styles.btnMd}>
                 {avForm.personId && unavailableMembers.some(m => m.personId === avForm.personId) ? 'Update' : 'Set'}
               </Button>
               {avForm.personId && (
-                <Button type="button" variant="secondary" onClick={() => setAvForm({ personId: '', type_id: '', reason: '', until: '' })} style={{ fontSize: '0.85rem' }}>Cancel</Button>
+                <Button type="button" variant="secondary" onClick={() => setAvForm({ personId: '', type_id: '', reason: '', until: '' })} className={styles.btnMd}>Cancel</Button>
               )}
             </div>
           </form>
@@ -156,38 +157,38 @@ export default function AvailabilityTab() {
       </Card>
 
       {/* Availability types */}
-      <Card style={{ padding: 'var(--space-28)' }}>
-        <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
+      <Card className={styles.sectionCard}>
+        <SectionLabel className={styles.sectionLabelMb20}>
           Availability types
         </SectionLabel>
-        <div style={{ marginBottom: 'var(--space-16)' }}>
+        <div className={styles.typesListWrap}>
           {availabilityTypes.map((t) => (
-            <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', padding: 'var(--space-8) 0', borderBottom: '1px solid var(--color-sand)' }}>
+            <div key={t.id} className={`row ${styles.typeRow}`}>
               {editingAt?.id === t.id ? (
                 <>
                   <EmojiPicker value={editingAt.emoji} onChange={(emoji) => setEditingAt((a) => ({ ...a, emoji }))} />
-                  <Input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} style={{ flex: 1 }} />
-                  <Button style={{ fontSize: '0.8rem', padding: 'var(--space-4) var(--space-10)' }} onClick={() => handleUpdateType(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</Button>
-                  <Button variant="secondary" style={{ fontSize: '0.8rem', padding: 'var(--space-4) var(--space-10)' }} onClick={() => setEditingAt(null)}>Cancel</Button>
+                  <Input value={editingAt.name} onChange={(e) => setEditingAt((a) => ({ ...a, name: e.target.value }))} className={styles.flexGrow} />
+                  <Button className={styles.btnEditType} onClick={() => handleUpdateType(t.id, { name: editingAt.name, emoji: editingAt.emoji })}>Save</Button>
+                  <Button variant="secondary" className={styles.btnEditType} onClick={() => setEditingAt(null)}>Cancel</Button>
                 </>
               ) : (
                 <>
-                  <span className="emoji-mono" style={{ fontSize: '1.1rem' }}>{t.emoji}</span>
-                  <span style={{ flex: 1 }}>{t.name}</span>
-                  <Button variant="secondary" style={{ fontSize: '0.75rem', padding: 'var(--space-3) var(--space-8)' }} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</Button>
-                  <button style={{ background: 'none', border: 'none', color: 'var(--color-charcoal-light)', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => handleArchiveType(t.id)}>Archive</button>
+                  <span className={`emoji-mono ${styles.emojiText}`}>{t.emoji}</span>
+                  <span className={styles.flexGrow}>{t.name}</span>
+                  <Button variant="secondary" className={styles.btnEditSm} onClick={() => setEditingAt({ id: t.id, name: t.name, emoji: t.emoji })}>Edit</Button>
+                  <button className={styles.archiveBtn} onClick={() => handleArchiveType(t.id)}>Archive</button>
                 </>
               )}
             </div>
           ))}
           {availabilityTypes.length === 0 && (
-            <p style={{ color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}>No availability types yet.</p>
+            <p className={styles.noTypesNote}>No availability types yet.</p>
           )}
         </div>
-        <form onSubmit={handleAddType} style={{ display: 'flex', gap: 'var(--space-8)' }}>
+        <form onSubmit={handleAddType} className="row">
           <EmojiPicker value={atForm.emoji} onChange={(emoji) => setAtForm((f) => ({ ...f, emoji }))} />
-          <Input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} style={{ flex: 1 }} />
-          <Button type="submit" disabled={atSaving || !atForm.name || !atForm.emoji} style={{ fontSize: '0.85rem' }}>Add</Button>
+          <Input placeholder="Name" value={atForm.name} onChange={(e) => setAtForm((f) => ({ ...f, name: e.target.value }))} className={styles.flexGrow} />
+          <Button type="submit" disabled={atSaving || !atForm.name || !atForm.emoji} className={styles.btnMd}>Add</Button>
         </form>
       </Card>
 

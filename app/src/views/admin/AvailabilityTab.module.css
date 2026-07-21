@@ -1,0 +1,113 @@
+/* Shared card + section-label spacing (both cards use the same padding) */
+.sectionCard {
+  padding: var(--space-28);
+}
+.sectionLabelMb16 {
+  margin: 0 0 var(--space-16);
+}
+.sectionLabelMb20 {
+  margin: 0 0 var(--space-20);
+}
+.sectionLabelMb12 {
+  margin: 0 0 var(--space-12);
+}
+
+/* Empty-state notes */
+.emptyNote {
+  color: var(--color-charcoal-light);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.noTypesNote {
+  color: var(--color-charcoal-light);
+  font-size: 0.9rem;
+}
+
+/* Currently-unavailable member rows */
+.listRow {
+  --gap: var(--space-10);
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--color-sand);
+}
+.listRowLast {
+  border-bottom: none;
+}
+.emojiText {
+  font-size: 1.1rem;
+}
+.flexGrow {
+  flex: 1;
+}
+.memberName {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.typeName {
+  margin-left: var(--space-8);
+  font-size: 0.82rem;
+  color: var(--color-charcoal-light);
+}
+.reasonText {
+  margin-left: var(--space-6);
+  font-size: 0.82rem;
+  color: var(--color-charcoal-light);
+}
+.untilText {
+  margin-left: var(--space-6);
+  font-size: 0.78rem;
+  color: var(--color-charcoal-light);
+}
+.btnEditSm {
+  font-size: 0.75rem;
+  padding: var(--space-3) var(--space-8);
+}
+.iconBtnDanger {
+  background: none;
+  border: none;
+  color: var(--color-red);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Set/edit availability form */
+.formSection {
+  margin-top: var(--space-20);
+  padding-top: var(--space-16);
+  border-top: 1px solid var(--color-sand);
+}
+.form {
+  --gap: var(--space-14);
+  max-width: 380px;
+}
+.fullWidth {
+  width: 100%;
+}
+.actionsGap6 {
+  --gap: var(--space-6);
+}
+.btnMd {
+  font-size: 0.85rem;
+}
+
+/* Availability types CRUD rows */
+.typesListWrap {
+  margin-bottom: var(--space-16);
+}
+.typeRow {
+  --gap: var(--space-10);
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--color-sand);
+}
+.btnEditType {
+  font-size: 0.8rem;
+  padding: var(--space-4) var(--space-10);
+}
+.archiveBtn {
+  background: none;
+  border: none;
+  color: var(--color-charcoal-light);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
