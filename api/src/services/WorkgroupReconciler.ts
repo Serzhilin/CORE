@@ -110,6 +110,9 @@ async function reconcileMembers(workgroupId: string, envelopeMembers: WorkgroupE
 
             let local = localByPersonId.get(person.id);
             if (!local) {
+                // is_workgroup_admin is local-only (not in WorkgroupEnvelopePayload's
+                // members[] shape, like Role.description) — always bootstraps false,
+                // never round-trips through eVault.
                 local = await wgmRepo().save(
                     wgmRepo().create({ workgroup_id: workgroupId, person_id: person.id, is_workgroup_admin: false })
                 );
@@ -229,8 +232,8 @@ export async function reconcileWorkgroupsForCommunity(communityId: string): Prom
 
         if (!local.envelope_id) {
             // Reverse self-heal (Axiom 2): this workgroup never completed its initial
-            // sync — syncWorkgroupToEvault's create/update calls are fire-and-forget
-            // everywhere except deleteWorkgroup (see WorkgroupService.ts). Re-push it.
+            // sync — a create's fire-and-forget syncWorkgroupToEvault call can silently
+            // fail, leaving envelope_id null forever with nothing to notice. Re-push it.
             try {
                 await syncWorkgroupToEvault(local.id);
                 logger.warn(
