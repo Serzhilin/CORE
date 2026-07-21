@@ -1,0 +1,235 @@
+/* Full-page centering wrapper: composes with global .row
+   (.row already supplies display:flex + align-items:center) */
+.centeredContainer {
+  min-height: 100vh;
+  justify-content: center;
+  background: var(--color-cream);
+  padding: var(--space-32) var(--space-20);
+}
+
+/* Sizing add-on for the global .login-layout grid */
+.layoutInner {
+  width: 100%;
+  max-width: 960px;
+}
+
+/* Vertical padding add-on for the global .login-brand-col */
+.brandCol {
+  padding-top: var(--space-28);
+  padding-bottom: var(--space-28);
+}
+
+/* Gap/spacing add-on for the global .login-brand-header */
+.brandHeader {
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.brandLogo {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
+.brandTitle {
+  margin: 0;
+}
+
+.tagline {
+  color: var(--color-charcoal-light);
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+.partnersHeading {
+  margin: var(--space-32) 0 var(--space-16);
+}
+
+/* Gap add-on for the global .login-partner-grid */
+.partnerGrid {
+  gap: var(--space-20);
+}
+
+/* Partner-app card link: composes with global .stack
+   (.stack already supplies display:flex + flex-direction:column;
+   --gap:0 neutralizes its default gap since spacing here comes from child margins) */
+.partnerCard {
+  --gap: 0;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.partnerLogo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: var(--space-10);
+}
+
+/* Fallback avatar box (single-letter): composes with global .row
+   (.row already supplies display:flex + align-items:center) */
+.partnerFallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 0;
+  color: white;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: var(--space-10);
+}
+
+.partnerName {
+  margin-bottom: var(--space-4);
+  text-decoration: underline;
+}
+
+.partnerDesc {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+  line-height: 1.5;
+}
+
+.signInCard {
+  padding: var(--space-28);
+}
+
+/* Outer stack inside the sign-in card: composes with global .stack
+   (.stack does not set align-items, so it's added here as an extra property) */
+.cardStack {
+  --gap: var(--space-20);
+  align-items: center;
+  width: 100%;
+}
+
+/* Inner stack inside the sign-in card: composes with global .stack
+   (.stack does not set align-items, so it's added here as an extra property) */
+.innerStack {
+  --gap: var(--space-16);
+  align-items: center;
+  color: var(--color-charcoal-light);
+  text-align: center;
+  width: 100%;
+}
+
+.instruction {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.walletLink {
+  font-weight: 700;
+  color: var(--color-charcoal);
+  text-decoration: underline;
+}
+
+.walletLinkNowrap {
+  white-space: nowrap;
+}
+
+/* Loading placeholder box (single child): composes with global .row
+   (.row already supplies display:flex + align-items:center) */
+.qrPlaceholder {
+  width: 220px;
+  height: 220px;
+  background: var(--color-sand);
+  border-radius: 0;
+  justify-content: center;
+}
+
+.qrPlaceholderText {
+  color: var(--color-charcoal-light);
+  font-size: 0.85rem;
+}
+
+/* QR / wallet-open state wrapper: composes with global .stack
+   (.stack's default gap already equals the original var(--space-8), so no
+   --gap override needed; align-items is added since .stack doesn't set it) */
+.qrState {
+  align-items: center;
+  width: 100%;
+}
+
+.qrBox {
+  padding: var(--space-12);
+  background: white;
+  border-radius: 0;
+  border: 1px solid var(--color-sand);
+  display: inline-block;
+}
+
+.qrImg {
+  display: block;
+}
+
+.walletBtn {
+  display: inline-flex;
+  justify-content: center;
+  padding: var(--space-12) var(--space-28);
+  background: var(--color-terracotta);
+  color: white;
+  border-radius: 0;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.expiryNote {
+  font-size: 0.85rem;
+}
+
+.expiryTitle {
+  margin: 0 0 var(--space-2);
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+
+.expiryHint {
+  margin: 0;
+}
+
+.infoBox {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 0;
+  padding: var(--space-12) var(--space-16);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  text-align: left;
+  color: var(--color-charcoal-light);
+}
+
+/* Footer logos row: composes with global .row */
+.footerLogos {
+  --gap: var(--space-12);
+  justify-content: center;
+  padding-top: var(--space-20);
+}
+
+.footerLabel {
+  font-size: 0.78rem;
+  color: var(--color-charcoal-light);
+  white-space: nowrap;
+}
+
+.footerAnd {
+  font-size: 0.78rem;
+  color: var(--color-charcoal-light);
+}
+
+.footerLogoEcommons {
+  height: 28px;
+  opacity: 0.75;
+}
+
+.footerLogoMetastate {
+  height: 28px;
+  opacity: 0.85;
+}
