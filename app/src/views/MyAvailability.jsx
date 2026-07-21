@@ -3,6 +3,7 @@ import { Card, Button, Input, Select, Label, Heading, SectionLabel, Page } from 
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { setMyAvailability } from '../api/client'
+import styles from './MyAvailability.module.css'
 
 export default function MyAvailability() {
   const { communityId, community, availabilityTypes, myMembership, refresh } = useCommunity()
@@ -58,34 +59,27 @@ export default function MyAvailability() {
   return (
     <Page maxWidth={520}>
       {current && (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 'var(--space-10)',
-          background: 'var(--color-sand)', borderRadius: 0, padding: '12px 18px', marginBottom: 'var(--space-20)',
-          fontSize: '0.95rem',
-        }}>
-          <span className="emoji-mono" style={{ fontSize: '1.3rem' }}>{current.type.emoji}</span>
+        <div className={`row ${styles.statusBox}`}>
+          <span className={`emoji-mono ${styles.statusEmoji}`}>{current.type.emoji}</span>
           <div>
-            <div style={{ fontWeight: 600 }}>{current.type.name}</div>
-            {current.reason && <div style={{ fontSize: '0.85rem', color: 'var(--color-charcoal-light)' }}>{current.reason}</div>}
-            {current.until && <div style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>Until {new Date(current.until).toLocaleDateString()}</div>}
+            <div className={styles.statusName}>{current.type.name}</div>
+            {current.reason && <div className={styles.statusReason}>{current.reason}</div>}
+            {current.until && <div className={styles.statusUntil}>Until {new Date(current.until).toLocaleDateString()}</div>}
           </div>
         </div>
       )}
 
       {!current && (
-        <div style={{
-          background: 'var(--color-cream-dark)', borderRadius: 0, padding: '12px 18px', marginBottom: 'var(--space-20)',
-          fontSize: '0.9rem', color: 'var(--color-charcoal-light)',
-        }}>
+        <div className={styles.noStatusBox}>
           You are currently marked as available in {community?.name}.
         </div>
       )}
 
-      <Card style={{ padding: 'var(--space-28)' }}>
-        <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
+      <Card className={styles.formCard}>
+        <SectionLabel className={styles.sectionLabelMb20}>
           Set status
         </SectionLabel>
-        <form onSubmit={handleSet} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
+        <form onSubmit={handleSet} className={`stack ${styles.form}`}>
           <div>
             <Label>Status</Label>
             <Select value={form.type_id} onChange={(e) => setForm((f) => ({ ...f, type_id: e.target.value }))}>
@@ -103,7 +97,7 @@ export default function MyAvailability() {
             <Label>Until (optional)</Label>
             <Input type="date" value={form.until} onChange={(e) => setForm((f) => ({ ...f, until: e.target.value }))} />
           </div>
-          <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center' }}>
+          <div className="row">
             <Button type="submit" disabled={saving || !form.type_id}>
               {saving ? 'Saving…' : 'Set status'}
             </Button>
@@ -113,7 +107,7 @@ export default function MyAvailability() {
               </Button>
             )}
             {saveMsg && (
-              <span style={{ fontSize: '0.85rem', color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>
+              <span className={styles.saveMsg} style={{ color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>
                 {saveMsg}
               </span>
             )}

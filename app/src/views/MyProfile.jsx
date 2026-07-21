@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { updateMe, uploadProfileImage } from '../api/client'
+import styles from './MyProfile.module.css'
 
 const CameraIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -75,18 +76,12 @@ export default function MyProfile() {
   }
 
   const camBadge = (active) => ({
-    position: 'absolute', bottom: 6, right: 6,
-    width: 28, height: 28, borderRadius: '50%',
-    background: 'rgba(44,44,44,0.55)', color: 'white',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    pointerEvents: 'none',
     opacity: active ? 1 : 0,
-    transition: 'opacity 0.15s',
   })
 
   return (
     <Page maxWidth={600}>
-      <Card style={{ overflow: 'hidden', marginBottom: 'var(--space-24)' }}>
+      <Card className={styles.profileCard}>
         {/* Banner */}
         <button
           type="button"
@@ -94,78 +89,65 @@ export default function MyProfile() {
           onClick={() => bannerFileRef.current?.click()}
           onMouseEnter={() => setBannerHover(true)}
           onMouseLeave={() => setBannerHover(false)}
+          className={styles.bannerRow}
           style={{
-            position: 'relative', display: 'block', width: '100%', height: 140,
-            border: 'none', padding: 0, cursor: 'pointer', overflow: 'hidden',
             background: user?.bannerUrl ? undefined : 'var(--color-sand-dark)',
-            opacity: bannerSaving ? 0.6 : 1, transition: 'opacity 0.15s',
+            opacity: bannerSaving ? 0.6 : 1,
           }}
         >
           {user?.bannerUrl && (
-            <img src={user.bannerUrl} alt="banner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src={user.bannerUrl} alt="banner" className={styles.bannerImg} />
           )}
-          <span style={camBadge(bannerHover && !bannerSaving)}>
-            {bannerSaving ? <span style={{ fontSize: 11 }}>…</span> : <CameraIcon />}
+          <span className={styles.camBadge} style={camBadge(bannerHover && !bannerSaving)}>
+            {bannerSaving ? <span className={styles.uploadingDots}>…</span> : <CameraIcon />}
           </span>
         </button>
-        <input ref={bannerFileRef} type="file" accept="image/*" style={{ display: 'none' }}
+        <input ref={bannerFileRef} type="file" accept="image/*" className={styles.hiddenFileInput}
           onChange={handleImageUpload('banner_url', setBannerSaving, 1200)} />
 
-        <div style={{ padding: 'var(--space-28)' }}>
+        <div className={styles.profileBody}>
           {/* Avatar + display name */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-20)', marginTop: -56, marginBottom: 'var(--space-20)' }}>
-            <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div className={`row ${styles.avatarRow}`}>
+            <div className={styles.avatarWrap}>
               <button
                 type="button"
                 disabled={avatarSaving}
                 onClick={() => avatarFileRef.current?.click()}
                 onMouseEnter={() => setAvatarHover(true)}
                 onMouseLeave={() => setAvatarHover(false)}
-                style={{
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  position: 'relative', display: 'block', borderRadius: '50%',
-                }}
+                className={styles.avatarButton}
               >
-                <div style={{
-                  width: 88, height: 88, borderRadius: '50%', overflow: 'hidden',
-                  background: 'var(--color-sand-dark)', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontSize: '2rem', fontWeight: 700, color: 'white',
-                  border: '3px solid white', opacity: avatarSaving ? 0.6 : 1, transition: 'opacity 0.15s',
-                }}>
+                <div className={styles.avatarCircle} style={{ opacity: avatarSaving ? 0.6 : 1 }}>
                   {user?.avatarUrl
-                    ? <img src={user.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ? <img src={user.avatarUrl} alt="avatar" className={styles.avatarImg} />
                     : (user?.displayName?.[0] || user?.firstName?.[0] || '?').toUpperCase()
                   }
                 </div>
-                <span style={{ ...camBadge(avatarHover && !avatarSaving), bottom: 4, right: 4 }}>
-                  {avatarSaving ? <span style={{ fontSize: 11 }}>…</span> : <CameraIcon />}
+                <span className={`${styles.camBadge} ${styles.camBadgeAvatar}`} style={camBadge(avatarHover && !avatarSaving)}>
+                  {avatarSaving ? <span className={styles.uploadingDots}>…</span> : <CameraIcon />}
                 </span>
               </button>
-              <input ref={avatarFileRef} type="file" accept="image/*" style={{ display: 'none' }}
+              <input ref={avatarFileRef} type="file" accept="image/*" className={styles.hiddenFileInput}
                 onChange={handleImageUpload('avatar_url', setAvatarSaving, 512)} />
             </div>
-            <div style={{ flex: 1, paddingTop: 'var(--space-32)' }}>
-              <div style={{ fontSize: '1.35rem', fontWeight: 700 }}>
+            <div className={styles.nameCol}>
+              <div className={styles.displayName}>
                 {user?.firstName || ''} {user?.lastName || ''}
               </div>
               {user?.ename && (
                 <div
                   onClick={copyEname}
                   title="Click to copy"
-                  style={{
-                    marginTop: 'var(--space-4)', fontFamily: 'monospace', fontSize: '0.85rem',
-                    color: 'var(--color-charcoal-light)', cursor: 'pointer',
-                    display: 'inline-flex', alignItems: 'center', gap: 'var(--space-8)',
-                  }}
+                  className={styles.enameRow}
                 >
                   eName: {user.ename}
-                  {enameCopied && <span style={{ fontSize: '0.75rem', color: 'var(--color-green)' }}>Copied!</span>}
+                  {enameCopied && <span className={styles.copiedText}>Copied!</span>}
                 </div>
               )}
             </div>
           </div>
 
-          <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
+          <form onSubmit={handleSaveProfile} className={`stack ${styles.formStack}`}>
             {/* Display name */}
             <div>
               <Label>Display name</Label>
@@ -175,13 +157,13 @@ export default function MyProfile() {
             {/* Bio */}
             <div>
               <Label>Bio</Label>
-              <Textarea style={{ minHeight: 80 }} value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} />
+              <Textarea className={styles.bioTextarea} value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} />
             </div>
 
             {myMembership?.joinedAt && (
               <div>
                 <Label>Member since</Label>
-                <div style={{ padding: 'var(--space-10) var(--space-14)', borderRadius: 0, border: '1px solid var(--color-sand)', background: 'var(--color-cream)', fontSize: '0.9rem', color: 'var(--color-charcoal-light)' }}>
+                <div className={styles.staticField}>
                   {new Date(myMembership.joinedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
               </div>
@@ -208,11 +190,11 @@ export default function MyProfile() {
               <Input type="date" value={form.birthDate} onChange={(e) => setForm((f) => ({ ...f, birthDate: e.target.value }))} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)' }}>
+            <div className={`row ${styles.saveRow}`}>
               <Button type="submit" disabled={saving}>
                 {saving ? 'Saving…' : 'Save profile'}
               </Button>
-              {saveMsg && <span style={{ fontSize: '0.85rem', color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>{saveMsg}</span>}
+              {saveMsg && <span className={styles.saveMsg} style={{ color: saveMsg.startsWith('Error') ? 'var(--color-red)' : 'var(--color-green)' }}>{saveMsg}</span>}
             </div>
           </form>
         </div>

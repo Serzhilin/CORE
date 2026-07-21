@@ -1,0 +1,47 @@
+.screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-cream);
+  padding: var(--space-24);
+}
+
+.card {
+  max-width: 480px;
+  width: 100%;
+  padding: var(--space-32);
+  text-align: center;
+}
+
+.heading {
+  margin-bottom: var(--space-12);
+}
+
+.intro {
+  color: var(--color-charcoal-light);
+  line-height: 1.7;
+  margin-bottom: var(--space-24);
+}
+
+.prompt {
+  color: var(--color-charcoal-light);
+  margin-bottom: var(--space-16);
+}
+
+.enameBox {
+  background: var(--color-sand);
+  border-radius: 0;
+  padding: var(--space-12) var(--space-16);
+  font-family: monospace;
+  font-size: 1rem;
+  justify-content: space-between;
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-charcoal-light);
+  font-size: 0.8rem;
+}

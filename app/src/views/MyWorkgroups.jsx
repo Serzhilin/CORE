@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Card, Badge, Select, Heading, Page } from '@ecommons/ui'
+import { Card, Badge, Select, Button, Heading, Page } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import { useCommunity } from '../context/CommunityContext'
 import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import { addWorkgroupMember, removeWorkgroupMember, assignRole, unassignRole } from '../api/client'
+import styles from './MyWorkgroups.module.css'
 
 export default function MyWorkgroups() {
   const { user } = useUser()
@@ -71,36 +72,38 @@ export default function MyWorkgroups() {
     <Page maxWidth={620}>
       {/* Joined workgroups */}
       {joined.length === 0 ? (
-        <Card style={{ padding: 'var(--space-28)', color: 'var(--color-charcoal-light)', textAlign: 'center', marginBottom: 'var(--space-32)' }}>
+        <Card className={styles.emptyCard}>
           You are not a member of any workgroup yet.
         </Card>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)', marginBottom: 36 }}>
+        <div className={`stack ${styles.joinedList}`}>
           {joined.map(({ wg, roles, unassigned }) => (
-            <Card key={wg.id} style={{ borderLeft: `4px solid ${wg.color}`, padding: 'var(--space-20) var(--space-24)' }}>
+            <Card key={wg.id} className={styles.workgroupRow} style={{ borderLeft: `4px solid ${wg.color}` }}>
               {/* Header row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-12)' }}>
-                <span style={{ fontWeight: 700, fontFamily: 'var(--font-title)', fontSize: '1.05rem' }}>{wg.name}</span>
-                <button
+              <div className={styles.rowHeader}>
+                <span className={styles.wgName}>{wg.name}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleLeave(wg)}
                   disabled={busy[wg.id]}
                   title="Leave workgroup"
-                  style={{ background: 'none', border: 'none', color: 'var(--color-red)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
+                  className={styles.leaveButton}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
                   </svg>
-                </button>
+                </Button>
               </div>
 
               {/* Roles row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
+              <div className={`row ${styles.rolesRow}`}>
                 {unassigned.length > 0 && (
                   <Select
                     value=""
                     onChange={(e) => handleAssign(wg, e.target.value)}
                     disabled={busy[wg.id]}
-                    style={{ width: 'auto', padding: 'var(--space-3) var(--space-8)', color: 'var(--color-charcoal-light)' }}
+                    className={styles.roleSelect}
                   >
                     <option value="">+ Role</option>
                     {unassigned.map((r) => (
@@ -113,14 +116,15 @@ export default function MyWorkgroups() {
                   <Badge
                     key={r.id}
                     color={r.color}
-                    style={{ fontSize: '0.8rem', padding: 'var(--space-3) var(--space-10)', background: `${r.color}20`, gap: 'var(--space-5)' }}
+                    className={styles.roleBadge}
+                    style={{ background: `${r.color}20` }}
                   >
-                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: r.color, flexShrink: 0 }} />
+                    <span className={styles.roleDot} style={{ background: r.color }} />
                     {r.name}
                     <button
                       onClick={() => handleUnassign(wg, r.id)}
                       disabled={busy[wg.id]}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'var(--color-charcoal-light)', fontSize: '0.9rem' }}
+                      className={styles.unassignButton}
                     >×</button>
                   </Badge>
                 ))}
@@ -136,41 +140,40 @@ export default function MyWorkgroups() {
         <div>
           <button
             onClick={() => setJoinOpen(v => !v)}
-            style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', background: 'none', border: 'none', cursor: 'pointer', padding: 'var(--space-4) 0', marginBottom: joinOpen ? 12 : 0 }}
+            className={`row ${styles.joinSection}`}
+            style={{ marginBottom: joinOpen ? 12 : 0 }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-              style={{ transition: 'transform 0.15s', transform: joinOpen ? 'rotate(90deg)' : 'rotate(0deg)', color: 'var(--color-charcoal-light)' }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              className={styles.chevron} style={{ transform: joinOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
               <polyline points="9 18 15 12 9 6"/>
             </svg>
-            <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-charcoal-light)', fontWeight: 600 }}>
+            <span className={styles.joinLabel}>
               Join a workgroup
             </span>
           </button>
-          {joinOpen && <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+          {joinOpen && <div className="stack">
             {available.map((wg) => (
               <div
                 key={wg.id}
-                style={{
-                  background: 'var(--color-cream-dark)', borderRadius: 0,
-                  border: '1px solid var(--color-sand)', padding: 'var(--space-12) var(--space-20)',
-                  display: 'flex', alignItems: 'center', gap: 'var(--space-12)',
-                }}
+                className={`row ${styles.availableRow}`}
               >
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: wg.color, flexShrink: 0 }} />
-                <span style={{ flex: 1, fontWeight: 500, fontSize: '0.9rem' }}>{wg.name}</span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--color-charcoal-light)' }}>
+                <span className={styles.availableDot} style={{ background: wg.color }} />
+                <span className={styles.availableName}>{wg.name}</span>
+                <span className={styles.memberCount}>
                   {wg.members.length} {wg.members.length === 1 ? 'member' : 'members'}
                 </span>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleJoin(wg)}
                   disabled={busy[wg.id]}
                   title="Join workgroup"
-                  style={{ background: 'none', border: 'none', color: 'var(--color-green)', cursor: 'pointer', opacity: busy[wg.id] ? 0.5 : 1, padding: 'var(--space-2) var(--space-4)', display: 'inline-flex', alignItems: 'center' }}
+                  className={styles.joinButton}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
                   </svg>
-                </button>
+                </Button>
               </div>
             ))}
           </div>}

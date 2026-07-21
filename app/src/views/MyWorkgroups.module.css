@@ -1,0 +1,118 @@
+.emptyCard {
+  padding: var(--space-28);
+  color: var(--color-charcoal-light);
+  text-align: center;
+  margin-bottom: var(--space-32);
+}
+
+.joinedList {
+  --gap: var(--space-12);
+  margin-bottom: 36px;
+}
+
+.workgroupRow {
+  padding: var(--space-20) var(--space-24);
+}
+
+.rowHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-12);
+}
+
+.wgName {
+  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+}
+
+.leaveButton {
+  color: var(--color-red);
+}
+
+.rolesRow {
+  --gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.roleSelect {
+  width: auto;
+  padding: var(--space-3) var(--space-8);
+  color: var(--color-charcoal-light);
+}
+
+.roleBadge {
+  font-size: 0.8rem;
+  padding: var(--space-3) var(--space-10);
+  gap: var(--space-5);
+}
+
+.roleDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.unassignButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  color: var(--color-charcoal-light);
+  font-size: 0.9rem;
+}
+
+.joinSection {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-4) 0;
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.15s;
+  color: var(--color-charcoal-light);
+}
+
+.joinLabel {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-charcoal-light);
+  font-weight: 600;
+}
+
+.availableRow {
+  --gap: var(--space-12);
+  background: var(--color-cream-dark);
+  border-radius: 0;
+  border: 1px solid var(--color-sand);
+  padding: var(--space-12) var(--space-20);
+}
+
+.availableDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.availableName {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.memberCount {
+  font-size: 0.78rem;
+  color: var(--color-charcoal-light);
+}
+
+.joinButton {
+  color: var(--color-green);
+}

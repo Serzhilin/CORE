@@ -1,0 +1,51 @@
+.formCard {
+  padding: var(--space-28);
+}
+
+.sectionLabelMb20 {
+  margin: 0 0 var(--space-20);
+}
+
+.statusBox {
+  --gap: var(--space-10);
+  background: var(--color-sand);
+  border-radius: 0;
+  padding: var(--space-12) 18px;
+  margin-bottom: var(--space-20);
+  font-size: 0.95rem;
+}
+
+.statusEmoji {
+  font-size: 1.3rem;
+}
+
+.statusName {
+  font-weight: 600;
+}
+
+.statusReason {
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+}
+
+.statusUntil {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+.noStatusBox {
+  background: var(--color-cream-dark);
+  border-radius: 0;
+  padding: var(--space-12) 18px;
+  margin-bottom: var(--space-20);
+  font-size: 0.9rem;
+  color: var(--color-charcoal-light);
+}
+
+.form {
+  --gap: var(--space-14);
+}
+
+.saveMsg {
+  font-size: 0.85rem;
+}

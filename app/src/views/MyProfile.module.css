@@ -1,0 +1,150 @@
+.camBadge {
+  position: absolute;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-charcoal);
+  transition: opacity 0.15s ease;
+  color: white;
+  pointer-events: none;
+}
+
+.camBadgeAvatar {
+  bottom: var(--space-4);
+  right: var(--space-4);
+}
+
+.profileCard {
+  overflow: hidden;
+  margin-bottom: var(--space-24);
+}
+
+.bannerRow {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 140px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  transition: opacity 0.15s;
+}
+
+.bannerImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.profileBody {
+  padding: var(--space-28);
+}
+
+.avatarRow {
+  --gap: var(--space-20);
+  margin-top: -56px;
+  margin-bottom: var(--space-20);
+}
+
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatarButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  border-radius: 50%;
+}
+
+.avatarCircle {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-sand-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  border: 3px solid white;
+  transition: opacity 0.15s;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.uploadingDots {
+  font-size: 11px;
+}
+
+.nameCol {
+  flex: 1;
+  padding-top: var(--space-32);
+}
+
+.displayName {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.enameRow {
+  margin-top: var(--space-4);
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.copiedText {
+  font-size: 0.75rem;
+  color: var(--color-green);
+}
+
+.formStack {
+  --gap: var(--space-14);
+}
+
+.bioTextarea {
+  min-height: 80px;
+}
+
+.staticField {
+  padding: var(--space-10) var(--space-14);
+  border-radius: 0;
+  border: 1px solid var(--color-sand);
+  background: var(--color-cream);
+  font-size: 0.9rem;
+  color: var(--color-charcoal-light);
+}
+
+.saveRow {
+  --gap: var(--space-12);
+}
+
+.saveMsg {
+  font-size: 0.85rem;
+}

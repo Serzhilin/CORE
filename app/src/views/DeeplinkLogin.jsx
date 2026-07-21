@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { ErrorText } from '@ecommons/ui'
+import styles from './DeeplinkLogin.module.css'
 
 export default function DeeplinkLogin() {
   const [error, setError] = useState(null)
@@ -57,16 +59,16 @@ export default function DeeplinkLogin() {
 
   if (!error) {
     return (
-      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', color: 'var(--color-charcoal-light)' }}>
+      <div className={`${styles.centerFill} ${styles.authenticating}`}>
         Authenticating…
       </div>
     )
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 'var(--space-16)', fontFamily: 'var(--font-sans)' }}>
-      <p style={{ color: 'var(--color-red)' }}>{error}</p>
-      <a href="/" style={{ fontWeight: 700, color: 'var(--color-charcoal)', textDecoration: 'underline' }}>Back to home</a>
+    <div className={`${styles.centerFill} ${styles.errorFill}`}>
+      <ErrorText as="p">{error}</ErrorText>
+      <a href="/" className={styles.backLink}>Back to home</a>
     </div>
   )
 }
