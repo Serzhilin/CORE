@@ -7,6 +7,7 @@ import CommunityTab from './admin/CommunityTab'
 import MembersTab from './admin/MembersTab'
 import WorkgroupsTab from './admin/WorkgroupsTab'
 import AvailabilityTab from './admin/AvailabilityTab'
+import styles from './AdminPanel.module.css'
 
 const TABS = [
   { key: 'workgroups', label: 'Workgroups' },
@@ -31,7 +32,7 @@ export default function AdminPanel() {
   )
 
   if (!isAdmin && !isWorkgroupAdmin) {
-    return <div style={{ color: 'var(--color-charcoal-light)', padding: 'var(--space-32)' }}>Access denied.</div>
+    return <div className={styles.accessDenied}>Access denied.</div>
   }
 
   const visibleTabs = isAdmin ? TABS : TABS.filter((t) => t.key === 'workgroups')
@@ -40,7 +41,7 @@ export default function AdminPanel() {
 
   return (
     <div>
-      <div style={{ marginBottom: 'var(--space-28)' }}>
+      <div className={styles.wrapper}>
         <Tabs tabs={visibleTabs} activeKey={activeKey} onChange={(key) => navigate(`/admin/${key}`)} />
       </div>
 

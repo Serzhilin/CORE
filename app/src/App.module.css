@@ -1,0 +1,35 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-32);
+  background: var(--color-cream);
+  min-height: 0;
+}
+
+/*
+ * Full-viewport flex-center loading state — used by the Layout loading
+ * gate. Not applied to the other two Suspense fallbacks in this file:
+ * those use genuinely different static styles in the current codebase
+ * (the lazy-views fallback has no style at all; the SuperadminPage
+ * fallback has only padding, no centering). Forcing all three into one
+ * shared appearance would be a visible behavior change beyond the scope
+ * of this migration — see task-7-report.md for detail.
+ */
+.centerFill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+}
+
+.suspensePad {
+  padding: var(--space-32);
+}

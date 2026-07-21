@@ -1,0 +1,93 @@
+.wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-32);
+  font-family: var(--font-sans);
+}
+
+.loadingFill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+}
+
+.accessDenied {
+  padding: var(--space-32);
+  font-family: var(--font-sans);
+  color: var(--color-red);
+}
+
+.heading {
+  margin: 0 0 var(--space-24);
+}
+
+.listError {
+  color: var(--color-red);
+  margin-bottom: var(--space-16);
+}
+
+.addCard {
+  padding: var(--space-28);
+  margin-bottom: var(--space-24);
+}
+
+.addCardLabel {
+  margin: 0 0 var(--space-20);
+}
+
+.formStack {
+  --gap: var(--space-10);
+}
+
+.enameInput {
+  flex: 1;
+}
+
+.previewBox {
+  border: 1px solid var(--color-sand);
+  border-radius: 0;
+  padding: var(--space-14);
+  font-size: 0.85rem;
+}
+
+.previewDescription {
+  margin-top: var(--space-4);
+}
+
+.slugLabel {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+.slugInput {
+  margin-top: var(--space-4);
+}
+
+.communityCard {
+  padding: var(--space-14) 18px;
+  margin-bottom: var(--space-10);
+}
+
+.communityRow {
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.communityName {
+  font-weight: 600;
+}
+
+.communitySlug {
+  font-size: 0.82rem;
+  color: var(--color-charcoal-light);
+}
+
+.expandedWrap {
+  margin-top: var(--space-16);
+}
+
+.emptyState {
+  color: var(--color-charcoal-light);
+}

@@ -1,0 +1,8 @@
+.accessDenied {
+  color: var(--color-charcoal-light);
+  padding: var(--space-32);
+}
+
+.wrapper {
+  margin-bottom: var(--space-28);
+}

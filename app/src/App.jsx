@@ -8,6 +8,7 @@ import LoginScreen from './components/LoginScreen'
 import TopBar from './components/TopBar'
 import OnboardingScreen from './views/OnboardingScreen'
 import DeeplinkLogin from './views/DeeplinkLogin'
+import styles from './App.module.css'
 
 const OrganogramView = lazy(() => import('./views/OrganogramView'))
 const MyProfile = lazy(() => import('./views/MyProfile'))
@@ -21,7 +22,9 @@ function Layout() {
 
   if (loading) {
     return (
-      <Loading style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)' }} />
+      <div className={styles.centerFill}>
+        <Loading />
+      </div>
     )
   }
 
@@ -35,9 +38,9 @@ function Layout() {
 
   return (
     <TopBarSlotProvider>
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      <div className={styles.layout}>
         <TopBar />
-        <main style={{ flex: 1, overflow: 'auto', padding: 'var(--space-32)', background: 'var(--color-cream)', minHeight: 0 }}>
+        <main className={styles.main}>
           <Suspense fallback={<Loading>Loading view…</Loading>}>
             <Routes>
               <Route path="/" element={<OrganogramView />} />
@@ -61,7 +64,7 @@ export default function App() {
         <Route path="/deeplink-login" element={<DeeplinkLogin />} />
         <Route path="/superadmin" element={
           <UserProvider>
-            <Suspense fallback={<Loading style={{ padding: 'var(--space-32)' }} />}>
+            <Suspense fallback={<div className={styles.suspensePad}><Loading /></div>}>
               <SuperadminPage />
             </Suspense>
           </UserProvider>

@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
 import { adminListAllCommunities, adminResolveEname, adminCreateCommunity } from '../api/client'
+import styles from './SuperadminPage.module.css'
 
 function slugify(name) {
   return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -51,15 +52,15 @@ function AddCommunityCard({ onCreated }) {
   }
 
   return (
-    <Card style={{ padding: 'var(--space-28)', marginBottom: 'var(--space-24)' }}>
-      <SectionLabel style={{ margin: '0 0 var(--space-20)' }}>
+    <Card className={styles.addCard}>
+      <SectionLabel className={styles.addCardLabel}>
         Add community from existing eName
       </SectionLabel>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
-        <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
+      <div className={`stack ${styles.formStack}`}>
+        <div className="row">
           <Input
-            style={{ flex: 1 }}
+            className={styles.enameInput}
             placeholder="@ename or w3id"
             value={enameInput}
             onChange={(e) => { setEnameInput(e.target.value); setPreview(null) }}
@@ -72,15 +73,15 @@ function AddCommunityCard({ onCreated }) {
         {error && <ErrorText>{error}</ErrorText>}
 
         {preview && (
-          <div style={{ border: '1px solid var(--color-sand)', borderRadius: 0, padding: 'var(--space-14)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
+          <div className={`stack ${styles.formStack} ${styles.previewBox}`}>
             <div>
               <strong>{preview.envelope.name}</strong>
-              {preview.envelope.description && <div style={{ marginTop: 'var(--space-4)' }}>{preview.envelope.description}</div>}
+              {preview.envelope.description && <div className={styles.previewDescription}>{preview.envelope.description}</div>}
             </div>
-            <label style={{ fontSize: '0.8rem', color: 'var(--color-charcoal-light)' }}>
+            <label className={styles.slugLabel}>
               Slug
               <Input
-                style={{ marginTop: 'var(--space-4)' }}
+                className={styles.slugInput}
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
               />
@@ -116,7 +117,9 @@ export default function SuperadminPage() {
 
   if (loading) {
     return (
-      <Loading style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'var(--font-sans)' }} />
+      <div className={styles.loadingFill}>
+        <Loading />
+      </div>
     )
   }
 
@@ -126,29 +129,29 @@ export default function SuperadminPage() {
 
   if (!isPlatformAdmin) {
     return (
-      <div style={{ padding: 'var(--space-32)', fontFamily: 'var(--font-sans)', color: 'var(--color-red)' }}>
+      <div className={styles.accessDenied}>
         Platform admin access required.
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-32)', fontFamily: 'var(--font-sans)' }}>
-      <Heading as="h1" style={{ margin: '0 0 var(--space-24)' }}>Superadmin — Communities</Heading>
+    <div className={styles.wrapper}>
+      <Heading as="h1" className={styles.heading}>Superadmin — Communities</Heading>
 
-      {listError && <div style={{ color: 'var(--color-red)', marginBottom: 'var(--space-16)' }}>{listError}</div>}
+      {listError && <div className={styles.listError}>{listError}</div>}
 
       <AddCommunityCard onCreated={refresh} />
 
       {communities.map((c) => (
-        <Card key={c.id} style={{ padding: '14px 18px', marginBottom: 'var(--space-10)' }}>
+        <Card key={c.id} className={styles.communityCard}>
           <div
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+            className={`row ${styles.communityRow}`}
             onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}
           >
             <div>
-              <div style={{ fontWeight: 600 }}>{c.name}</div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--color-charcoal-light)' }}>/{c.slug}</div>
+              <div className={styles.communityName}>{c.name}</div>
+              <div className={styles.communitySlug}>/{c.slug}</div>
             </div>
             <Badge variant={c.provisioning_status === 'linked' ? 'green' : 'gray'}>
               {c.provisioning_status === 'linked' ? `linked · ${c.ename}` : 'local only'}
@@ -156,7 +159,7 @@ export default function SuperadminPage() {
           </div>
 
           {expandedId === c.id && (
-            <div style={{ marginTop: 'var(--space-16)' }}>
+            <div className={styles.expandedWrap}>
               <W3dsLinkCard communityId={c.id} community={c} onChange={refresh} />
             </div>
           )}
@@ -164,7 +167,7 @@ export default function SuperadminPage() {
       ))}
 
       {communities.length === 0 && !listError && (
-        <p style={{ color: 'var(--color-charcoal-light)' }}>No communities yet.</p>
+        <p className={styles.emptyState}>No communities yet.</p>
       )}
     </div>
   )
