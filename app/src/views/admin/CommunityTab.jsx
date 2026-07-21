@@ -193,7 +193,7 @@ export default function CommunityTab() {
           <div>
             <Label style={{ marginBottom: 'var(--space-8)' }}>Logo</Label>
             <div className={`row ${styles.gap16}`}>
-              <div className={styles.previewBox}>
+              <div className={`row ${styles.previewBox}`}>
                 {logo
                   ? <img src={logo} alt="logo" className={styles.previewImgContain} />
                   : <span className={styles.emojiPlaceholder}>🏛️</span>
@@ -218,7 +218,7 @@ export default function CommunityTab() {
           <div>
             <Label style={{ marginBottom: 'var(--space-8)' }}>Group photo</Label>
             <div className={`row ${styles.gap16}`}>
-              <div className={styles.previewBox}>
+              <div className={`row ${styles.previewBox}`}>
                 {photo
                   ? <img src={photo} alt="group photo" className={styles.previewImgCover} />
                   : <span className={styles.emojiPlaceholder}>📷</span>
@@ -273,7 +273,7 @@ export default function CommunityTab() {
           const name = [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email || 'Unknown'
           const isSelf = m.personId === user?.id
           return (
-            <div key={m.personId} className={styles.adminRow}>
+            <div key={m.personId} className={`row ${styles.adminRow}`}>
               <span className={styles.adminName}>{name}</span>
               {isSelf && <span className={styles.smallNote}>you</span>}
               <button
