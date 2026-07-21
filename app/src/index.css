@@ -20,3 +20,45 @@ label {
 @media (max-width: 640px) {
   .topbar-filter-break { display: block; }
 }
+
+.login-layout {
+  display: grid;
+  gap: 40px;
+}
+@media (min-width: 768px) {
+  .login-layout {
+    grid-template-columns: 1.1fr 400px;
+    gap: 64px;
+    align-items: start;
+  }
+}
+
+.login-brand-col {
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .login-brand-col {
+    text-align: left;
+  }
+}
+
+.login-brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .login-brand-header {
+    justify-content: flex-start;
+  }
+}
+
+.login-partner-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .login-partner-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

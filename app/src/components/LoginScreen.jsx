@@ -44,11 +44,11 @@ export default function LoginScreen({ onSuccess }) {
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'var(--color-cream)', padding: 'var(--space-32) var(--space-20)',
     }}>
-      <div className="grid gap-10 md:grid-cols-[1.1fr_400px] md:gap-16 md:items-start" style={{ width: '100%', maxWidth: 960 }}>
+      <div className="login-layout" style={{ width: '100%', maxWidth: 960 }}>
 
         {/* Left column (desktop) / top (mobile): brand */}
-        <div className="text-center md:text-left" style={{ paddingTop: 'var(--space-28)', paddingBottom: 'var(--space-28)' }}>
-          <div className="flex items-center justify-center md:justify-start" style={{ gap: 'var(--space-12)', marginBottom: 'var(--space-16)' }}>
+        <div className="login-brand-col" style={{ paddingTop: 'var(--space-28)', paddingBottom: 'var(--space-28)' }}>
+          <div className="login-brand-header" style={{ gap: 'var(--space-12)', marginBottom: 'var(--space-16)' }}>
             <img src="/logo.png" alt="CORE" style={{ height: 40, width: 40, objectFit: 'contain' }} />
             <Heading as="h1" style={{ margin: 0 }}>
               CORE
@@ -64,7 +64,7 @@ export default function LoginScreen({ onSuccess }) {
           <Heading as="h2" fontSize="1.25rem" style={{ margin: 'var(--space-32) 0 var(--space-16)' }}>
             This app works together with:
           </Heading>
-          <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 'var(--space-20)' }}>
+          <div className="login-partner-grid" style={{ gap: 'var(--space-20)' }}>
             {[
               { name: 'WVTTK', logo: '/wvttk-logo.png', color: 'var(--color-terracotta)', desc: 'Plans workgroup meetings and agendas.', url: 'https://wvttk.lab.ecommons.space' },
               { name: 'ALVer', logo: '/alver-logo.png', color: 'var(--color-amber)', desc: 'Runs formal cooperative meetings and votes.', url: 'https://alver.lab.ecommons.space' },
