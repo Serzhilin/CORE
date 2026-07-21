@@ -28,6 +28,7 @@ async function reconcileMemberRoles(membershipId: string, roleIds: string[]): Pr
         if (localRoleIds.has(roleId)) continue;
         try {
             await wmrRepo().save(wmrRepo().create({ workgroup_membership_id: membershipId, role_id: roleId }));
+            logger.warn("WorkgroupReconciler: assigned role %s to membership %s (present in eVault, missing locally)", roleId, membershipId);
         } catch (err) {
             logger.warn(err, "WorkgroupReconciler: member role assign failed for membership %s role %s", membershipId, roleId);
         }
@@ -37,6 +38,7 @@ async function reconcileMemberRoles(membershipId: string, roleIds: string[]): Pr
         if (envelopeRoleIds.has(r.role_id)) continue;
         try {
             await wmrRepo().delete(r.id);
+            logger.warn("WorkgroupReconciler: unassigned role %s from membership %s (absent from eVault)", r.role_id, membershipId);
         } catch (err) {
             logger.warn(err, "WorkgroupReconciler: member role unassign failed for membership %s role %s", membershipId, r.role_id);
         }
