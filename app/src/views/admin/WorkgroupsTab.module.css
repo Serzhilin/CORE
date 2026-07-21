@@ -1,0 +1,249 @@
+/* Add-workgroup bar + form */
+.headerBar {
+  justify-content: flex-end;
+  margin-bottom: var(--space-20);
+}
+
+.addWgCard {
+  padding: var(--space-20);
+  margin-bottom: var(--space-16);
+}
+
+.addWgForm {
+  display: flex;
+  gap: var(--space-8);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.colorSwatchGroup {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.colorSwatchInput {
+  width: 36px;
+  height: 34px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.colorHexInput {
+  width: 90px;
+}
+
+/* Shared button font-size utilities used across the small inline forms */
+.btnSm {
+  font-size: 0.85rem;
+}
+
+.btnXs {
+  font-size: 0.8rem;
+}
+
+/* Workgroup card shell + header */
+.wgCard {
+  margin-bottom: var(--space-12);
+}
+
+.wgHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-14) var(--space-20);
+  cursor: pointer;
+  user-select: none;
+}
+
+.colorDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  flex-shrink: 0;
+}
+
+/* Click-to-edit fields (workgroup name, role name, description) */
+.editableField {
+  cursor: pointer;
+}
+
+.editableFieldActive {
+  cursor: text;
+}
+
+.wgNameInput {
+  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  padding: var(--space-4) var(--space-8);
+}
+
+.wgNameText {
+  font-weight: 700;
+  font-family: var(--font-title);
+}
+
+.countText {
+  font-size: 0.8rem;
+  color: var(--color-charcoal-light);
+}
+
+.iconButtonDanger {
+  background: none;
+  border: none;
+  color: var(--color-red);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+}
+
+.marginLeftAuto {
+  margin-left: auto;
+}
+
+.chevron {
+  color: var(--color-charcoal-light);
+}
+
+.expandedBody {
+  border-top: 1px solid var(--color-sand);
+}
+
+.tabContent {
+  padding: var(--space-20);
+}
+
+.sectionGap {
+  margin: 0 0 var(--space-10);
+}
+
+/* Roles sub-tab */
+.roleRow {
+  margin-bottom: var(--space-6);
+}
+
+.roleNameInput {
+  flex: 1;
+  padding: var(--space-3) var(--space-6);
+  font-size: 0.9rem;
+}
+
+.roleNameText {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.roleDeleteButton {
+  background: none;
+  border: none;
+  color: var(--color-red);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.addRoleForm {
+  display: flex;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+.flexInput {
+  flex: 1;
+}
+
+/* Members sub-tab */
+.memberRow {
+  --gap: var(--space-6);
+  padding: var(--space-10) 0;
+}
+
+.memberName {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.roleChipRow {
+  --gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.roleSelect {
+  width: auto;
+  padding: var(--space-2) var(--space-6);
+  font-size: 0.78rem;
+  color: var(--color-charcoal-light);
+}
+
+.roleBadge {
+  font-size: 0.75rem;
+  padding: var(--space-2) var(--space-8);
+  gap: var(--space-4);
+}
+
+.roleUnassignButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  color: var(--color-charcoal-light);
+  font-size: 0.9rem;
+}
+
+.addMemberRow {
+  display: flex;
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+}
+
+.addMemberButton {
+  font-size: 0.8rem;
+  align-self: flex-start;
+}
+
+/* Details sub-tab */
+.detailsStack {
+  --gap: var(--space-16);
+}
+
+.labelGap {
+  margin-bottom: var(--space-6);
+}
+
+.descTextarea {
+  width: 100%;
+  font-size: 0.88rem;
+}
+
+.descriptionDisplay {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  padding: var(--space-6) 0;
+}
+
+.colorPickerRow {
+  display: flex;
+  gap: var(--space-10);
+  align-items: center;
+}
+
+.colorSwatchLarge {
+  width: 40px;
+  height: 36px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.colorHexText {
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+  font-family: monospace;
+}
