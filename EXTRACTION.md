@@ -1,8 +1,11 @@
 # @ecommons/ui extraction — running checklist
 
-Package lives at `../ecommons-ui` (sibling of CORE), consumed via `file:` dep,
-built with tsup. CORE imports the **built** `dist/`, so every step here ends
-with `npm run build` in `ecommons-ui` before switching back to CORE.
+Package lives at `~/Projects/ecommons-ui`, consumed via a `git+ssh` dependency
+pinned to a commit on its `main` branch (see root `package.json`), built with
+tsup. CORE imports the **built** `dist/`, so every step here ends with
+`npm run build` in `ecommons-ui`, then `git push origin main`, then
+`npm install @ecommons/ui@git+ssh://git@codeberg.org/eCommons/ecommons-ui.git#main`
+in CORE to pick it up — a local build alone does not reach CORE.
 
 **Note (2026-07-13):** `ecommons-ui` had no git repo until now — its own repo
 was only just initialized (`git init`, commit `a97199e`, covering tokens +
