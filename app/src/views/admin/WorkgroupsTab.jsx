@@ -386,7 +386,7 @@ export default function WorkgroupsTab() {
                   {getTab(wg.id) === 'details' && (
                     <div className={`stack ${styles.detailsStack}`}>
                       <div>
-                        <Label size="sm" className={styles.labelGap}>Description</Label>
+                        <Label size="sm" style={{ marginBottom: 'var(--space-6)' }}>Description</Label>
                         {editingWgDesc[wg.id] !== undefined ? (
                           <Textarea
                             autoFocus
@@ -409,8 +409,8 @@ export default function WorkgroupsTab() {
                         )}
                       </div>
                       <div>
-                        <Label size="sm" className={styles.labelGap}>Color</Label>
-                        <div className={styles.colorPickerRow}>
+                        <Label size="sm" style={{ marginBottom: 'var(--space-6)' }}>Color</Label>
+                        <div className={`row ${styles.colorPickerRow}`}>
                           <input
                             key={wg.color}
                             type="color"
