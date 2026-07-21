@@ -3,7 +3,13 @@ import { Community } from "../database/entities/Community";
 import { Workgroup } from "../database/entities/Workgroup";
 import { CommunityMembership } from "../database/entities/CommunityMembership";
 import { Person } from "../database/entities/Person";
-import { createEnvelope, updateEnvelope, getEnvelope, getUserMetaEnvelopeId } from "../lib/evault-client";
+import {
+    createEnvelope,
+    updateEnvelope,
+    getEnvelope,
+    getUserMetaEnvelopeId,
+    findEnvelopesByOntology,
+} from "../lib/evault-client";
 import { ONTOLOGIES } from "../lib/w3ds/ontology";
 import { logger } from "../lib/logger";
 import {
@@ -39,6 +45,24 @@ async function resolveParticipant(personId: string): Promise<{ metaId: string; e
 
 // ── Community chat ──────────────────────────────────────────────────────────
 
+/** Creates a fresh Chat/Group envelope for a community and persists its id locally.
+ *  Shared by getOrCreateCommunityChatId (initial link) and syncCommunityChatToEvault's
+ *  self-heal path (chat_envelope_id missing or its envelope no longer exists). */
+async function createCommunityChatEnvelope(
+    community: Community
+): Promise<{ id: string; payload: Record<string, unknown> } | null> {
+    if (!community.ename) return null;
+    const payload = buildNewChatPayload({ name: community.name, participantIds: [], members: [] });
+    const id = await createEnvelope({
+        vaultEname: community.ename,
+        ontology: ONTOLOGIES.Community,
+        payload,
+        acl: ["*"],
+    });
+    await communityRepo().update(community.id, { chat_envelope_id: id });
+    return { id, payload };
+}
+
 /** Used once at link time. If envelopeId is set (the target eName already has a
  *  Chat/Group envelope), just persists it. If null, creates a fresh one seeded from
  *  the community being linked, so every linked community ends up with a chat. */
@@ -49,14 +73,7 @@ export async function getOrCreateCommunityChatId(communityId: string, envelopeId
         return;
     }
     if (!community.ename) return;
-    const payload = buildNewChatPayload({ name: community.name, participantIds: [], members: [] });
-    const newEnvelopeId = await createEnvelope({
-        vaultEname: community.ename,
-        ontology: ONTOLOGIES.Community,
-        payload,
-        acl: ["*"],
-    });
-    await communityRepo().update(community.id, { chat_envelope_id: newEnvelopeId });
+    await createCommunityChatEnvelope(community);
     await syncCommunityChatToEvault(community.id);
 }
 
@@ -64,18 +81,41 @@ export async function getOrCreateCommunityChatId(communityId: string, envelopeId
  *  member is a chat participant, preserving every other field — including participants that
  *  aren't community members (partners, guests, or additions from another platform). Never
  *  removes a participant; membership removal is handled separately by
- *  removePersonFromCommunityChat. Fire-and-forget caller. */
+ *  removePersonFromCommunityChat.
+ *
+ *  Self-heal (Axiom 1/2): if chat_envelope_id was never set (the initial create at link
+ *  time silently failed) or the envelope it points at no longer exists (deleted by another
+ *  platform), recreate it rather than leaving the community without a chat. A single failed
+ *  fetch is ambiguous (transient network error vs. genuine deletion), so absence is
+ *  confirmed via a vault-wide ontology listing — same signal WorkgroupReconciler's sweep
+ *  uses to tell deletion apart from a transient error — before concluding it's really gone.
+ *  Fire-and-forget caller. */
 export async function syncCommunityChatToEvault(communityId: string): Promise<void> {
     const community = await communityRepo().findOne({ where: { id: communityId } });
-    if (!community?.chat_envelope_id || !community.ename) {
-        logger.warn("Skipping community chat sync for %s — no chat_envelope_id linked", communityId);
+    if (!community?.ename) {
+        logger.warn("Skipping community chat sync for %s — no ename linked", communityId);
         return;
     }
 
-    const current = await getEnvelope(community.ename, community.chat_envelope_id);
+    let chatEnvelopeId = community.chat_envelope_id;
+    let current: Record<string, unknown> | null = chatEnvelopeId
+        ? await getEnvelope(community.ename, chatEnvelopeId)
+        : null;
+
     if (!current) {
-        logger.warn("Community chat envelope fetch failed for %s, skipping sync", communityId);
-        return;
+        if (chatEnvelopeId) {
+            const envelopes = await findEnvelopesByOntology(community.ename, ONTOLOGIES.Community, 500);
+            if (envelopes.some((e) => e.id === chatEnvelopeId)) {
+                logger.warn("Community chat fetch transiently failed for %s, skipping this sync", communityId);
+                return;
+            }
+        }
+        const reason = chatEnvelopeId ? "envelope confirmed absent from vault (deleted)" : "chat_envelope_id never set";
+        const healed = await createCommunityChatEnvelope(community);
+        if (!healed) return;
+        logger.warn("Community chat self-healed for %s (%s) — created envelope %s", communityId, reason, healed.id);
+        chatEnvelopeId = healed.id;
+        current = healed.payload;
     }
 
     const memberships = await membershipRepo().find({ where: { community_id: communityId } });
@@ -100,7 +140,7 @@ export async function syncCommunityChatToEvault(communityId: string): Promise<vo
 
     await updateEnvelope({
         vaultEname: community.ename,
-        envelopeId: community.chat_envelope_id,
+        envelopeId: chatEnvelopeId,
         ontology: ONTOLOGIES.Community,
         payload: merged,
         acl: ["*"],
