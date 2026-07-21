@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-charcoal);
+  background: rgba(44, 44, 44, 0.55);
   transition: opacity 0.15s ease;
   color: white;
   pointer-events: none;

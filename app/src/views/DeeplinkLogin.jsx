@@ -67,7 +67,7 @@ export default function DeeplinkLogin() {
 
   return (
     <div className={`${styles.centerFill} ${styles.errorFill}`}>
-      <ErrorText as="p">{error}</ErrorText>
+      <ErrorText as="p" fontSize="1rem">{error}</ErrorText>
       <a href="/" className={styles.backLink}>Back to home</a>
     </div>
   )
