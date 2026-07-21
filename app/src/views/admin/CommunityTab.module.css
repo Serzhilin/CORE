@@ -1,0 +1,146 @@
+/* File-input trigger label — replaces the legacy global .btn-secondary class.
+   Base values copied verbatim from node_modules/@ecommons/ui/dist/index.css .btn-secondary,
+   with the padding/font-size overrides that every call site in this file already applied inline. */
+.fileBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-12);
+  background-color: white;
+  border: 2px solid var(--color-charcoal);
+  border-radius: 0;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  cursor: pointer;
+  transition: all 0.1s;
+  box-shadow: var(--block-shadow-sm);
+}
+.fileBtn:hover {
+  color: var(--color-terracotta);
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--block-shadow-color);
+}
+.fileBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--block-shadow-color);
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+/* Community settings card + form layout */
+.settingsCard {
+  padding: var(--space-28);
+  margin-bottom: var(--space-24);
+}
+.sectionLabelSpacing {
+  margin: 0 0 var(--space-20);
+}
+.subHeading {
+  margin: 0 0 -4px;
+}
+.subHeadingSpaced {
+  margin: var(--space-10) 0 -4px;
+}
+.gap12 {
+  --gap: var(--space-12);
+}
+.gap14 {
+  --gap: var(--space-14);
+}
+.gap16 {
+  --gap: var(--space-16);
+}
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-14);
+}
+.fileNote {
+  font-size: 0.85rem;
+  color: var(--color-charcoal-light);
+}
+.smallNote {
+  font-size: 0.75rem;
+  color: var(--color-charcoal-light);
+}
+.previewBox {
+  width: 80px;
+  height: 48px;
+  border: 1px solid var(--color-sand);
+  border-radius: 0;
+  background: var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.previewImgContain {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.previewImgCover {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+.emojiPlaceholder {
+  font-size: 1.5rem;
+}
+.dangerIconBtn {
+  padding: var(--space-6) var(--space-10);
+  color: var(--color-red);
+  display: inline-flex;
+  align-items: center;
+}
+.colorSwatch {
+  width: 40px;
+  height: 36px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.flexInput {
+  flex: 1;
+}
+.saveMsg {
+  font-size: 0.85rem;
+}
+
+/* Admins list */
+.adminRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--color-sand);
+}
+.adminName {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.adminDeleteBtn {
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+}
+.addAdminWrap {
+  margin-top: var(--space-16);
+}
+.addAdminSelect {
+  width: auto;
+  padding: var(--space-8) var(--space-12);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.linkCardWrap {
+  margin-bottom: var(--space-24);
+}
