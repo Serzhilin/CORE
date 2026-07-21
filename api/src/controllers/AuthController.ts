@@ -6,6 +6,7 @@ import { findOrCreateByEname, fetchEVaultProfile, updatePerson, findById } from 
 import { getUserMetaEnvelopeId } from "../lib/evault-client";
 import { syncUserProfileToEvault } from "../services/UserProfileSyncService";
 import { logger } from "../lib/logger";
+import { triggerMembershipReconcile } from "../services/MembershipReconcileTrigger";
 import { Person } from "../database/entities/Person";
 import { signToken } from "../middleware/auth";
 import { isPlatformAdminEname } from "../middleware/communityAccess";
@@ -100,6 +101,9 @@ export async function epassportLogin(req: Request, res: Response) {
     const returnTo = sessionReturnTo.get(session) ?? "/";
     sessionReturnTo.delete(session);
     const memberships = await getMembershipsForPerson(person.id);
+    triggerMembershipReconcile(person.id).catch((err) =>
+        logger.warn(err, "MembershipReconciler: request-triggered reconcile failed for person %s", person.id)
+    );
     const isPlatformAdmin = isPlatformAdminEname(person.ename);
     const payload = { token, user: serializePerson(person), memberships, returnTo, isPlatformAdmin };
     sessionResults.set(session, payload);
@@ -135,6 +139,10 @@ export async function devLogin(req: Request, res: Response) {
 export async function getMe(req: Request, res: Response) {
     const person = await findById(req.user!.userId);
     if (!person) { res.status(404).json({ error: "Person not found" }); return; }
+
+    triggerMembershipReconcile(person.id).catch((err) =>
+        logger.warn(err, "MembershipReconciler: request-triggered reconcile failed for person %s", person.id)
+    );
 
     const memberships = await AppDataSource.getRepository(CommunityMembership).find({
         where: { person_id: person.id },
