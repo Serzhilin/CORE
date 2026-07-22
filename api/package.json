@@ -25,6 +25,7 @@
     "pg": "^8.11.3",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
+    "poplar": "git+ssh://git@codeberg.org/eCommons/Poplar.git#main",
     "reflect-metadata": "^0.2.1",
     "typeorm": "^0.3.24",
     "uuid": "^9.0.1",
