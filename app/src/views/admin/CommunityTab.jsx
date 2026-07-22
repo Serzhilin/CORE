@@ -284,7 +284,7 @@ export default function CommunityTab() {
                   try { await updateMember(communityId, m.personId, { is_admin: false }); await refresh() }
                   catch (err) { alert(err.message) }
                 }}
-                className={styles.adminDeleteBtn}
+                className={styles.iconBtnDanger}
                 style={{ cursor: isSelf ? 'not-allowed' : 'pointer', color: isSelf ? 'var(--color-sand-dark)' : 'var(--color-red)' }}
               >
                 <TrashIcon />

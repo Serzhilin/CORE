@@ -26,8 +26,8 @@ export default function PersonModal({ member, onClose }) {
   return (
     <Modal onOverlayClick={onClose} className={styles.panelWrap}>
       {/* Header */}
-      <div className={styles.modalHeader}>
-        <div className={styles.headerAvatarRow}>
+      <div className={`row ${styles.modalHeader}`}>
+        <div className={`row ${styles.headerAvatarRow}`}>
           <Avatar src={member.avatarUrl} size={52} fontSize="1.2rem" fontWeight={600}>
             {(member.firstName || member.email || '?')[0].toUpperCase()}
           </Avatar>
@@ -69,7 +69,7 @@ export default function PersonModal({ member, onClose }) {
         <div className={styles.workgroupsSection}>
           <SectionLabel as="h4" fontSize="0.85rem" className={styles.sectionLabelGap}>Workgroups</SectionLabel>
           {wgMemberships.map(({ workgroup, roles }) => (
-            <div key={workgroup.id} className={styles.workgroupRow}>
+            <div key={workgroup.id} className={`row ${styles.workgroupRow}`}>
               <span className={styles.workgroupDot} style={{ background: workgroup.color }} />
               <span className={styles.workgroupName}>{workgroup.name}</span>
               {roles.length > 0 && (

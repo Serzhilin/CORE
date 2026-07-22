@@ -6,16 +6,13 @@
 }
 
 .modalHeader {
-  display: flex;
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: var(--space-20);
 }
 
 .headerAvatarRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-14);
+  --gap: var(--space-14);
 }
 
 .modalTitle {
@@ -75,9 +72,6 @@
 }
 
 .workgroupRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
   margin-bottom: var(--space-4);
 }
 

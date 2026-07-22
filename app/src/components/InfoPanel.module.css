@@ -9,9 +9,7 @@
 
 /* CommunityView */
 .communityRoot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-16);
+  --gap: var(--space-16);
   height: 100%;
 }
 
@@ -35,9 +33,6 @@
 }
 
 .workgroupRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
   padding: var(--space-6) var(--space-4);
   cursor: pointer;
   border-radius: 0;
@@ -63,16 +58,12 @@
 
 /* WorkgroupView */
 .workgroupRoot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
+  --gap: var(--space-12);
   height: 100%;
 }
 
 .workgroupHeader {
-  display: flex;
   align-items: flex-start;
-  gap: var(--space-8);
 }
 
 .backButton {
@@ -115,9 +106,8 @@
 }
 
 .memberRow {
-  display: flex;
   align-items: flex-start;
-  gap: var(--space-6);
+  --gap: var(--space-6);
   padding: var(--space-5) var(--space-4);
   cursor: pointer;
   border-radius: 0;
@@ -158,9 +148,7 @@
 
 /* PersonView */
 .personRoot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-14);
+  --gap: var(--space-14);
   height: 100%;
   overflow-y: auto;
 }
@@ -173,15 +161,11 @@
   font-size: 0.82rem;
   text-align: left;
   padding: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
+  --gap: var(--space-4);
 }
 
 .avatarRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
+  --gap: var(--space-12);
 }
 
 .personName {
@@ -192,10 +176,8 @@
 }
 
 .badgeRow {
-  display: flex;
-  gap: var(--space-4);
+  --gap: var(--space-4);
   flex-wrap: wrap;
-  align-items: center;
   margin-top: var(--space-4);
 }
 
@@ -252,9 +234,7 @@
 }
 
 .stackGap4 {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  --gap: var(--space-4);
 }
 
 .contactRow {

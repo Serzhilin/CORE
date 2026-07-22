@@ -121,7 +121,7 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
-.adminDeleteBtn {
+.iconBtnDanger {
   background: none;
   border: none;
   padding: var(--space-2) var(--space-4);

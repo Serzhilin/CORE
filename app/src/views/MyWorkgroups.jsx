@@ -84,7 +84,6 @@ export default function MyWorkgroups() {
                 <span className={styles.wgName}>{wg.name}</span>
                 <Button
                   variant="ghost"
-                  size="sm"
                   onClick={() => handleLeave(wg)}
                   disabled={busy[wg.id]}
                   title="Leave workgroup"
@@ -164,7 +163,6 @@ export default function MyWorkgroups() {
                 </span>
                 <Button
                   variant="ghost"
-                  size="sm"
                   onClick={() => handleJoin(wg)}
                   disabled={busy[wg.id]}
                   title="Join workgroup"

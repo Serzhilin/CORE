@@ -88,7 +88,7 @@ export default function CardGrid({ community, filter, onMemberClick, gridRef, se
           const members = membersForWorkgroup(wg)
           return (
             <Card key={wg.id} className={styles.card} style={{ borderTopColor: wg.color }}>
-              <div className={styles.workgroupHeaderRow}>
+              <div className={`row ${styles.workgroupHeaderRow}`}>
                 <span className={styles.workgroupHeaderName}>{wg.name}</span>
                 <span className={styles.workgroupHeaderCount}>{members.length}</span>
               </div>
@@ -116,7 +116,7 @@ function MemberRow({ m, wgColor, roles, onMemberClick, selected, showLastInitial
     <div
       data-person-id={m.personId}
       onClick={() => onMemberClick(m)}
-      className={styles.memberRow}
+      className={`row ${styles.memberRow}`}
       style={{
         opacity: unavailable ? 0.45 : 1,
         background: selected ? `${wgColor}18` : 'none',

@@ -52,14 +52,14 @@ export default function TopBar() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.headerRow}>
+      <div className={`row ${styles.headerRow}`}>
 
         {/* Left: CORE mark + community logo/name (click → home) */}
         <div
           onClick={() => navigate('/')}
-          className={styles.brandLink}
+          className={`row ${styles.brandLink}`}
         >
-          <span className={styles.coreMark}>
+          <span className={`row ${styles.coreMark}`}>
             <img src="/logo.png" alt="CORE" className={styles.coreLogo} />
             <span className={styles.coreText}>
               CORE
@@ -136,7 +136,7 @@ export default function TopBar() {
                       key={m.communityId}
                       onClick={() => { setShowMenu(false); switchCommunity(m.communityId); navigate('/') }}
                     >
-                      <span className={styles.communityRow}>
+                      <span className="row">
                         <span className={styles.communityRowName} style={{ fontWeight: m.communityId === communityId ? 600 : 400 }}>
                           {m.community?.name || m.communityId}
                         </span>

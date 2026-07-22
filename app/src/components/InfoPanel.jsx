@@ -28,7 +28,7 @@ function accentColor(selection, community) {
 
 function CommunityView({ community, onSelect }) {
   return (
-    <div className={styles.communityRoot}>
+    <div className={`stack ${styles.communityRoot}`}>
       <div>
         <div className={styles.communityName}>
           {community.name}
@@ -45,7 +45,7 @@ function CommunityView({ community, onSelect }) {
           <div
             key={wg.id}
             onClick={() => onSelect({ type: 'workgroup', id: wg.id })}
-            className={styles.workgroupRow}
+            className={`row ${styles.workgroupRow}`}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--color-cream)'}
             onMouseLeave={e => e.currentTarget.style.background = 'none'}
           >
@@ -66,8 +66,8 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
     .sort((a, b) => (a.member.firstName || '').localeCompare(b.member.firstName || ''))
 
   return (
-    <div className={styles.workgroupRoot}>
-      <div className={styles.workgroupHeader}>
+    <div className={`stack ${styles.workgroupRoot}`}>
+      <div className={`row ${styles.workgroupHeader}`}>
         <button onClick={onBack} className={styles.backButton}>‹</button>
         <div>
           <div className={styles.workgroupTitle} style={{ borderLeftColor: wg.color }}>{wg.name}</div>
@@ -85,7 +85,7 @@ function WorkgroupView({ wg, community, onSelect, onBack, onFilterToWorkgroup })
             <div
               key={member.personId}
               onClick={() => onSelect({ type: 'person', id: member.personId, fromWorkgroup: wg.id })}
-              className={styles.memberRow}
+              className={`row ${styles.memberRow}`}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--color-cream)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}
             >
@@ -125,16 +125,16 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
   const initial = (member.firstName || member.email || '?')[0].toUpperCase()
 
   return (
-    <div className={styles.personRoot}>
-      <button onClick={onBack} className={styles.personBackButton}>
+    <div className={`stack ${styles.personRoot}`}>
+      <button onClick={onBack} className={`row ${styles.personBackButton}`}>
         ‹ {fromWorkgroup ? (community.workgroups.find(w => w.id === fromWorkgroup)?.name ?? 'Back') : 'Back'}
       </button>
 
-      <div className={styles.avatarRow}>
+      <div className={`row ${styles.avatarRow}`}>
         <Avatar src={member.avatarUrl} size={104} fontSize="2.2rem">{initial}</Avatar>
         <div>
           <div className={styles.personName}>{name}</div>
-          <div className={styles.badgeRow}>
+          <div className={`row ${styles.badgeRow}`}>
             {member.isAdmin && <Badge variant="plain" className={styles.adminBadge}>Admin</Badge>}
             {member.membershipType && (
               <Badge variant="plain" className={styles.membershipTypeBadge}>
@@ -168,7 +168,7 @@ function PersonView({ member, community, fromWorkgroup, onBack }) {
       )}
 
       {(member.email || member.phone || member.website) && (
-        <div className={`${styles.sectionDivider} ${styles.stackGap4}`}>
+        <div className={`stack ${styles.sectionDivider} ${styles.stackGap4}`}>
           {member.email && <div className={styles.contactRow}>{member.email}</div>}
           {member.phone && <div className={styles.contactRow}>{member.phone}</div>}
           {member.website && <div className={styles.contactRow}><a href={member.website} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>{member.website}</a></div>}

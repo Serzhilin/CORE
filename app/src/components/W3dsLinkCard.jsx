@@ -72,12 +72,12 @@ export default function W3dsLinkCard({ communityId, community, onChange }) {
           </Button>
         </div>
       ) : (
-        <div className={styles.formStack}>
+        <div className={`stack ${styles.formStack}`}>
           <p className={styles.description}>
             This community is local-only. Link it to an existing W3DS eName you own or administer
             to sync its identity and membership to your eVault.
           </p>
-          <div className={styles.row}>
+          <div className={styles.actionRow}>
             <Input
               className={styles.flexInput}
               placeholder="@ename or w3id"

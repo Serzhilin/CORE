@@ -117,7 +117,7 @@
   color: var(--color-charcoal-light);
 }
 
-.deleteBtn {
+.iconBtnDanger {
   background: none;
   border: none;
   color: var(--color-red);

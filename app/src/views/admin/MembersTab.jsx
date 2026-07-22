@@ -220,7 +220,6 @@ export default function MembersTab() {
                         })()}
                         <Button
                           variant="ghost"
-                          size="sm"
                           className={styles.editableCell}
                           onClick={() => setEditingCell(`${m.personId}:type`)}
                           title="Edit membership type"
@@ -251,7 +250,6 @@ export default function MembersTab() {
                         </span>
                         <Button
                           variant="ghost"
-                          size="sm"
                           className={styles.editableCell}
                           onClick={() => setEditingCell(`${m.personId}:joined`)}
                           title="Edit joined date"
@@ -266,7 +264,7 @@ export default function MembersTab() {
                     <button
                       onClick={() => handleRemove(m.personId, name)}
                       title="Remove from community"
-                      className={styles.deleteBtn}
+                      className={styles.iconBtnDanger}
                     >
                       <TrashIcon size={15} />
                     </button>

@@ -213,7 +213,7 @@ export default function WorkgroupsTab() {
                 <button
                   onClick={() => handleDeleteWorkgroup(wg.id)}
                   title="Delete workgroup"
-                  className={styles.iconButtonDanger}
+                  className={styles.iconBtnDanger}
                 >
                   <TrashIcon />
                 </button>
@@ -348,7 +348,7 @@ export default function WorkgroupsTab() {
                                 <button
                                   onClick={() => handleRemoveMember(wg.id, member.personId)}
                                   title="Remove from workgroup"
-                                  className={`${styles.iconButtonDanger} ${styles.marginLeftAuto}`}
+                                  className={`${styles.iconBtnDanger} ${styles.marginLeftAuto}`}
                                 >
                                   <TrashIcon />
                                 </button>
