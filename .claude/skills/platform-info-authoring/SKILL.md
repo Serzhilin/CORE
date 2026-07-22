@@ -79,15 +79,19 @@ or aspirational features as if they exist.
   If the target repo has a `w3ds` skill available, load its `reference/registry.md` for the
   canonical ontology UUID table rather than re-deriving field names from memory.
 - **ontology-spec/** — one file per ontology this platform **writes to**, regardless of whether
-  the platform originated that schema. Schema ownership and being a data source are different
-  questions — an integrator reading this file wants to know exactly what fields *this platform*
-  puts in envelopes of that schemaId, even if another platform designed the schema (e.g. a
-  chat-notification ontology defined by a separate messaging platform that this one also writes
-  instances of). If this platform only *reads* an ontology and never writes it, it does not get a
-  file here — cover it in `agents/` instead. List the exact fields and types as they appear in the
-  platform's payload-building code (e.g. `buildWorkgroupPayload`-style functions), not an idealized
-  schema. If the schema is owned elsewhere, say so in one line at the top of the file and note
-  that the owning platform's spec wins on conflict.
+  the platform originated that schema, and regardless of whether the write touches every field or
+  only a few. Schema ownership and being a data source are different questions — an integrator
+  reading this file wants to know exactly what fields *this platform* puts in envelopes of that
+  schemaId, even if another platform designed the schema (e.g. a chat-notification ontology
+  defined by a separate messaging platform that this one also writes instances of) or if this
+  platform only patches 1-2 fields of an otherwise shared, well-known ontology (e.g. patching just
+  `displayName`/`bio` on a `User` envelope still counts as writing `User` — say so explicitly and
+  list only the fields actually touched, don't describe the whole schema). If this platform only
+  *reads* an ontology and never writes any field of it, it does not get a file here — cover it in
+  `agents/` instead. List the exact fields and types as they appear in the platform's
+  payload-building code (e.g. `buildWorkgroupPayload`-style functions), not an idealized schema. If
+  the schema is owned elsewhere, say so in one line at the top of the file and note that the
+  owning platform's spec wins on conflict.
 
 ## Process
 
@@ -99,17 +103,30 @@ or aspirational features as if they exist.
    the README alone.
 3. Find the platform's ontology constants file (e.g. `ontology.ts`) and enumerate **every entry
    in it as a checklist** — don't rely on ontologies surfacing incidentally while reading routes.
-   For each entry, grep its usages to classify it: does this platform ever write it (any
-   `createEnvelope`/`updateEnvelope`/payload-builder call using that constant), or does it only
-   read it? Written ontologies each get an `ontology-spec/` file (see below) whether or not this
-   platform originated the schema; read-only ontologies get a mention in `agents/` only, never
-   their own `ontology-spec/` file. Skipping this enumeration is the most common way an agent
-   under-covers a platform's real integration surface.
+   If no single constants file exists (schemaIds instead appear as inline string/UUID literals
+   scattered near eVault-client calls), build the checklist by grepping for the mutation calls
+   below across the whole codebase and collecting every distinct schemaId literal passed to them
+   — the absence of a constants file is not an excuse to skip enumeration, only a different way to
+   build the same list.
+   For each entry, grep its usages to classify it: does this platform ever write it, or does it
+   only read it? "Write" means *any* of: `createMetaEnvelope`, `updateMetaEnvelope`,
+   `removeMetaEnvelope`, `bulkCreateMetaEnvelopes`, and their legacy aliases
+   `storeMetaEnvelope`/`updateMetaEnvelopeById` (see the `w3ds` skill's terminology notes if
+   present), or any platform-specific payload-builder function that feeds one of those calls —
+   even a call that only sets 1-2 fields counts as a write. Written ontologies each get an
+   `ontology-spec/` file (see below) whether or not this platform originated the schema and
+   whether the write is a full envelope or a partial-field patch; read-only ontologies get a
+   mention in `agents/` only, never their own `ontology-spec/` file. Skipping this enumeration is
+   the most common way an agent under-covers a platform's real integration surface.
 4. For any existing `docs/platform-info/**/*.md` files, treat them as the current source of
    truth to refresh, not overwrite blindly — keep their `w3id` as-is.
 5. Write one new file per audience/ontology that doesn't already have coverage; each starts with
    `w3id: null`.
-6. Do not run `syncPlatformInfo` yourself unless asked — authoring the docs and pushing them to
+6. Before finishing, recount: every ontology your step 3 checklist marked "written" must have a
+   matching `ontology-spec/*.md` file, one-to-one. If the counts don't match, you skipped one —
+   go back and add the missing file rather than reporting completion. This recount is the
+   agent's own check, not something the reader of the docs can catch later.
+7. Do not run `syncPlatformInfo` yourself unless asked — authoring the docs and pushing them to
    a real eVault are separate steps. Tell the user the files are ready for `syncPlatformInfo`.
 
 ## Non-goals
