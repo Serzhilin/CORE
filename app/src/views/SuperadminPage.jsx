@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Button, Input, Badge, Loading, SectionLabel, ErrorText, Heading } from '@ecommons/ui'
+import { Card, Button, Input, Badge, Loading, SectionLabel, ErrorText, Heading, Page } from '@ecommons/ui'
 import { useUser } from '../context/UserContext'
 import LoginScreen from '../components/LoginScreen'
 import W3dsLinkCard from '../components/W3dsLinkCard'
@@ -136,7 +136,7 @@ export default function SuperadminPage() {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <Page maxWidth={720} style={{ padding: 'var(--space-32)', fontFamily: 'var(--font-sans)' }}>
       <Heading as="h1" className={styles.heading}>Superadmin — Communities</Heading>
 
       {listError && <div className={styles.listError}>{listError}</div>}
@@ -169,6 +169,6 @@ export default function SuperadminPage() {
       {communities.length === 0 && !listError && (
         <p className={styles.emptyState}>No communities yet.</p>
       )}
-    </div>
+    </Page>
   )
 }
