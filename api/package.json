@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon --exec \"npx ts-node\" src/index.ts",
     "register-platform": "ts-node scripts/register-platform.ts",
+    "sync-platform-info": "ts-node scripts/sync-platform-info.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "jest --runInBand",
