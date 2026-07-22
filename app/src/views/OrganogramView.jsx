@@ -5,10 +5,9 @@ import { useSetTopBarSlot } from '../context/TopBarSlotContext'
 import CardGrid from './CardGrid'
 import InfoPanel from '../components/InfoPanel'
 import html2canvas from 'html2canvas'
+import styles from './OrganogramView.module.css'
 
 const GraphView = lazy(() => import('./graph/GraphView'))
-
-const checkStyle = { display: 'flex', alignItems: 'center', gap: 'var(--space-6)', fontSize: '0.9rem', cursor: 'pointer' }
 
 const INITIAL_FILTER = { workgroupId: '', roleName: '', membershipTypeId: '', showUnavailable: true, search: '' }
 
@@ -28,15 +27,14 @@ export default function OrganogramView() {
 
   useSetTopBarSlot(
     community ? (
-      <div style={{ display: 'flex', gap: 'var(--space-10)', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-        <Panel shadow="sm" style={{ display: 'flex', width: 160, height: 34, boxSizing: 'border-box', overflow: 'hidden', flexShrink: 0 }}>
+      <div className={styles.filterRow}>
+        <Panel shadow="sm" className={styles.viewTogglePanel}>
           {['graph', 'cards'].map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
+              className={styles.viewToggleBtn}
               style={{
-                flex: 1, padding: '0 var(--space-14)', height: '100%', boxSizing: 'border-box', border: 'none', cursor: 'pointer',
-                fontSize: '0.9rem', fontWeight: 500, fontFamily: 'var(--font-sans)',
                 background: view === v ? 'var(--color-terracotta)' : 'white',
                 color: view === v ? 'white' : 'var(--color-charcoal-light)',
               }}
@@ -48,14 +46,14 @@ export default function OrganogramView() {
 
         <div className="topbar-filter-break" />
 
-        <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 var(--space-10)', appearance: 'none', WebkitAppearance: 'none' }}>
+        <Select value={filter.roleName} onChange={(e) => patch({ roleName: e.target.value })} className={styles.selectSm}>
           <option value="">All roles</option>
           {allRoleNames.map((name) => (
             <option key={name} value={name}>{name}</option>
           ))}
         </Select>
 
-        <Select value={filter.membershipTypeId} onChange={(e) => patch({ membershipTypeId: e.target.value })} style={{ width: 'auto', height: 34, padding: '0 var(--space-10)', appearance: 'none', WebkitAppearance: 'none' }}>
+        <Select value={filter.membershipTypeId} onChange={(e) => patch({ membershipTypeId: e.target.value })} className={styles.selectSm}>
           <option value="">All membership types</option>
           {membershipTypes.map((mt) => (
             <option key={mt.id} value={mt.id}>{mt.name}</option>
@@ -68,12 +66,12 @@ export default function OrganogramView() {
           placeholder="Search by name…"
           value={filter.search}
           onChange={(e) => patch({ search: e.target.value })}
-          style={{ height: 34, padding: '0 var(--space-10)', boxSizing: 'border-box', boxShadow: 'var(--block-shadow-sm)', width: 160 }}
+          className={styles.searchInput}
         />
 
         <div className="topbar-filter-break" />
 
-        <label style={checkStyle}>
+        <label className={styles.checkLabel}>
           <input type="checkbox" checked={filter.showUnavailable} onChange={(e) => patch({ showUnavailable: e.target.checked })} />
           Show inactive members
         </label>
@@ -107,10 +105,10 @@ export default function OrganogramView() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className={styles.mainColumn}>
       {/* Main content row: view + InfoPanel */}
-      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        <div style={{ flex: 1, minWidth: 0, overflow: view === 'cards' ? 'auto' : 'visible' }}>
+      <div className={styles.contentRow}>
+        <div className={styles.contentColumn} style={{ overflow: view === 'cards' ? 'auto' : 'visible' }}>
           {view === 'cards' ? (
             <CardGrid community={community} filter={filter} onMemberClick={handleMemberClick} gridRef={cardGridRef} selectedPersonId={panelSelection?.type === 'person' ? panelSelection.id : null} />
           ) : (

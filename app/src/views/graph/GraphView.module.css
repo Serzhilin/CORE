@@ -1,0 +1,16 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.canvasWrap {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.loadingPad {
+  padding: var(--space-32);
+}

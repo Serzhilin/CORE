@@ -4,6 +4,7 @@ import { getCommunityGraph } from '../../api/client'
 import { useGraphData } from './useGraphData'
 import { useForceSimulation } from './useForceSimulation'
 import ForceGraph from './ForceGraph'
+import styles from './GraphView.module.css'
 
 export default function GraphView({ communityId, filters, selection, onSelectionClear, onPersonSelect, onWorkgroupSelect, refreshKey, exportRef, style }) {
   const [graphData, setGraphData] = useState(null)
@@ -38,7 +39,7 @@ export default function GraphView({ communityId, filters, selection, onSelection
     }
   }, [exportRef])
 
-  if (loading) return <Loading style={{ padding: 'var(--space-32)' }}>Loading graph…</Loading>
+  if (loading) return <div className={styles.loadingPad}><Loading>Loading graph…</Loading></div>
   if (!graphData) return null
 
   function handleSelect(node) {
@@ -48,8 +49,8 @@ export default function GraphView({ communityId, filters, selection, onSelection
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, ...style }}>
-      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+    <div className={styles.column} style={style}>
+      <div className={styles.canvasWrap}>
         <ForceGraph
           simNodes={simNodes}
           simLinks={simLinks}

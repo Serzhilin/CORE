@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import WorkgroupNode from './WorkgroupNode'
 import PersonNode from './PersonNode'
+import styles from './ForceGraph.module.css'
 
 function getHighlightedIds(selected, nodes, links) {
   if (!selected) return null
@@ -169,8 +170,8 @@ export default function ForceGraph({ simNodes, simLinks, filters, selected, onSe
       width="100%"
       height="100%"
       viewBox={`0 0 ${W} ${H}`}
-      className="panel-frame"
-      style={{ background: '#fff', display: 'block', cursor: isPanning ? 'grabbing' : 'grab' }}
+      className={`panel-frame ${styles.canvas}`}
+      style={{ cursor: isPanning ? 'grabbing' : 'grab' }}
       onMouseDown={handleSvgMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
