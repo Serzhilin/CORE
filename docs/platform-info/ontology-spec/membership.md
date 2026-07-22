@@ -1,6 +1,6 @@
 ---
 title: "Ontology: Membership"
-w3id: null
+w3id: "c6b79b6a-ee03-59c6-81c1-210a33bae81d"
 ---
 
 UUID: `d300f6d4-a018-446c-add4-b34abc95de05` — custom ontology, not yet

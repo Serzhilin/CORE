@@ -1,6 +1,6 @@
 ---
 title: "Ontology: User"
-w3id: null
+w3id: "353fa9ea-ccc9-5331-bf10-4d06713503fe"
 ---
 
 UUID: `550e8400-e29b-41d4-a716-446655440000` (source: `api/src/lib/w3ds/ontology.ts`)

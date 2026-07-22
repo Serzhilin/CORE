@@ -1,6 +1,6 @@
 ---
 title: "Ontology: Community"
-w3id: null
+w3id: "d9dd7b74-2162-5a72-9a16-ffa8ad3136de"
 ---
 
 UUID: `550e8400-e29b-41d4-a716-446655440003` (source: `api/src/lib/w3ds/ontology.ts`)

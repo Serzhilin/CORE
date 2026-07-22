@@ -1,6 +1,6 @@
 ---
 title: "Ontology: Availability"
-w3id: null
+w3id: "2d8bfd45-3cf7-597c-af41-8d5c348c0773"
 ---
 
 UUID: `fcdc28d2-f22e-469b-a2f0-dad6bf3dd152` — custom ontology, not yet

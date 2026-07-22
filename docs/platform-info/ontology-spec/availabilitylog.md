@@ -1,6 +1,6 @@
 ---
 title: "Ontology: AvailabilityLog"
-w3id: null
+w3id: "8e1879de-79a0-534a-8e25-c74b76b8815a"
 ---
 
 UUID: `9cf4bb82-d18c-4eb8-b1cc-6730026800c7` — custom ontology, not yet

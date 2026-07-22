@@ -1,6 +1,6 @@
 ---
 title: "Integrating with CORE (for AI agents and platforms)"
-w3id: null
+w3id: "00fe522e-32ab-5f29-99a1-03999cb006d0"
 ---
 
 CORE is a W3DS platform. To read or write CORE-related data from another

@@ -1,6 +1,6 @@
 ---
 title: "CORE — Marketplace Listing"
-w3id: null
+w3id: "ba197e80-f270-5663-a386-e2415e16dc59"
 ---
 
 - **Display name:** CORE

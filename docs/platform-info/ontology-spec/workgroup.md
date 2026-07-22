@@ -1,6 +1,6 @@
 ---
 title: "Ontology: Workgroup"
-w3id: null
+w3id: "37f3c8af-ffda-5532-91c3-4fe79f98d843"
 ---
 
 UUID: `7867abbd-420e-4dd9-bad6-8ad894c50b94` — custom ontology, not yet

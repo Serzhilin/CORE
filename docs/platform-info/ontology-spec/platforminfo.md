@@ -1,6 +1,6 @@
 ---
 title: "Ontology: PlatformInfo"
-w3id: null
+w3id: "f05ae249-6c81-525a-8237-1edd6fc80e97"
 ---
 
 UUID: `18a83870-04cf-4694-817a-edf037d7b256` — custom ontology, not yet

@@ -1,6 +1,6 @@
 ---
 title: "Ontology: Organization"
-w3id: null
+w3id: "6e6ac5fc-e545-5018-9f04-c9f6ebdf7048"
 ---
 
 UUID: `ad226473-640e-4d16-90e5-2fd96f261554` — custom ontology, not yet

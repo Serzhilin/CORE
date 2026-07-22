@@ -1,6 +1,6 @@
 ---
 title: "What is CORE"
-w3id: null
+w3id: "8ba360fe-4b99-56e0-b74c-1a42f86b401b"
 ---
 
 CORE (Community Organisation and Roles Engine) is a W3DS platform for managing
