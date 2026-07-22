@@ -1,0 +1,9 @@
+{
+    "platformName": "CommunityOrganisationAndRolesEngine",
+    "displayName": "CORE",
+    "description": "Manages community roles, membership and governance",
+    "url": "https://core.lab.ecommons.space",
+    "logoUrl": "https://core.lab.ecommons.space/logo.png",
+    "category": "Productivity",
+    "version": "1.0.0"
+}

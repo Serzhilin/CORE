@@ -4,9 +4,10 @@ import { config } from "dotenv";
 
 config({ path: path.resolve(__dirname, "../../.env") });
 
-import { registerPlatform, PlatformIdentity } from "poplar";
+import { registerPlatform, PlatformIdentity, PlatformConfigFile } from "poplar";
 
 const IDENTITY_PATH = path.resolve(__dirname, "../data/platform-identity.json");
+const CONFIG_PATH = path.resolve(__dirname, "../platform.config.json");
 
 function readIdentity(): PlatformIdentity | null {
     if (!fs.existsSync(IDENTITY_PATH)) return null;
@@ -34,21 +35,18 @@ async function main(): Promise<void> {
         return;
     }
 
+    const platformConfig: PlatformConfigFile = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
+
     const identity = await registerPlatform(
         {
             registryUrl,
             provisionerUrl,
             verificationId,
             apiKey,
-            profile: {
-                platformName: "CommunityOrganisationAndRolesEngine",
-                displayName: "CORE",
-                description: "Manages community roles, membership and governance",
-                url: "https://core.lab.ecommons.space",
-                logoUrl: "https://core.lab.ecommons.space/logo.png",
-                category: "Productivity",
-                version: "1.0.0",
-            },
+            // CORE has no cryptographic keypair — a keyless platform eVault,
+            // so publicKey stays unset (see platform.config.json).
+            publicKey: platformConfig.publicKey,
+            profile: platformConfig,
         },
         before
     );
